@@ -1,4 +1,6 @@
-
+class IOException (Exception):
+    """ Indicates that reading or writing files failed"""
+    pass
 
 class TextParseException (Exception):
     """ Indicates that parsing using the Lark parser failed """

@@ -3,6 +3,8 @@ SessionController.py
 
 Class definition for the SessionController object.
 """
+from derp.language.Parser import Parser
+from derp.language.Transformer import Transformer
 from derp.session.Evaluator import Evaluator
 from derp.session.ISessionController import ISessionController
 from derp.session.session_state.FileManager import FileManager
@@ -22,7 +24,7 @@ class SessionController(ISessionController):
         self.__repl = None
 
         # other members
-        self.__parser_controller = ParserController()
+        self.__parser_controller = Parser()
         self.__transformer = Transformer()
         self.__evaluator = Evaluator()
         self.__session_state = SessionStateController()
