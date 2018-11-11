@@ -1,3 +1,6 @@
+from derp.exceptions.exceptions import *
+
+
 class Grammar (dict):
     """
     Type checking container to hold information about the grammar to be
@@ -20,7 +23,13 @@ class Grammar (dict):
 
         raises GrammarDefinitionException if the input does not follow this behavior
         """
-        pass
+
+        # Function to raise exception from within list comp
+        def raise_ex(): raise GrammarDefinitionException
+
+        # Convert dict to tuple(str, tuple(str, str, str...)), raising exception if typecheck fails
+        self._tuples = tuple((k if isinstance(k, str) else raise_ex(), tuple(x if isinstance(x, str) else (x if isinstance(x, str) else raise_ex()) for x in v))
+                             for k, v in grammardef.items())
 
     def productions(self):
         """
@@ -36,3 +45,12 @@ class Grammar (dict):
         The result with either be one of the nonterminals in the grammar or None
         """
         return None
+
+
+def merge_grammars(*grammars):
+    """
+    Merges multiple grammars to produce a new grammar
+
+    raises GrammarMergeException
+    """
+    pass
