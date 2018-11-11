@@ -1,6 +1,7 @@
 
 from derp.exceptions import TextParseException
 from derp.language.IParser import IParser
+from lark import Lark
 
 
 class Parser (IParser):
