@@ -53,4 +53,12 @@ def merge_grammars(*grammars):
 
     raises GrammarMergeException
     """
-    pass
+
+    merged_grammar = {}
+
+    for g in grammars:
+        for k, v in g.productions():
+            merged_grammar[k] = merged_grammar[k] + \
+                v if k in merged_grammar else v
+
+    return Grammar(merged_grammar)
