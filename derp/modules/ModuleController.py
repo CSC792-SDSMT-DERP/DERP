@@ -18,6 +18,15 @@ class ModuleController(IModuleController):
     def __init__(self):
         self.__modules = []  # type: typing.List[IModule]
 
+    def get_posts(self, source_ast, qualifier_tree):
+        """
+        Dispatches a query to the module which handles the sources specified in the source_ast.
+        :param source_ast: A source_ast handled entirely by a single module.
+        :param qualifier_tree: A tree representing a logical expression which the posts must match.
+        :return: a PostIterator which iterates over the returned set of posts
+        """
+        pass
+
     def load_module(self, name):
         """
         Loads a module with the given name and makes it available to the DERP backend.

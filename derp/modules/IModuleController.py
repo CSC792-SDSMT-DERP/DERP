@@ -4,10 +4,13 @@ IModuleController.py
 Interface definition for ModuleController objects.
 """
 
+from derp.modules.IPostQueryable import IPostQueryable
 
-class IModuleController:
+
+class IModuleController(IPostQueryable):
     """
     A ModuleController is required to be able to load and unload modules, and manage loaded modules.
+    It also dispatches queries to the appropriate loaded modules.
     """
 
     def load_module(self, name):
