@@ -36,10 +36,12 @@ class SessionController(ISessionController):
 
         # session action handling dictionary
         self.__action_handling = {
-            SessionActionType.QUERY: self._read_operation
+            SessionActionType.QUERY: self._read_operation,
+            SessionActionType.LOAD_MODULE: self._load_operation,
+            SessionActionType.UNLOAD_MODULE: self._unload_operation
         }
 
-    def _recall_operation(self,session_action):
+    def _recall_operation(self, session_action):
         list_commands = self.__session_state.get_buffer().get_commands()
         output = " ".join(list_commands)
         action = UXAction(UXActionType.RECALL, text=output, warnings=session_action.get_warnings())
@@ -55,7 +57,8 @@ class SessionController(ISessionController):
         return action
 
     def _change_mode_operation(self, session_action):
-        action = UXAction(UXActionType.CHANGE_MODE, text=session_action.get_text(), warnings=session_action.get_warnings())
+        action = UXAction(UXActionType.CHANGE_MODE, text=session_action.get_text(),
+                          warnings=session_action.get_warnings())
         return action
 
     def _error_operation(self, session_action):
@@ -71,6 +74,41 @@ class SessionController(ISessionController):
             ast_list.append(ast)
         executor = self.__selection_executor_factory.build_selection_executor(ast_list)
         return executor
+
+    def _load_operation(self, load_action):
+        # TODO
+        """
+            module_name = get_module_name(load_action)
+            try:
+                self.__module_controller.load_module(module_name)
+                active_modules = self.__module_controller.loaded_modules()
+                field_grammars = [module.post_definition().field_grammar() for module in active_modules]
+                source_grammars = [module.source_grammar() for module in active_modules]
+                ...
+                merge grammars
+                roll back if fail
+            except ModuleNotRegisteredException:
+                return UXAction(UXActionType.ERROR, text="Module {0} could not be found".format(module_name),
+                                warnings=[])
+        """
+        return self._no_op_operation(load_action)
+
+    def _unload_operation(self, unload_action):
+        # TODO
+        """
+            module_name = get_module_name(unload_action)
+            try:
+                self.__module_controller.unload_module(module_name)
+                active_modules = self.__module_controller.loaded_modules()
+                field_grammars = [module.post_definition().field_grammar() for module in active_modules]
+                source_grammars = [module.source_grammar() for module in active_modules]
+                ...
+                merge grammars
+                roll back if fail [shouldn't ever happen]
+            except ModuleNotLoadedException:
+                return UXAction(UXActionType.ERROR, text="Module {0} is not currently loaded".format(module_name), warnings=[])
+        """
+        return self._no_op_operation(unload_action)
 
     def run_input(self, string_input):
         """

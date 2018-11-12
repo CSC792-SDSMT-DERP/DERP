@@ -16,7 +16,7 @@ class PostIterator:
         :param post_generator: Python generator which continually yields the next post
         returned from a query.
         """
-        self._post_generator = post_generator
+        self.__post_generator = post_generator
 
     def __iter__(self):
-        return self._post_generator()
+        return self.__post_generator()

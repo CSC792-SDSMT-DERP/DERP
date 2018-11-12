@@ -13,22 +13,36 @@ class IModuleController(IPostQueryable):
     It also dispatches queries to the appropriate loaded modules.
     """
 
+    def register_module(self, module):
+        """
+        Adds a module to the module registry, making it eligible for loading.
+        :raises ModuleRegistrationException: raised if a module is already registered with a given name
+        :raises ModuleDefinitionException: raised if the module is malformed
+        :param module: A derp.module.IModule to register
+        """
+        pass
+
     def load_module(self, name):
         """
-        Loads a module with the given name and makes it available to the DERP backend.
-        :raises ModuleDefinitionException: raised if the module is malformed
+        Marks a module as active in the module registry.
+        :raises ModuleNotRegisteredException: raised if the module is not registered
         :param name: name of the module to load
         :type name: str
-        :return: boolean indicating success
         """
         pass
 
     def unload_module(self, name):
         """
-        Unloads the module with the given name, removing its availability to the DERP backend.
+        Marks a module as inactive in the module registry.
+        :raises ModuleNotLoadedException: raised if the module is not currently active in the module registry.
         :param name: name of the module to unload
         :type name: str
-        :return: boolean indicating success.
         """
         pass
 
+    def loaded_modules(self):
+        """
+        Retrieves a list of all of the actively loaded modules.
+        :return: a list of all of the actively loaded modules
+        """
+        pass

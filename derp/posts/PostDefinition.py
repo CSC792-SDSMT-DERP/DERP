@@ -9,6 +9,7 @@ import collections
 import numbers
 import datetime
 
+from derp.language.Grammar import Grammar
 
 class PostDefinition:
     """
@@ -22,7 +23,7 @@ class PostDefinition:
     def __init__(self, field_definitions):
         assert isinstance(field_definitions, collections.Mapping)
         assert len(field_definitions.keys()) != 0
-        self._field_definitions = field_definitions
+        self.__field_definitions = field_definitions
 
     def field_exists(self, field_name, field_type=None):
         """
@@ -31,11 +32,11 @@ class PostDefinition:
         :param field_type: An optional FieldType to match against
         :return: True if a field matching the provided parameters exists in the post definition
         """
-        if field_name not in self._field_definitions:
+        if field_name not in self.__field_definitions:
             return False
         elif field_type is None:
             return True
-        elif self._field_definitions[field_name] != field_type:
+        elif self.__field_definitions[field_name] != field_type:
             return False
         else:
             return True
@@ -48,7 +49,12 @@ class PostDefinition:
         """
         if not self.field_exists(field_name):
             return None
-        return self._field_definitions[field_name]
+        return self.__field_definitions[field_name]
+
+    def field_grammar(self):
+        return Grammar({
+            "field": self.__field_definitions.keys()
+        })
 
 
 class FieldType(Enum):

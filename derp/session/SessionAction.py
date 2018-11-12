@@ -33,3 +33,5 @@ class SessionAction:
 
 class SessionActionType(Enum):
     QUERY = 1
+    LOAD_MODULE = 2
+    UNLOAD_MODULE = 3
