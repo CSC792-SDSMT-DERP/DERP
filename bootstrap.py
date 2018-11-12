@@ -12,7 +12,12 @@ from frontend.PostReader import PostReader
 from modules.reddit.RedditModule import RedditModule
 
 
-def create_objects():
+def main():
+    """
+    Performs on-start setup for the DERP interpreter including
+    core object construction and pre-requisite setup for default modules
+    :return: None
+    """
     post_reader = PostReader()
     repl = Repl()
     session_controller = SessionController()
@@ -30,16 +35,13 @@ def create_objects():
     # set session_controller dependencies
     session_controller.set_repl(repl)
 
-    return repl
+    # set selection_executor_factory dependencies
+    selection_executor_factory.set_module_controller(module_controller)
+
+    # set module_controller dependencies
 
 
-def main():
-    """
-    Performs on-start setup for the DERP interpreter including
-    core object construction and pre-requisite setup for default modules
-    :return: None
-    """
-    pass
+    repl.read_eval_print_loop()
 
 
 if __name__ == "__main__":

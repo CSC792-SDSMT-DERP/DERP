@@ -3,6 +3,9 @@ Repl.py
 
 Class definition for the Repl object.
 """
+from derp.session.UXAction import UXAction
+from derp.session.SessionController import SessionController
+from frontend.PostReader import PostReader
 
 
 class Repl:
@@ -15,11 +18,44 @@ class Repl:
     """
 
     def __init__(self):
-        self.__session_controller = None
-        self.__post_reader = None
+        self.__session_controller = None  # type: SessionController
+        self.__post_reader = None  # type: PostReader
 
     def set_session_controller(self, session_controller):
+        """
+        Sets the SessionController object this Repl will communicate with.
+        :param session_controller: The SessionController assigned to the Repl
+        :type session_controller: SessionController
+        :return:
+        """
         self.__session_controller = session_controller
 
     def set_post_reader(self, post_reader):
         self.__post_reader = post_reader
+
+    def print_message(self, ux_action):
+        """
+        Prints a ux_action's text
+        :param ux_action: UXAction object with the text to print
+        :type ux_action: UXAction
+        :return: None
+        """
+        print(ux_action.get_text())
+
+    def handle_input(self, string_input):
+        """
+        Handle a line of input by sending it to the SessionController
+        :param string_input: A line of user input
+        :type string_input: str
+        :return: None
+        """
+        self.__session_controller.run_input(string_input)
+
+    def read_eval_print_loop(self):
+        """
+        Set the Repl object to reading from standard in until the program terminates
+        :return: None
+        """
+        while True:
+            string_input = input(">>>")
+            self.handle_input(string_input)

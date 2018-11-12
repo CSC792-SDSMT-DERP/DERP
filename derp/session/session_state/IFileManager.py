@@ -6,6 +6,10 @@ Interface definition for FileManager objects.
 
 
 class IFileManager:
+    """
+    FileManagers must be able to read and write files at given paths.
+    """
+
     def read_file(self, file_path):
         """
         Reads input from the specified file and returns a list of strings
