@@ -15,3 +15,8 @@ class GrammarMergeException (Exception):
 class GrammarDefinitionException (Exception):
     """ Indicates that creating a Grammar from a dictionary is not possible """
     pass
+
+
+class SemanticException (Exception):
+    """ Indicates that a processed AST is not semantically correct """
+    pass

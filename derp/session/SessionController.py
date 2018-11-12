@@ -81,7 +81,7 @@ class SessionController(ISessionController):
         """
         ux_action = None
         ast = self.__parser_controller.parse(string_input)
-        ast = self.__transformer.transform(ast)  # TODO: this is currently based off a local stub and may be inaccurate
+        ast = self.__transformer.transform(ast)
         # TODO: evaluator currently returns nothing
         session_action = self.__evaluator.evaluate(ast)  # type: SessionAction
 
