@@ -18,9 +18,9 @@ class Repl:
     reads results of a query.
     """
 
-    def __init__(self):
-        self.__session_controller = None  # type: SessionController
-        self.__post_reader = None  # type: PostReader
+    def __init__(self, session_controller, post_reader):
+        self.__session_controller = session_controller  # type: SessionController
+        self.__post_reader = post_reader  # type: PostReader
 
         # UXAction handling dictionary
         self.__action_handling = {
@@ -30,18 +30,6 @@ class Repl:
             UXActionType.RECALL: self._handle_recall,
             UXActionType.READ: self._handle_read,
         }
-
-    def set_session_controller(self, session_controller):
-        """
-        Sets the SessionController object this Repl will communicate with.
-        :param session_controller: The SessionController assigned to the Repl
-        :type session_controller: SessionController
-        :return:
-        """
-        self.__session_controller = session_controller
-
-    def set_post_reader(self, post_reader):
-        self.__post_reader = post_reader
 
     def _handle_error(self, action):
         print(action.get_text())

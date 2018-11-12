@@ -22,11 +22,10 @@ class SessionController(ISessionController):
     parsing and evaluation pipeline, and manages selection and criterion persistence.
     """
 
-    def __init__(self):
+    def __init__(self, selection_executor_factory, module_controller):
         # external dependencies
-        self.__repl = None
-        self.__module_controller = None
-        self.__selection_executor_factory = None  # type: SelectionExecutorFactory
+        self.__module_controller = module_controller
+        self.__selection_executor_factory = selection_executor_factory  # type: SelectionExecutorFactory
 
         # other members
         self.__parser_controller = Parser()
@@ -39,15 +38,6 @@ class SessionController(ISessionController):
         self.__action_handling = {
             SessionActionType.QUERY: self._read_operation
         }
-
-    def set_repl(self, repl):
-        self.__repl = repl
-
-    def set_selection_executor_factory(self, selection_executor_factory):
-        self.__selection_executor_factory = selection_executor_factory
-
-    def set_module_controller(self, module_controller):
-        self.__module_controller = module_controller
 
     def _recall_operation(self,session_action):
         list_commands = self.__session_state.get_buffer().get_commands()
