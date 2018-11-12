@@ -40,7 +40,7 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     'remove_expression':    '"remove posts"i selector',
 
     'qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
-    'qualifier_and':    ('qualifier_and "and"i qualifier', 'qualifier'),
+    'qualifier_and':    ('qualifier_and "and"i? qualifier', 'qualifier'),
 
     'qualifier':    ('with_exp article field date_check date',
                      'with_exp string substring_check field',
@@ -53,12 +53,12 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     'with_exp': ('"with"i', '"without"i'),
 
     'date_check':   '"date"i ("on"i | "after"i | "before"i)',
-    'date':         '(month day?)? year',
+    'date':         '(month (day ","?)?)? year',
     'year':         'digit digit digit digit',
     'month':        ('"january"i', '"february"i', '"march"i', '"april"i', '"may"i'
                      '"june"i', '"july"i', '"august"i', '"september"i', '"october"i',
                      '"november"i', '"december"i'),
-    'day':          '/[0-3]/ digit',
+    'day':          ('/[0-3]/ digit', '/[1-9]/'),
 
     'substring_check':  '"in"i "the"i?',
 
