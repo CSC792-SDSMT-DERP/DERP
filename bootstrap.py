@@ -33,6 +33,8 @@ def main():
 
     # set session_controller dependencies
     session_controller.set_repl(repl)
+    session_controller.set_selection_executor_factory(selection_executor_factory)
+    session_controller.set_module_controller(module_controller)
 
     # set selection_executor_factory dependencies
     selection_executor_factory.set_module_controller(module_controller)

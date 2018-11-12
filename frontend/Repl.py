@@ -22,6 +22,15 @@ class Repl:
         self.__session_controller = None  # type: SessionController
         self.__post_reader = None  # type: PostReader
 
+        # UXAction handling dictionary
+        self.__action_handling = {
+            UXActionType.ERROR: self._handle_error,
+            UXActionType.CHANGE_MODE: self._handle_change_mode,
+            UXActionType.NO_OP: self._handle_no_op,
+            UXActionType.RECALL: self._handle_recall,
+            UXActionType.READ: self._handle_read,
+        }
+
     def set_session_controller(self, session_controller):
         """
         Sets the SessionController object this Repl will communicate with.
@@ -34,14 +43,27 @@ class Repl:
     def set_post_reader(self, post_reader):
         self.__post_reader = post_reader
 
-    def print_message(self, ux_action):
-        """
-        Prints a ux_action's text
-        :param ux_action: UXAction object with the text to print
-        :type ux_action: UXAction
-        :return: None
-        """
-        print(ux_action.get_text())
+    def _handle_error(self, action):
+        print(action.get_text())
+
+    def _handle_change_mode(self, action):
+        print(action.get_text())
+
+    def _handle_no_op(self, action):
+        print(action.get_text())
+
+    def _handle_recall(self, action):
+        print(action.get_text())
+
+    def _handle_read(self, action):
+        self.__post_reader.read_from(action.get_post_iterator())
+
+    def _print_warnings(self, action):
+        # TODO: this assumes that warnings will be strings or implement __str__
+        warnings = action.get_warnings()
+        if warnings is not None:
+            for warning in warnings:
+                print(warning)
 
     def _handle_input(self, string_input):
         """
@@ -51,21 +73,9 @@ class Repl:
         :return: None
         """
         action = self.__session_controller.run_input(string_input)  # type: UXAction
-        action_type = action.get_type()
-        # TODO: replace if statements with dictionary based switch
-        # TODO: determine how to handle warnings
-        if action_type is UXActionType.READ:
-            self.__post_reader.read_from(action.get_post_iterator())
-        elif action_type is UXActionType.RECALL:
-            pass  # TODO: get buffer contents from session_controller
-        elif action_type is UXActionType.ERROR:
-            pass  # TODO: handle errors
-        elif action_type is UXActionType.CHANGE_MODE:
-            pass  # TODO: handle changing mode
-        elif action_type is UXActionType.NO_OP:
-            self.print_message(action.get_text())
-        else:
-            raise Exception("ERROR: unexpected UXActionType")
+        self.__action_handling[action.get_type()](action)
+
+        self._print_warnings(action)
 
     def read_eval_print_loop(self):
         """
