@@ -23,7 +23,6 @@ def main():
     session_controller = SessionController()
     selection_executor_factory = SelectionExecutorFactory()
     module_controller = ModuleController()
-    module = RedditModule()
 
     # set repl dependencies
     repl.set_post_reader(post_reader)
@@ -39,7 +38,7 @@ def main():
     selection_executor_factory.set_module_controller(module_controller)
 
     # set module_controller dependencies
-
+    module_controller.load_module("RedditModule")
 
     repl.read_eval_print_loop()
 

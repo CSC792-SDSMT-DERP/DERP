@@ -22,6 +22,7 @@ class SessionController(ISessionController):
     def __init__(self):
         # external dependencies
         self.__repl = None
+        self.__module_controller = None
 
         # other members
         self.__parser_controller = Parser()
@@ -32,3 +33,15 @@ class SessionController(ISessionController):
 
     def set_repl(self, repl):
         self.__repl = repl
+
+    def set_module_controller(self, module_controller):
+        self.__module_controller = module_controller
+
+    def run_input(self, string_input):
+        """
+        The SessionController provides responses to strings of input
+        representing DERP language constructs.
+        :param string_input: a line of user input
+        :return: UXAction instructing the Repl how to proceed
+        """
+        pass

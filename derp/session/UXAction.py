@@ -16,10 +16,11 @@ class UXAction:
     As a result, any warnings encountered in the backend while preparing the data will be included in the UX action.
     """
 
-    def __init__(self, action_type, text, warnings):
+    def __init__(self, action_type, text, post_iterator, warnings):
         self.__text = text
         self.__warnings = warnings
         self.__type = action_type
+        self.__post_iterator = post_iterator
 
     def get_warnings(self):
         return self.__warnings
@@ -30,8 +31,11 @@ class UXAction:
     def get_type(self):
         return self.__type
 
+    def get_post_iterator(self):
+        return self.__post_iterator
 
-class UXActionTypes(Enum):
+
+class UXActionType(Enum):
     """
     UXActionTypes indicate what type of action a UXAction is
 

@@ -3,6 +3,7 @@ Repl.py
 
 Class definition for the Repl object.
 """
+from derp.session.UXAction import UXActionType
 from derp.session.UXAction import UXAction
 from derp.session.SessionController import SessionController
 from frontend.PostReader import PostReader
@@ -42,14 +43,29 @@ class Repl:
         """
         print(ux_action.get_text())
 
-    def handle_input(self, string_input):
+    def _handle_input(self, string_input):
         """
         Handle a line of input by sending it to the SessionController
         :param string_input: A line of user input
         :type string_input: str
         :return: None
         """
-        self.__session_controller.run_input(string_input)
+        action = self.__session_controller.run_input(string_input)  # type: UXAction
+        action_type = action.get_type()
+        # TODO: replace if statements with dictionary based switch
+        # TODO: determine how to handle warnings
+        if action_type is UXActionType.READ:
+            self.__post_reader.read_from(action.get_post_iterator())
+        elif action_type is UXActionType.RECALL:
+            pass  # TODO: get buffer contents from session_controller
+        elif action_type is UXActionType.ERROR:
+            pass  # TODO: handle errors
+        elif action_type is UXActionType.CHANGE_MODE:
+            pass  # TODO: handle changing mode
+        elif action_type is UXActionType.NO_OP:
+            self.print_message(action.get_text())
+        else:
+            raise Exception("ERROR: unexpected UXActionType")
 
     def read_eval_print_loop(self):
         """
@@ -58,4 +74,4 @@ class Repl:
         """
         while True:
             string_input = input(">>>")
-            self.handle_input(string_input)
+            self._handle_input(string_input)

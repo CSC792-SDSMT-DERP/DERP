@@ -3,6 +3,9 @@ ModuleController.py
 
 Class definition for the ModuleController object.
 """
+import typing  # TODO: remove when development is done
+
+from derp.modules.IModule import IModule  # TODO: remove when development is done
 from derp.modules.IModuleController import IModuleController
 
 
@@ -11,6 +14,9 @@ class ModuleController(IModuleController):
     The ModuleController is responsible for managing modules that are loaded, and for exposing
     loaded modules to the rest of the DERP backend.
     """
+
+    def __init__(self):
+        self.__modules = []  # type: typing.List[IModule]
 
     def load_module(self, name):
         """
