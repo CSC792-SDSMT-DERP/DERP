@@ -15,7 +15,8 @@ class IParser:
         Gives the parser multiple grammars to combine into a new
         grammar, which will be loaded as the active grammar for parsing
 
-        Raises GrammarMergeException
+        raises GrammarMergeException -> combining the grammars produces an invalid grammar
+        raises GrammarDefinitionException -> the combined grammar does not have a start symbol
         """
         pass
 
@@ -24,6 +25,7 @@ class IParser:
         Parses a line of text using the grammar created in the most recent call to setSyntax,
         returns the AST produced by the Lark Parser
 
-        raises TextParseException
+        raises TextParseException -> no Grammar has been set
+        raises TextParseException -> the parser fails to parse the text
         """
         pass

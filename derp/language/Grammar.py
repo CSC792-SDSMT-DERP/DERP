@@ -1,5 +1,7 @@
 from derp.exceptions.exceptions import *
 
+from lark import Lark
+
 
 class Grammar (dict):
     """
@@ -25,25 +27,19 @@ class Grammar (dict):
         """
 
         try:
-            # Function to raise exception from within list comp
-            def raise_ex(): raise GrammarDefinitionException(
-                "grammar nonterminal or production is not of type string")
-
             # Convert dict to tuple(str, tuple(str, str, str...)), raising exception if typecheck fails
-            self._tuples = tuple((k if isinstance(k, str) else raise_ex(), tuple(x if isinstance(x, str) else (x if isinstance(x, str) else raise_ex()) for x in v))
+            self._tuples = tuple((k, (v,) if isinstance(v, str) else tuple(x for x in v))
                                  for k, v in grammar_productions.items())
 
-            self._startsym = start_symbol
-            if start_symbol is not None and start_symbol not in grammar_productions:
-                raise GrammarDefinitionException(
-                    "grammar start symbol is not in productions list")
-
-        except GrammarDefinitionException:
-            raise
-
-        except Exception:
+        except Exception as ex:
             raise GrammarDefinitionException(
-                "structure of grammar definition is invalid")
+                "structure of grammar definition is invalid") from ex
+
+        if start_symbol is not None and start_symbol not in grammar_productions:
+            raise GrammarDefinitionException(
+                "grammar start symbol is not in productions list")
+
+        self._startsym = start_symbol
 
     def productions(self):
         """
@@ -51,14 +47,7 @@ class Grammar (dict):
         with two items. The first is the first is the nonterminal produced, and the second is a tuple
         of strings containing productions for the nonterminal
         """
-        return tuple()
-
-    def start_symbol(self):
-        """
-        Gets the start symbol for the grammar.
-        The result with either be one of the nonterminals in the grammar or None
-        """
-        return None
+        return self._tuples
 
     def start_symbol(self):
         """
@@ -83,14 +72,18 @@ def merge_grammars(*grammars):
     start_symbols = set()
 
     # Merge all productions together
-    for g in grammars:
-        for k, v in g.productions():
-            merged_grammar[k] = merged_grammar[k] + \
-                v if k in merged_grammar else v
+    try:
+        for g in grammars:
+            for k, v in g.productions():
+                merged_grammar[k] = merged_grammar[k] + \
+                    v if k in merged_grammar else v
 
-        # Build set of all non-none start symbols
-        if g.start_symbol() is not None:
-            start_symbols.update(g.start_symbol())
+            # Build set of all non-none start symbols
+            if g.start_symbol() is not None:
+                start_symbols.update([g.start_symbol()])
+
+    except Exception as ex:
+        raise GrammarMergeException("unable to merge grammars (" + ex.args[0] + ")") from ex
 
     # Assume no start symbol
     new_start = None
@@ -100,12 +93,56 @@ def merge_grammars(*grammars):
         new_start = start_symbols.pop()
 
     # Otherwise, make a new start symbol S_n, and production S_n -> S1 | S2....
-    else:
+    elif len(start_symbols) > 1:
         i = 0
-        while "S_" + str(i) in merged_grammar:
+        while "s_" + str(i) in merged_grammar:
             i += 1
 
-        new_start = "S_" + str(i)
+        new_start = "s_" + str(i)
         merged_grammar[new_start] = start_symbols
 
     return Grammar(merged_grammar, new_start)
+
+
+def convert_productions_to_lark_grammar(productions):
+
+    # Start with common grammar rules - escaped strings, signed numbers, and whitespace ignoring
+    string_grammar = r"""
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%ignore WS
+"""
+
+    # Add a line to the grammar for each item in the productions list
+    # The line will be of the form 'nonterminal : (production) | (production) | (production)...'
+    for nonterminal_rule in productions:
+        string_production = nonterminal_rule[0] + \
+            " : ( " + nonterminal_rule[1][0] + " )"
+
+        for production in nonterminal_rule[1][1:]:
+            string_production += " | ( " + production + " )"
+
+        string_grammar += "\n" + string_production
+
+    return string_grammar
+
+
+def build_lark_parser(grammar):
+    """
+    Converts a grammar object into a Lark parser
+
+    raises GrammarDefinitionException
+    """
+
+    if grammar.start_symbol() is None:
+        raise GrammarDefinitionException(
+            "no start symbol defined in grammar")
+
+    string_grammar = convert_productions_to_lark_grammar(grammar.productions())
+
+    try:
+        return Lark(string_grammar, start=grammar.start_symbol())
+    except Exception as ex:
+        raise GrammarDefinitionException(
+            "unable to produce Lark parser (" + ex.args[0] + ")") from ex
