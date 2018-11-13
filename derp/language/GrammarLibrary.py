@@ -26,7 +26,10 @@ _main_mode_only_grammar = Grammar({
     'recall_expression':    '"recall"i string',
     'clear_expression':     '"clear"i string',
     'read_expression':      '"read"i string',
-    'create_expression':    '"create"i _article? "new"i? ("selection"i | "criteria"i)'
+    'create_expression':    '"create"i _article? "new"i? (selection | criteria)',
+
+    'selection': '"selection"i',
+    'criteria':  '"criteria"i'
 })
 
 _criteria_and_selection_modes_shared_grammar = Grammar({
