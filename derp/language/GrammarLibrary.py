@@ -87,6 +87,12 @@ _selection_mode_only_grammar = Grammar({
     'source':   ('source ( "and"i | "or"i ) source', 'string')
 })
 
+_temporary_reddit_grammar = Grammar({
+    'source':           'reddit_source',
+    'reddit_source':    ('"reddit"', '"subreddit" string'),
+    'field':            ('"nsfw"', '"author"', '"title"', '"upvotes"', '"date"')
+})
+
 MAIN_MODE_GRAMMAR = merge_grammars(_basic_grammar, _main_mode_only_grammar)
 
 CRITERIA_MODE_GRAMMAR = merge_grammars(
