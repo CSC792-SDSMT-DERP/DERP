@@ -41,14 +41,16 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
 
     'qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
     'qualifier_and':    ('qualifier_and "and"i? qualifier', 'qualifier'),
+    'qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
+                     'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
-    'qualifier':    ('with_exp article field date_check date',
-                     'with_exp string substring_check field',
-                     'boolean_check field',
-                     'string_check field string',
-                     'number_check number field',
-                     'on_exp string',
-                     '"matching"i string'),
+    'date_qualifier':       'with_exp article field date_check date',
+    'substring_qualifier':  'with_exp string substring_check field',
+    'boolean_qualifier':    'boolean_check field',
+    'string_qualifier':     'string_check field string',
+    'number_qualifier':     'number_check number field',
+    'about_qualifier':      'on_exp string',
+    'match_qualifier':      '"matching"i string',
 
     'with_exp': ('"with"i', '"without"i'),
 
