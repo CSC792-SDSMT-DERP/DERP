@@ -39,8 +39,9 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     'add_expression':       '"add posts"i selector',
     'remove_expression':    '"remove posts"i selector',
 
-    'qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
-    'qualifier_and':    ('qualifier_and "and"i? qualifier', 'qualifier'),
+    '?qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
+    '?qualifier_and':    ('qualifier_and "and"i? qualifier', 'qualifier'),
+
     'qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
                      'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
