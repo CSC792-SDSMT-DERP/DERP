@@ -2,7 +2,7 @@ from derp.language.Grammar import Grammar
 from derp.language.Grammar import merge_grammars
 
 _basic_grammar = Grammar({
-    'article':  ('"a"i', '"an"i', '"the"i'),
+    '_article':  ('"a"i', '"an"i', '"the"i'),
     'digit':    '/[0-9]/',
     'number':   'digit+',
     'string':   'ESCAPED_STRING',
@@ -26,7 +26,7 @@ _main_mode_only_grammar = Grammar({
     'recall_expression':    '"recall"i string',
     'clear_expression':     '"clear"i string',
     'read_expression':      '"read"i string',
-    'create_expression':    '"create"i article? "new"i? ("selection"i | "criteria"i)'
+    'create_expression':    '"create"i _article? "new"i? ("selection"i | "criteria"i)'
 })
 
 _criteria_and_selection_modes_shared_grammar = Grammar({
@@ -45,7 +45,7 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     'qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
                      'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
-    'date_qualifier':       'with_exp article field date_check date',
+    'date_qualifier':       'with_exp _article field date_check date',
     'substring_qualifier':  'with_exp string substring_check field',
     'boolean_qualifier':    'boolean_check field',
     'string_qualifier':     'string_check field string',
