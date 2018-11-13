@@ -21,6 +21,8 @@ class SessionAction:
     def get_type(self):
         return self.__action_type
 
+    # TODO: change to get_data
+
     def get_file_name(self):
         return self.__file_name
 

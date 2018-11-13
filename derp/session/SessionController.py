@@ -103,7 +103,7 @@ class SessionController(ISessionController):
                 field_grammars = [module.post_definition().field_grammar() for module in active_modules]
                 source_grammars = [module.source_grammar() for module in active_modules]
                 ...
-                merge grammars
+                merge criteria and selection grammars
                 roll back if fail [shouldn't ever happen]
             except ModuleNotLoadedException:
                 return UXAction(UXActionType.ERROR, text="Module {0} is not currently loaded".format(module_name), warnings=[])
@@ -118,6 +118,7 @@ class SessionController(ISessionController):
         :return: UXAction instructing the Repl how to proceed
         """
         ux_action = None
+        # TODO: maintain three separate parsers and a mode tracker
         ast = self.__parser_controller.parse(string_input)
         ast = self.__transformer.transform(ast)
         # TODO: evaluator currently returns nothing
@@ -126,3 +127,4 @@ class SessionController(ISessionController):
         ux_action = self.__action_handling[session_action.get_type()](session_action)
 
         return ux_action
+

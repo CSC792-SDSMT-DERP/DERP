@@ -24,6 +24,7 @@ def main():
     session_controller = SessionController(selection_executor_factory, module_controller)
     repl = Repl(session_controller, post_reader)
 
+    # TODO: replace with register module.
     # set module_controller dependencies
     module_controller.load_module("RedditModule")
 
