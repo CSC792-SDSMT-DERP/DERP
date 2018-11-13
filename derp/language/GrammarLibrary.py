@@ -48,37 +48,46 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     'qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
                      'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
-    'date_qualifier':       'with_exp _article field date_check date',
-    'substring_qualifier':  'with_exp string substring_check field',
-    'boolean_qualifier':    'boolean_check field',
-    'string_qualifier':     'string_check field string',
-    'number_qualifier':     'number_check number field',
-    'about_qualifier':      'on_exp string',
+    'date_qualifier':       '_with_exp _article field _date_check date',
+    'substring_qualifier':  '_with_exp string _substring_check field',
+    'boolean_qualifier':    '_boolean_check field',
+    'string_qualifier':     '_string_check field string',
+    'number_qualifier':     '_number_check number field',
+    'about_qualifier':      '_on_exp string',
     'match_qualifier':      '"matching"i string',
 
-    'with_exp': ('"with"i', '"without"i'),
+    '_with_exp': ('_with', 'without'),
+    '_with':     '"with"i',
+    'without':  '"without"i',
 
-    'date_check':   '"date"i ("on"i | "after"i | "before"i)',
+    '_date_check':   ('date_future', 'date_past', 'date_exact'),
+    'date_future':   '"after"i',
+    'date_past':     '"before"i',
+    'date_exact':    ('"on"i', '"in"i'),
+
     'date':         '(month (day ","?)?)? year',
     'year':         'digit digit digit digit',
-    'month':        ('"january"i', '"february"i', '"march"i', '"april"i', '"may"i'
-                     '"june"i', '"july"i', '"august"i', '"september"i', '"october"i',
-                     '"november"i', '"december"i'),
+    '!month':        ('"january"i', '"february"i', '"march"i', '"april"i', '"may"i'
+                      '"june"i', '"july"i', '"august"i', '"september"i', '"october"i',
+                      '"november"i', '"december"i'),
     'day':          ('/[0-3]/ digit', '/[1-9]/'),
 
-    'substring_check':  '"in"i "the"i?',
+    '_substring_check':  '"in"i "the"i?',
 
-    'boolean_check':    '"which are"i "not"i?',
+    '_boolean_check':    '"which are"i negate?',
 
-    'string_check': 'with_exp "the exact"i',
+    '_string_check': '_with_exp "the exact"i',
 
-    'number_check': 'with_exp ( "exactly"i | above_exp | below_exp | "roughly"i)',
-    'above_exp':   ('"over"i', '"greater than"i'),
-    'below_exp':   ('"under"i', '"less than"i'),
+    '_number_check': '_with_exp (number_above | number_below | number_exact | number_approx)',
+    'number_above':   ('"over"i', '"greater than"i'),
+    'number_below':   ('"under"i', '"less than"i'),
+    'number_exact':   '"exactly"i',
+    'number_approx':  '"roughly"i',
 
-    'on_exp':   '"not"i? ("on"i | "about"i)',
+    '_on_exp':   'negate? ("on"i | "about"i)',
+    'negate':    '"not"i',
 
-    'field': ''
+    '!field': ''
 })
 
 _criteria_mode_only_grammar = Grammar({
@@ -96,7 +105,7 @@ _selection_mode_only_grammar = Grammar({
 _temporary_reddit_grammar = Grammar({
     'source':           'reddit_source',
     'reddit_source':    ('"reddit"', '"subreddit" string'),
-    'field':            ('"nsfw"', '"author"', '"title"', '"upvotes"', '"date"')
+    '!field':            ('"nsfw"', '"author"', '"title"', '"upvotes"', '"date"')
 })
 
 MAIN_MODE_GRAMMAR = merge_grammars(_basic_grammar, _main_mode_only_grammar)
