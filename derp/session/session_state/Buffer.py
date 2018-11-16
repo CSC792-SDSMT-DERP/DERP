@@ -9,11 +9,15 @@ class Buffer:
     """
     Buffer of commands that represent a single selection or criterion.
     """
+
+    def __init__(self):
+        self.__buffer = []
+
     def add_command(self, command):
-        pass
+        self.__buffer.append(command)
 
     def get_commands(self):
-        pass
+        return self.__buffer.copy()
 
     def clear(self):
-        pass
+        self.__buffer.clear()
