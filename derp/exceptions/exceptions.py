@@ -20,3 +20,18 @@ class GrammarDefinitionException (Exception):
 class SemanticException (Exception):
     """ Indicates that a processed AST is not semantically correct """
     pass
+
+
+class ModuleRegistrationException(Exception):
+    """ Indicates that a module was not able to be registered """
+    pass
+
+
+class ModuleNotRegisteredException(Exception):
+    """ Indicates that a module was not registered when it was referenced """
+    pass
+
+
+class ModuleNotLoadedException(Exception):
+    """ Indicates that a module was not loaded when it was referenced """
+    pass
