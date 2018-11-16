@@ -38,7 +38,7 @@ class ISessionStateController:
         """
         pass
 
-    def LoadSelection(self, name):
+    def load_selection(self, name):
         """
         Loads the named selection into the buffer.
         :raises IOException: raised if a load fails
