@@ -12,9 +12,6 @@ class FileManager(IFileManager):
     The FileManager reads and writes persisted selections and criteria.
     """
 
-    def __init__(self):
-        pass
-
     def read_file(self, file_path):
         """
         Reads input from the specified file and returns a list of strings
