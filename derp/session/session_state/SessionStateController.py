@@ -14,18 +14,9 @@ class SessionStateController(ISessionStateController):
     The SessionStateController is also responsible for managing the "savable" buffer of statements.
     """
 
-    def __init__(self):
+    def __init__(self, file_manager):
         self.__buffer = Buffer()
-        self.__file_manager = None  # type: FileManager
-
-    def set_file_manager(self, file_manager):
-        """
-        Set the FileManager to use for saving and loading.
-        :param file_manager: FileManager instance for IO
-        :type file_manager: FileManager
-        :return: None
-        """
-        self.__file_manager = file_manager
+        self.__file_manager = file_manager  # type: FileManager
 
     def save_criteria(self, name):
         """
@@ -54,7 +45,7 @@ class SessionStateController(ISessionStateController):
         """
         self.__file_manager.write_file(name, self.__buffer.get_commands())
 
-    def LoadSelection(self, name):
+    def load_selection(self, name):
         """
         Loads the named selection into the buffer.
         :raises IOException: raised if a load fails
