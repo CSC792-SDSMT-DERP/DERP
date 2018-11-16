@@ -12,28 +12,18 @@ class SessionAction:
     performing a query.
     """
 
-    def __init__(self, session_action_type, text=None, file_name=None, warnings=None):
+    def __init__(self, session_action_type, data):
         self.__action_type = session_action_type
-        self.__file_name = file_name
-        self.__warnings = warnings
-        self.__text = text
+        self.__data = data
 
     def get_type(self):
         return self.__action_type
 
-    # TODO: change to get_data
-
-    def get_file_name(self):
-        return self.__file_name
-
-    def get_warnings(self):
-        return self.__warnings
-
-    def get_text(self):
-        return self.__text
+    def get_data(self):
+        return self.__data
 
 
 class SessionActionType(Enum):
     QUERY = 1
-    LOAD_MODULE = 2
-    UNLOAD_MODULE = 3
+    LOAD_MODULE = 2         # data is a string containing the name of the module
+    UNLOAD_MODULE = 3       # data is a string containing the name of the module
