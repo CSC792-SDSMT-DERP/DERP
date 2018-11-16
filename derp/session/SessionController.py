@@ -12,7 +12,8 @@ from derp.session.UXAction import UXAction, UXActionType
 from derp.session.session_state.FileManager import FileManager
 from derp.session.session_state.SessionStateController import SessionStateController
 from derp.session.selection_execution.SelectionExecutorFactory import SelectionExecutorFactory
-from derp.exceptions.exceptions import ModuleNotLoadedException, ModuleNotRegisteredException
+from derp.exceptions.exceptions import ModuleNotLoadedException, ModuleNotRegisteredException, TextParseException
+from derp.language.GrammarLibrary import *
 
 
 class SessionController(ISessionController):
@@ -35,6 +36,9 @@ class SessionController(ISessionController):
         self.__session_state = SessionStateController()
         self.__file_manager = FileManager()
 
+        # Load main mode grammar
+        self.__parser_controller.set_grammar(MAIN_MODE_GRAMMAR)
+
         # session action handling dictionary
         self.__action_handling = {
             SessionActionType.QUERY: self._read_operation,
@@ -44,13 +48,12 @@ class SessionController(ISessionController):
 
     def _recall_operation(self, session_action):
         list_commands = self.__session_state.get_buffer().get_commands()
-        output = " ".join(list_commands)
-        action = UXAction(UXActionType.RECALL, text=output, warnings=session_action.get_warnings())
+        action = UXAction(UXActionType.RECALL, list_commands, session_action.get_warnings())
         return action
 
     def _read_operation(self, session_action):
         executor = self._perform_query(session_action.get_file_name())
-        action = UXAction(UXActionType.READ, post_iterator=executor, warnings=session_action.get_warnings())
+        action = UXAction(UXActionType.READ, executor, session_action.get_warnings())
         return action
 
     def _no_op_operation(self, session_action):
@@ -58,12 +61,7 @@ class SessionController(ISessionController):
         return action
 
     def _change_mode_operation(self, session_action):
-        action = UXAction(UXActionType.CHANGE_MODE, text=session_action.get_text(),
-                          warnings=session_action.get_warnings())
-        return action
-
-    def _error_operation(self, session_action):
-        action = UXAction(UXActionType.ERROR, text=session_action.get_text(), warnings=session_action.get_warnings())
+        action = UXAction(UXActionType.CHANGE_MODE, session_action.get_data(), warnings=session_action.get_warnings())
         return action
 
     def _perform_query(self, name):
@@ -84,9 +82,8 @@ class SessionController(ISessionController):
             field_grammars = [module.post_definition().field_grammar() for module in active_modules]
             source_grammars = [module.source_grammar() for module in active_modules]
             # TODO: Merge grammars and roll back on failure
-        except ModuleNotRegisteredException:
-            return UXAction(UXActionType.ERROR, text="Module {0} could not be found".format(module_name),
-                            warnings=[])
+        except ModuleNotRegisteredException as e:
+            return UXAction(UXActionType.ERROR, e)
         return self._no_op_operation(load_action)
 
     def _unload_operation(self, unload_action):
@@ -97,8 +94,8 @@ class SessionController(ISessionController):
             field_grammars = [module.post_definition().field_grammar() for module in active_modules]
             source_grammars = [module.source_grammar() for module in active_modules]
             # TODO: Merge grammars (failure should never happen)
-        except ModuleNotLoadedException:
-            return UXAction(UXActionType.ERROR, text="Module {0} is not currently loaded".format(module_name), warnings=[])
+        except ModuleNotLoadedException as e:
+            return UXAction(UXActionType.ERROR, e)
         return self._no_op_operation(unload_action)
 
     def run_input(self, string_input):
@@ -108,14 +105,18 @@ class SessionController(ISessionController):
         :param string_input: a line of user input
         :return: UXAction instructing the Repl how to proceed
         """
-        ux_action = None
-        # TODO: maintain three separate parsers and a mode tracker
-        ast = self.__parser_controller.parse(string_input)
-        ast = self.__transformer.transform(ast)
-        # TODO: evaluator currently returns nothing
-        session_action = self.__evaluator.evaluate(ast)  # type: SessionAction
+        try:
+            ux_action = None
+            # TODO: maintain three separate parsers and a mode tracker
+            ast = self.__parser_controller.parse(string_input)
+            ast = self.__transformer.transform(ast)
+            # TODO: evaluator currently returns nothing
+            session_action = self.__evaluator.evaluate(ast)  # type: SessionAction
 
-        ux_action = self.__action_handling[session_action.get_type()](session_action)
+            ux_action = self.__action_handling[session_action.get_type()](session_action)
+            return ux_action
+        except TextParseException as e:
+            return UXAction(UXActionType.ERROR, e)
 
-        return ux_action
+
 

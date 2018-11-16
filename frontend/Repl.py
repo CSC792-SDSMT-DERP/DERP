@@ -32,22 +32,21 @@ class Repl:
         }
 
     def _handle_error(self, action):
-        print(action.get_text())
+        print(action.get_data())
 
     def _handle_change_mode(self, action):
-        print(action.get_text())
+        print(action.get_data())
 
     def _handle_no_op(self, action):
-        print(action.get_text())
+        print("")
 
     def _handle_recall(self, action):
-        print(action.get_text())
+        print("\n".join(action.get_data()))
 
     def _handle_read(self, action):
-        self.__post_reader.read_from(action.get_post_iterator())
+        self.__post_reader.read_from(action.get_data())
 
     def _print_warnings(self, action):
-        # TODO: this assumes that warnings will be strings or implement __str__
         warnings = action.get_warnings()
         if warnings is not None:
             for warning in warnings:

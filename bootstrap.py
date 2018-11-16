@@ -9,7 +9,7 @@ from derp.session.SessionController import SessionController
 from derp.session.selection_execution.SelectionExecutorFactory import SelectionExecutorFactory
 from frontend.Repl import Repl
 from frontend.PostReader import PostReader
-from modules.reddit.RedditModule import RedditModule
+from modules.mock.MockModule import MockModule
 
 
 def main():
@@ -18,7 +18,9 @@ def main():
     core object construction and pre-requisite setup for default modules
     :return: None
     """
+    mock_module = MockModule()
     module_controller = ModuleController()
+    module_controller.register_module(mock_module)
     post_reader = PostReader()
     selection_executor_factory = SelectionExecutorFactory(module_controller)
     session_controller = SessionController(selection_executor_factory, module_controller)
@@ -26,7 +28,7 @@ def main():
 
     # TODO: replace with register module.
     # set module_controller dependencies
-    module_controller.load_module("RedditModule")
+    module_controller.load_module(mock_module.name())
 
     repl.read_eval_print_loop()
 

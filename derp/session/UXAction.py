@@ -16,23 +16,19 @@ class UXAction:
     As a result, any warnings encountered in the backend while preparing the data will be included in the UX action.
     """
 
-    def __init__(self, action_type, text=None, post_iterator=None, warnings=None):
-        self.__text = text
+    def __init__(self, action_type, data=None, warnings=[]):
+        self.__data = data
         self.__warnings = warnings
         self.__type = action_type
-        self.__post_iterator = post_iterator
 
     def get_warnings(self):
         return self.__warnings
 
-    def get_text(self):
-        return self.__text
+    def get_data(self):
+        return self.__data
 
     def get_type(self):
         return self.__type
-
-    def get_post_iterator(self):
-        return self.__post_iterator
 
 
 class UXActionType(Enum):
@@ -46,8 +42,8 @@ class UXActionType(Enum):
     Change Mode - Keep running as normal, enter the mode given in the action
     NOOP - Do nothing, continue as usual
     """
-    READ = 0
-    RECALL = 1
-    ERROR = 2
-    CHANGE_MODE = 3
-    NO_OP = 4
+    READ = 0            # Data is a selection executor
+    RECALL = 1          # Data is a list of strings
+    ERROR = 2           # Data is an exception
+    CHANGE_MODE = 3     # TODO
+    NO_OP = 4           # Data is None

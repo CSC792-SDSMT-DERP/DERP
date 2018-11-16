@@ -26,6 +26,7 @@ class ModuleController(IModuleController):
         :param qualifier_tree: A tree representing a logical expression which the posts must match.
         :return: a PostIterator which iterates over the returned set of posts
         """
+        # TODO: I'm not sure how the source ast will be parsed at the moment
         pass
 
     def register_module(self, module):
