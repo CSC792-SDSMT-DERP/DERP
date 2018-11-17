@@ -108,7 +108,7 @@ def convert_productions_to_lark_grammar(productions):
 
     # Start with common grammar rules - escaped strings, signed numbers, and whitespace ignoring
     string_grammar = r"""
-%import common.ESCAPED_STRING -> STRING
+%import common.ESCAPED_STRING
 %import common.WS
 %ignore WS
 """

@@ -1,6 +1,11 @@
 """
 Transformer.py
 Implementation for Transformer objects.
+
+TODO: Semantic checks for
+* Reading or Recalling a non-existing selection/criteria
+* Reading a selection that requires unloaded modules
+* Check that string data is non-empty
 """
 
 from derp.language.ITransformer import ITransformer
@@ -15,6 +20,7 @@ from derp.language.qualifier_reductions.AboutQualifierReducer import AboutQualif
 from derp.language.qualifier_reductions.MatchingQualifierReducer import MatchingQualifierReducer
 
 from lark import Transformer as LarkTransformer
+from lark import Visitor as LarkVisitor
 from lark import Tree as LarkTree, Token as LarkToken
 
 
@@ -23,6 +29,20 @@ class Transformer(ITransformer):
     Defines the transform function which performs semantic analysis and macro expansion on an AST
     as provided by an IParser.
     """
+
+    class StringQuoteRemover(LarkTransformer):
+        """
+        Find all string rules and remove the quotes around them, turning them into
+        STRING tokens.
+        """
+
+        def string(self, args):
+            unquoted_string = args[0][1:-1]
+
+            if len(unquoted_string) == 0:
+                raise SemanticException("Strings must not be empty")
+
+            return LarkToken('STRING', unquoted_string)
 
     class ModuleSourceTransformer(LarkTransformer):
         def source_module(self, args):
@@ -57,9 +77,12 @@ class Transformer(ITransformer):
         qualifier_reduce = DateQualifierReducer() * SubstringQualifierReducer() * \
             StringQualifierReducer() * BoolQualifierReducer() * \
             NumberQualifierReducer() * AboutQualifierReducer()
-        source_reduce = self.ModuleSourceTransformer()
 
-        reducer = qualifier_reduce * source_reduce * MatchingQualifierReducer()
+        source_reduce = self.ModuleSourceTransformer()
+        string_reduce = self.StringQuoteRemover()
+
+        reducer = string_reduce * qualifier_reduce * \
+            source_reduce * MatchingQualifierReducer()
 
         ast = reducer.transform(ast)
 

@@ -4,6 +4,7 @@ from derp.language.Grammar import merge_grammars
 _basic_grammar = Grammar({
     '_ARTICLE':  ('"a"i', '"an"i', '"the"i'),
     'NUMBER':   '/-?[0-9]+/',
+    'string':   'ESCAPED_STRING',
 
     'statement':    'expression',
     'expression':   ('stop_expression',
@@ -20,11 +21,11 @@ _main_mode_only_grammar = Grammar({
                    'read_expression',
                    'create_expression'),
 
-    'load_expression':      '"load"i STRING',
-    'unload_expression':    '"unload"i STRING',
-    'recall_expression':    '"recall"i STRING',
-    'clear_expression':     '"clear"i STRING',
-    'read_expression':      '"read"i STRING',
+    'load_expression':      '"load"i string',
+    'unload_expression':    '"unload"i string',
+    'recall_expression':    '"recall"i string',
+    'clear_expression':     '"clear"i string',
+    'read_expression':      '"read"i string',
     'create_expression':    '"create"i _ARTICLE? "new"i? (SELECTION | CRITERIA)',
 
     'SELECTION': '"selection"i',
@@ -37,7 +38,7 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
                              'remove_expression'),
 
     'recall_expression':    '"recall"i',
-    'save_expression':      '"save as"i STRING',
+    'save_expression':      '"save as"i string',
     'add_expression':       '"add posts"i selector',
     'remove_expression':    '"remove posts"i selector',
 
@@ -48,12 +49,12 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
                      'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
     'date_qualifier':       'WITH_EXP _ARTICLE? FIELD _date_check date',
-    'substring_qualifier':  'WITH_EXP STRING _substring_check FIELD',
+    'substring_qualifier':  'WITH_EXP string _substring_check FIELD',
     'boolean_qualifier':    '_boolean_check FIELD',
-    'string_qualifier':     '_string_check FIELD STRING',
+    'string_qualifier':     '_string_check FIELD string',
     'number_qualifier':     '_number_check NUMBER FIELD',
-    'about_qualifier':      'NEGATE? _ON_EXP STRING',
-    'match_qualifier':      'NEGATE? "matching"i STRING',
+    'about_qualifier':      'NEGATE? _ON_EXP string',
+    'match_qualifier':      'NEGATE? "matching"i string',
 
     'WITH_EXP': '/with(out)?/i',
 
@@ -94,7 +95,7 @@ _selection_mode_only_grammar = Grammar({
     'read_expression':  '"read"i',
 
     'selector': ('qualifier_or', '"from"i source qualifier_or?'),
-    'source':   ('source ( "and"i | "or"i ) source -> source_or', 'STRING -> source_selection')
+    'source':   ('source ( "and"i | "or"i ) source -> source_or', 'string -> source_selection')
 })
 
 _temporary_reddit_grammar = Grammar({
@@ -105,7 +106,7 @@ _temporary_reddit_grammar = Grammar({
     # Would be defined by module
     #   * Source rule must not begin with ? and must not begin with _
     #   * Source rule may begin with ! or be all caps
-    'reddit_source':            ('"reddit"', '"subreddit" STRING')
+    'reddit_source':            ('"reddit"', '"subreddit" string')
 })
 
 MAIN_MODE_GRAMMAR = merge_grammars(_basic_grammar, _main_mode_only_grammar)
