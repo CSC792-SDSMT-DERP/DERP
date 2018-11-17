@@ -59,7 +59,8 @@ class Repl:
         :type string_input: str
         :return: None
         """
-        action = self.__session_controller.run_input(string_input)  # type: UXAction
+        action = self.__session_controller.run_input(
+            string_input)  # type: UXAction
         self.__action_handling[action.get_type()](action)
 
         self._print_warnings(action)
@@ -70,5 +71,5 @@ class Repl:
         :return: None
         """
         while True:
-            string_input = input(">>>")
+            string_input = input(">>> ")
             self._handle_input(string_input)

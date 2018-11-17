@@ -30,7 +30,7 @@ class Evaluator(IEvaluator):
                 assert(len(tree.children) == 0)
 
                 result_action = SessionAction(
-                    SessionActionType.CHANGE_MODE, ModeRequestType.EXIT)
+                    SessionActionType.CHANGE_MODE, SessionActionModeType.EXIT)
 
             def load_expression(self, tree):
                 nonlocal result_action
@@ -98,9 +98,9 @@ class Evaluator(IEvaluator):
 
                 new_mode = None
                 if create_type == "CRITERIA":
-                    new_mode = ModeRequestType.CRITERIA
+                    new_mode = SessionActionModeType.CRITERIA
                 elif create_type == "SELECTION":
-                    new_mode = ModeRequestType.SELECTION
+                    new_mode = SessionActionModeType.SELECTION
                 else:
                     assert(False)
 

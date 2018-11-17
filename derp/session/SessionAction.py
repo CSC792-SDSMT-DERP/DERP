@@ -22,8 +22,12 @@ class SessionAction:
     def get_data(self):
         return self.__data
 
+    # TODO : Is this something we need?
+    def get_warnings(self):
+        return []
 
-class ModeRequestType(Enum):
+
+class SessionActionModeType(Enum):
     EXIT = 1
     # Exit the current mode
 
@@ -48,7 +52,7 @@ class SessionActionType(Enum):
     # data : str if in Main Mode else None - name of selection or criteria to recall
 
     CHANGE_MODE = 5
-    # data : ModeRequestType - Mode to change to
+    # data : SessionActionModeType - Mode to change to
 
     SAVE_BUFFER = 6
     # data : str - Name to save the buffer under

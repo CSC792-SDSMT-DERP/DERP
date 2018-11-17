@@ -11,10 +11,7 @@ class Parser (IParser):
     Implementation of the IParser interface, utilizing the Python Lark parser
     """
 
-    def __init__(self):
-        self._parser = None
-
-    def set_grammar(self, *grammars):
+    def __init__(self, *grammars):
         """
         Gives the parser multiple grammars to combine into a new
         grammar, which will be loaded as the active grammar for parsing
@@ -22,9 +19,11 @@ class Parser (IParser):
         raises GrammarMergeException
         raises GrammarDefinitionException
         """
-
-        new_grammar = merge_grammars(*grammars)
-        self._parser = build_lark_parser(new_grammar)
+        if len(grammars):
+            new_grammar = merge_grammars(*grammars)
+            self._parser = build_lark_parser(new_grammar)
+        else:
+            self._parser = None
 
     def parse(self, text):
         """

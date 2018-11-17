@@ -11,6 +11,7 @@ import datetime
 
 from derp.language.Grammar import Grammar
 
+
 class PostDefinition:
     """
     Lists out the details of each field on the post objects returned from a
@@ -53,12 +54,12 @@ class PostDefinition:
 
     def field_grammar(self):
         """
-        Constructs a grammar mapping the nonterminal "field" to the OR of all of the field names
+        Constructs a grammar mapping the terminal FIELD to the OR of all of the field names
         in the post definition
         :return: A Grammar representing all of the field names
         """
         return Grammar({
-            "field": self.__field_definitions.keys()
+            "FIELD": self.__field_definitions.keys()
         })
 
     def field_definitions(self):
