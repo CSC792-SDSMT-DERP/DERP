@@ -108,7 +108,7 @@ def convert_productions_to_lark_grammar(productions):
 
     # Start with common grammar rules - escaped strings, signed numbers, and whitespace ignoring
     string_grammar = r"""
-%import common.ESCAPED_STRING
+%import common.ESCAPED_STRING -> STRING
 %import common.WS
 %ignore WS
 """
@@ -117,10 +117,10 @@ def convert_productions_to_lark_grammar(productions):
     # The line will be of the form 'nonterminal : (production) | (production) | (production)...'
     for nonterminal_rule in productions:
         string_production = nonterminal_rule[0] + \
-            " : ( " + nonterminal_rule[1][0] + " )"
+            " : " + nonterminal_rule[1][0] + "\n"
 
         for production in nonterminal_rule[1][1:]:
-            string_production += " | ( " + production + " )"
+            string_production += " | " + production + "\n"
 
         string_grammar += "\n" + string_production
 
