@@ -16,7 +16,7 @@ class MockModule(IModule):
 
     def source_grammar(self):
         return Grammar({
-            "source": '"mock"',
+            "MOCKMODULE_SOURCE": '"mock"'
         })
 
     def post_definition(self):

@@ -59,7 +59,7 @@ class PostDefinition:
         :return: A Grammar representing all of the field names
         """
         return Grammar({
-            "FIELD": self.__field_definitions.keys()
+            "FIELD": tuple('"' + k + '"' for k in self.__field_definitions.keys())
         })
 
     def field_definitions(self):
