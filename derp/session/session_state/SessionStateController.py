@@ -3,6 +3,8 @@ SessionStateController.py
 
 Class definition for the SessionStateController object.
 """
+import os
+
 from derp.session.session_state import FileManager
 from derp.session.session_state.Buffer import Buffer
 from derp.session.session_state.ISessionStateController import ISessionStateController
@@ -25,7 +27,7 @@ class SessionStateController(ISessionStateController):
         :param name: name to save the criteria under
         :return: None
         """
-        self.__file_manager.write_file(name, self.__buffer.get_commands())
+        self.__file_manager.write_file(os.path.join("criteria", name), self.__buffer.get_commands())
 
     def load_criteria(self, name):
         """
@@ -34,7 +36,7 @@ class SessionStateController(ISessionStateController):
         :param name: name of the criteria to load
         :return: list of strings representing the criteria
         """
-        return self.__file_manager.read_file(name)
+        return self.__file_manager.read_file(os.path.join("criteria", name))
 
     def save_selection(self, name):
         """
@@ -43,7 +45,7 @@ class SessionStateController(ISessionStateController):
         :param name: name to save the selection under
         :return: None
         """
-        self.__file_manager.write_file(name, self.__buffer.get_commands())
+        self.__file_manager.write_file(os.path.join("selections", name), self.__buffer.get_commands())
 
     def load_selection(self, name):
         """
@@ -52,7 +54,7 @@ class SessionStateController(ISessionStateController):
         :param name: name of the selection to load
         :return: list of strings representing the criteria
         """
-        self.__file_manager.read_file(name)
+        self.__file_manager.read_file(os.path.join("selections", name))
 
     def get_buffer(self):
         """

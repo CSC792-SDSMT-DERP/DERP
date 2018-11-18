@@ -4,6 +4,7 @@ FileManager.py
 Class definition for the FileManager object.
 """
 import io
+import os
 from derp.session.session_state.IFileManager import IFileManager
 
 
@@ -19,7 +20,7 @@ class FileManager(IFileManager):
         :param file_path: path to the file to read from
         :raises IOException: raised if the FileManager failed to read the file
         """
-        file = io.open(file_path, "r")
+        file = io.open(os.path.join(os.getcwd(), file_path), "r")
         lines = file.readlines()
         return lines
 
@@ -28,5 +29,5 @@ class FileManager(IFileManager):
         Writes each line in lines to the specified file.
         :raises IOException: raised if the FileManager failed to write the file
         """
-        file = io.open(file_path, "w")
+        file = io.open(os.path.join(os.getcwd(), file_path), "w")
         file.writelines(lines)
