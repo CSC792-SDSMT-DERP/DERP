@@ -4,6 +4,7 @@ from derp.language.Grammar import *
 from derp.exceptions.exceptions import *
 
 from lark import Lark
+from lark.exceptions import LarkError
 
 
 class Parser (IParser):
@@ -39,7 +40,7 @@ class Parser (IParser):
         ast = None
         try:
             ast = self._parser.parse(text)
-        except Exception as ex:
+        except LarkError as ex:
             raise TextParseException(
                 "error parsing text '" + text + "' (" + ex.args[0] + ")") from ex
 

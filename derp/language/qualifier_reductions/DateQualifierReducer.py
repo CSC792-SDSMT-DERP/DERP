@@ -116,7 +116,7 @@ class DateQualifierReducer(Transformer):
         target_date = None
         try:
             target_date = date(year, month, day)
-        except Exception as e:
+        except ValueError as e:
             raise SemanticException(
                 "Unable to create date type from " + str(month) + "/" + str(day) + "/" + str(year) + ": " + e.args[0]) from e
 

@@ -1,9 +1,10 @@
 from derp.exceptions.exceptions import *
 
 from lark import Lark
+from lark.exceptions import LarkError
 
 
-class Grammar (dict):
+class Grammar:
     """
     Type checking container to hold information about the grammar to be
     used to construct a lark parser
@@ -142,6 +143,6 @@ def build_lark_parser(grammar):
 
     try:
         return Lark(string_grammar, start=grammar.start_symbol())
-    except Exception as ex:
+    except LarkError as ex:
         raise GrammarDefinitionException(
             "unable to produce Lark parser (" + ex.args[0] + ")") from ex
