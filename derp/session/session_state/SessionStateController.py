@@ -8,6 +8,7 @@ import os
 from derp.session.session_state import FileManager
 from derp.session.session_state.Buffer import Buffer
 from derp.session.session_state.ISessionStateController import ISessionStateController
+from derp.exceptions.exceptions import FileIOException
 
 
 class SessionStateController(ISessionStateController):
@@ -23,38 +24,72 @@ class SessionStateController(ISessionStateController):
     def save_criteria(self, name):
         """
         Saves the the list of statements in the buffer as a new criterion.
-        :raises IOException: raised if a save fails
+        :raises FileIOException: raised if a save fails
         :param name: name to save the criteria under
         :return: None
         """
-        self.__file_manager.write_file(os.path.join("criteria", name), self.__buffer.get_commands())
+        try:
+            self.__file_manager.write_file(os.path.join("criteria", name), self.__buffer.get_commands())
+        except FileIOException as e:
+            raise e
 
     def load_criteria(self, name):
         """
         Loads the named criterion into the buffer.
-        :raises IOException: raised if a load fails
+        :raises FileIOException: raised if a load fails
         :param name: name of the criteria to load
         :return: list of strings representing the criteria
         """
-        return self.__file_manager.read_file(os.path.join("criteria", name))
+        try:
+            return self.__file_manager.read_file(os.path.join("criteria", name))
+        except FileIOException as e:
+            raise e
+
+    def delete_criteria(self, name):
+        """
+        Deletes the criteria with the given name
+        :param name: name of the criteria to delete
+        :raises FileIOException: raised if deletion fails
+        """
+        try:
+            self.__file_manager.delete_file(os.path.join("criteria", name))
+        except FileIOException as e:
+            raise e
 
     def save_selection(self, name):
         """
         Saves the list of statements in the buffer as a new selection.
-        :raises IOException: raised if a save fails
+        :raises FileIOException: raised if a save fails
         :param name: name to save the selection under
         :return: None
         """
-        self.__file_manager.write_file(os.path.join("selections", name), self.__buffer.get_commands())
+        try:
+            self.__file_manager.write_file(os.path.join("selections", name), self.__buffer.get_commands())
+        except FileIOException as e:
+            raise e
 
     def load_selection(self, name):
         """
         Loads the named selection into the buffer.
-        :raises IOException: raised if a load fails
+        :raises FileIOException: raised if a load fails
         :param name: name of the selection to load
         :return: list of strings representing the criteria
         """
-        self.__file_manager.read_file(os.path.join("selections", name))
+        try:
+            self.__file_manager.read_file(os.path.join("selections", name))
+        except FileIOException as e:
+            raise e
+
+    def delete_selection(self, name):
+        """
+        Deletes the selection with the given name
+        :param name: name of the selection to delete
+        :raises FileIOException: raised if deletion fails
+        """
+        try:
+            self.__file_manager.delete_file(os.path.join("selections", name))
+        except FileIOException as e:
+            raise e
 
     def get_buffer(self):
         """

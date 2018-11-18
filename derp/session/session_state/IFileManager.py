@@ -3,8 +3,7 @@ IFileManager.py
 
 Interface definition for FileManager objects.
 """
-
-
+#from derp.exceptions.exceptions import FileIOException
 class IFileManager:
     """
     FileManagers must be able to read and write files at given paths.
@@ -15,13 +14,23 @@ class IFileManager:
         Reads input from the specified file and returns a list of strings
         representing line separated input.
         :param file_path: path to the file to read from
-        :raises IOException: raised if the FileManager failed to read the file
+        :raises FileIOException: raised if the FileManager failed to read the file or the path is above the CWD
         """
         pass
 
     def write_file(self, file_path, lines):
         """
         Writes each line in lines to the specified file.
-        :raises IOException: raised if the FileManager failed to write the file
+        :param file_path: path to the file to write to
+        :param lines: lines to write to the file
+        :raises FileIOException: raised if the FileManager failed to write the file or the path is above the CWD
+        """
+        pass
+
+    def delete_file(self, file_path):
+        """
+        Deletes the file at the specified path.
+        :param file_path: path to the file to delete
+        :raises FileIOException: raised if the FileManager failed to delete the file or the path is above the CWD
         """
         pass
