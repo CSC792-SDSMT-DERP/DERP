@@ -22,7 +22,6 @@ class IModule(IPostQueryable):
 
     def source_grammar(self):
         """
-        TODO
         :return: the grammar for parsing sources interpreted by this module.
         """
         pass

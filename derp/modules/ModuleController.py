@@ -26,6 +26,7 @@ class ModuleController(IModuleController):
         :param qualifier_tree: A tree representing a logical expression which the posts must match.
         :return: a PostIterator which iterates over the returned set of posts
         """
+        # TODO: I'm not sure how the source ast will be parsed at the moment
         pass
 
     def register_module(self, module):
@@ -39,7 +40,8 @@ class ModuleController(IModuleController):
         # TODO: Find a way to enforce IModule on the module and raise ModuleDefinitionException if needed
 
         if module.name() in self.__modules:
-            raise ModuleRegistrationException()
+            raise ModuleRegistrationException(
+                "Module " + module.name() + " registered twice")
 
         self.__modules[module.name()] = module
 
@@ -51,7 +53,8 @@ class ModuleController(IModuleController):
         :type name: str
         """
         if name not in self.__modules:
-            raise ModuleNotRegisteredException()
+            raise ModuleNotRegisteredException(
+                "Module " + name + " not registered")
 
         self.__active_modules.add(name)
 
@@ -62,8 +65,9 @@ class ModuleController(IModuleController):
         :param name: name of the module to unload
         :type name: str
         """
+        # TODO : Is this really an exception?
         if name not in self.__active_modules:
-            raise ModuleNotLoadedException()
+            raise ModuleNotLoadedException("Module " + name + " not loaded")
 
         self.__active_modules.remove(name)
 

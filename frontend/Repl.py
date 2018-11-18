@@ -32,22 +32,21 @@ class Repl:
         }
 
     def _handle_error(self, action):
-        print(action.get_text())
+        print(action.get_data())
 
     def _handle_change_mode(self, action):
-        print(action.get_text())
+        print(action.get_data())
 
     def _handle_no_op(self, action):
-        print(action.get_text())
+        print("")
 
     def _handle_recall(self, action):
-        print(action.get_text())
+        print("\n".join(action.get_data()))
 
     def _handle_read(self, action):
-        self.__post_reader.read_from(action.get_post_iterator())
+        self.__post_reader.read_from(action.get_data())
 
     def _print_warnings(self, action):
-        # TODO: this assumes that warnings will be strings or implement __str__
         warnings = action.get_warnings()
         if warnings is not None:
             for warning in warnings:
@@ -60,7 +59,8 @@ class Repl:
         :type string_input: str
         :return: None
         """
-        action = self.__session_controller.run_input(string_input)  # type: UXAction
+        action = self.__session_controller.run_input(
+            string_input)  # type: UXAction
         self.__action_handling[action.get_type()](action)
 
         self._print_warnings(action)
@@ -71,5 +71,5 @@ class Repl:
         :return: None
         """
         while True:
-            string_input = input(">>>")
+            string_input = input(">>> ")
             self._handle_input(string_input)

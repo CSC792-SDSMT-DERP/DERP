@@ -11,6 +11,7 @@ import datetime
 
 from derp.language.Grammar import Grammar
 
+
 class PostDefinition:
     """
     Lists out the details of each field on the post objects returned from a
@@ -52,9 +53,21 @@ class PostDefinition:
         return self.__field_definitions[field_name]
 
     def field_grammar(self):
+        """
+        Constructs a grammar mapping the terminal FIELD to the OR of all of the field names
+        in the post definition
+        :return: A Grammar representing all of the field names
+        """
         return Grammar({
-            "field": self.__field_definitions.keys()
+            "FIELD": self.__field_definitions.keys()
         })
+
+    def field_definitions(self):
+        """
+        Return a copy of the mapping from field names to field types for fields described by the post definition.
+        :return: A map from field names to field types
+        """
+        return dict(self.__field_definitions)
 
 
 class FieldType(Enum):

@@ -12,26 +12,53 @@ class SessionAction:
     performing a query.
     """
 
-    def __init__(self, session_action_type, text=None, file_name=None, warnings=None):
+    def __init__(self, session_action_type, data):
         self.__action_type = session_action_type
-        self.__file_name = file_name
-        self.__warnings = warnings
-        self.__text = text
+        self.__data = data
 
     def get_type(self):
         return self.__action_type
 
-    def get_file_name(self):
-        return self.__file_name
+    def get_data(self):
+        return self.__data
 
+    # TODO : Is this something we need?
     def get_warnings(self):
-        return self.__warnings
+        return []
 
-    def get_text(self):
-        return self.__text
+
+class SessionActionModeType(Enum):
+    EXIT = 1
+    # Exit the current mode
+
+    SELECTION = 2
+    # Switch to selection mode
+
+    CRITERIA = 3
+    # Switch to criteria mode
 
 
 class SessionActionType(Enum):
     QUERY = 1
+    # data : str if in Main Mode else None - name of selection execute
+
     LOAD_MODULE = 2
+    # data : str - name of the module
+
     UNLOAD_MODULE = 3
+    # data : str - name of the module
+
+    RECALL = 4
+    # data : str if in Main Mode else None - name of selection or criteria to recall
+
+    CHANGE_MODE = 5
+    # data : SessionActionModeType - Mode to change to
+
+    SAVE_BUFFER = 6
+    # data : str - Name to save the buffer under
+
+    APPEND_TO_BUFFER = 7
+    # data : None; indicates to add the line that generated the evaluated AST
+
+    CLEAR_BUFFER = 8
+    # data : None
