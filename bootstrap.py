@@ -6,6 +6,8 @@ ModuleController, and Module objects on startup. Performs any required dependenc
 """
 from derp.modules.ModuleController import ModuleController
 from derp.session.SessionController import SessionController
+from derp.session.session_state.SessionStateController import SessionStateController
+from derp.session.session_state.FileManager import FileManager
 from derp.session.selection_execution.SelectionExecutorFactory import SelectionExecutorFactory
 from frontend.Repl import Repl
 from frontend.PostReader import PostReader
@@ -18,17 +20,20 @@ def main():
     core object construction and pre-requisite setup for default modules
     :return: None
     """
-    mock_module = MockModule()
     module_controller = ModuleController()
-    module_controller.register_module(mock_module)
     post_reader = PostReader()
+    file_manager = FileManager()
     selection_executor_factory = SelectionExecutorFactory(module_controller)
-    session_controller = SessionController(selection_executor_factory, module_controller)
+
+    session_controller = SessionController(
+        selection_executor_factory, module_controller, file_manager)
+
     repl = Repl(session_controller, post_reader)
 
-    # TODO: replace with register module.
-    # set module_controller dependencies
-    module_controller.load_module(mock_module.name())
+    # For now, we explicitly register modules that we know exist,
+    # in the future this could do discovery
+    mock_module = MockModule()
+    module_controller.register_module(mock_module)
 
     repl.read_eval_print_loop()
 

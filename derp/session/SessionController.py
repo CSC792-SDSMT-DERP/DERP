@@ -30,12 +30,15 @@ class SessionController(ISessionController):
         SELECTION = 2
         CRITERIA = 3
 
-    def __init__(self, selection_executor_factory, module_controller):
+    def __init__(self, selection_executor_factory, module_controller, file_manager):
         # external dependencies
         self.__module_controller = module_controller
 
         # type: SelectionExecutorFactory
         self.__selection_executor_factory = selection_executor_factory
+
+        # type: SessionStateController
+        self.__session_state = SessionStateController(file_manager)
 
         # other members
         self.__main_mode_parser = Parser(MAIN_MODE_GRAMMAR)
@@ -44,7 +47,6 @@ class SessionController(ISessionController):
 
         self.__transformer = Transformer()
         self.__evaluator = Evaluator()
-        self.__session_state = SessionStateController(FileManager())
 
         # Initialize in main mode
         self._switch_to_main_mode()
@@ -145,9 +147,11 @@ class SessionController(ISessionController):
         except ModuleNotRegisteredException as e:
             return UXAction(UXActionType.ERROR, e)
 
+        raised_exception = None
+
         try:
             self._build_selection_and_criteria_grammars()
-        except Exception as e:
+        except DerpException as e:
             self.__module_controller.unload_module(module_name)
             return UXAction(UXActionType.ERROR, e)
 
@@ -169,21 +173,59 @@ class SessionController(ISessionController):
     def _build_selection_and_criteria_grammars(self):
         active_modules = self.__module_controller.loaded_modules()
 
-        # TODO enforce that source grammars are valid
-        try:
-            field_grammars = [module.post_definition().field_grammar()
-                              for module in active_modules]
-            source_grammars = [module.source_grammar()
-                               for module in active_modules]
+        print(len(active_modules), "loaded modules")
 
-            self.__criteria_mode_parser = Parser(CRITERIA_MODE_GRAMMAR, *field_grammars, *source_grammars)
-            self.__selection_mode_parser = Parser(SELECTION_MODE_GRAMMAR, *field_grammars, *source_grammars)
-        except GrammarMergeException as e:
-            raise e
-        except GrammarDefinitionException as e:
-            raise e
-        except Exception as e:
-            raise ModuleDefinitionException() from e
+        # Last module was just unloaded
+        if len(active_modules) == 0:
+            self.__criteria_mode_parser = Parser()
+            self.__selection_mode_parser = Parser()
+            print("Resetting parsers")
+
+        # Merge all grammars from loaded modules
+        else:
+
+            # TODO enforce that source grammars are valid
+            try:
+                field_grammars = [module.post_definition().field_grammar()
+                                  for module in active_modules]
+                source_grammars = [(module.name(), module.source_grammar(),)
+                                   for module in active_modules]
+
+                # Build a list of all the {modulename}_source rules
+                # that exist
+                source_productions = []
+                for name, grammar in source_grammars:
+                    # Module grammars must not define a start symbol
+                    assert(grammar.start_symbol() is None)
+
+                    # Do all text matching with lower case
+                    name_source = name.lower() + "_source"
+                    grammar_source = None
+
+                    # Find the grammar rule that is {modulename}_source
+                    # It can be all caps (token) or all lower case (rule), and may begin with !
+                    for key, productions in grammar.productions():
+                        alnum_key = ''.join(
+                            x if x.isalnum() or x == '_' else '' for x in key.lower())
+
+                        if name_source == alnum_key:
+                            grammar_source = key
+
+                    assert(grammar_source is not None)
+                    source_productions.append(grammar_source)
+
+                assert(len(source_productions) > 0)
+
+                # Make a grammar that is just the rule 'source -> [each module source name]'
+                source_rule_grammar = Grammar({'source': source_productions})
+
+                source_grammars = [module.source_grammar()
+                                   for module in active_modules]
+
+                self.__criteria_mode_parser = Parser(CRITERIA_MODE_GRAMMAR, *field_grammars, *source_grammars, source_rule_grammar)
+                self.__selection_mode_parser = Parser(SELECTION_MODE_GRAMMAR, *field_grammars, *source_grammars, source_rule_grammar)
+            except DerpException as e:
+                raise e
 
     def _save_buffer_operation(self, save_action):
         assert(save_action.get_data() is not None)
@@ -225,7 +267,6 @@ class SessionController(ISessionController):
         """
         try:
             ux_action = None
-            # TODO: maintain three separate parsers and a mode tracker
             ast = self.__parser_controller.parse(string_input)
             ast = self.__transformer.transform(ast)
             session_action = self.__evaluator.evaluate(
