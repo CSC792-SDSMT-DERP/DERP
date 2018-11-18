@@ -14,7 +14,7 @@ class ISessionStateController:
     def save_criteria(self, name):
         """
         Saves the the list of statements in the buffer as a new criterion.
-        :raises IOException: raised if a save fails
+        :raises FileIOException: raised if a save fails
         :param name: name to save the criteria under
         :return: None
         """
@@ -23,16 +23,24 @@ class ISessionStateController:
     def load_criteria(self, name):
         """
         Loads the named criterion into the buffer.
-        :raises IOException: raised if a load fails
+        :raises FileIOException: raised if a load fails
         :param name: name of the criteria to load
         :return: list of strings representing the criteria
+        """
+        pass
+
+    def delete_criteria(self, name):
+        """
+        Deletes the criteria with the given name
+        :param name: name of the criteria to delete
+        :raises FileIOException: raised if deletion fails
         """
         pass
 
     def save_selection(self, name):
         """
         Saves the list of statements in the buffer as a new selection.
-        :raises IOException: raised if a save fails
+        :raises FileIOException: raised if a save fails
         :param name: name to save the selection under
         :return: None
         """
@@ -41,16 +49,24 @@ class ISessionStateController:
     def load_selection(self, name):
         """
         Loads the named selection into the buffer.
-        :raises IOException: raised if a load fails
+        :raises FileIOException: raised if a load fails
         :param name: name of the selection to load
         :return: list of strings representing the criteria
+        """
+        pass
+
+    def delete_selection(self, name):
+        """
+        Deletes the selection with the given name
+        :param name: name of the selection to delete
+        :raises FileIOException: raised if deletion fails
         """
         pass
 
     def get_buffer(self):
         """
         Returns the current buffer.
-        :return:
+        :return: returns the Buffer object that the SessionStateController is using
         """
         pass
 
