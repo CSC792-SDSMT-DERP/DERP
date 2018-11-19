@@ -19,4 +19,4 @@ class PostIterator:
         self.__post_generator = post_generator
 
     def __iter__(self):
-        return self.__post_generator()
+        return self.__post_generator
