@@ -1,4 +1,4 @@
-from derp.exceptions.exceptions import *
+from derp.exceptions import *
 
 from lark import Lark
 from lark.exceptions import LarkError

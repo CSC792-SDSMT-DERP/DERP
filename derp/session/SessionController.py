@@ -3,17 +3,15 @@ SessionController.py
 
 Class definition for the SessionController object.
 """
-from derp.language.Parser import Parser
-from derp.language.Transformer import Transformer
-from derp.session.Evaluator import Evaluator
-from derp.session.ISessionController import ISessionController
-from derp.session.SessionAction import SessionAction, SessionActionType, SessionActionModeType
-from derp.session.UXAction import UXAction, UXActionType, UXActionModeType
-from derp.session.session_state.FileManager import FileManager
-from derp.session.session_state.SessionStateController import SessionStateController
-from derp.session.selection_execution.SelectionExecutorFactory import SelectionExecutorFactory
-from derp.exceptions.exceptions import *
-from derp.language.GrammarLibrary import *
+import derp.language as language
+from derp.exceptions import *
+
+from .Evaluator import Evaluator
+from .ISessionController import ISessionController
+from .SessionAction import SessionAction, SessionActionType, SessionActionModeType
+from .UXAction import UXAction, UXActionType, UXActionModeType
+from .session_state import *
+from .selection_execution import *
 
 from enum import Enum
 
@@ -41,11 +39,13 @@ class SessionController(ISessionController):
         self.__session_state = SessionStateController(file_manager)
 
         # other members
-        self.__main_mode_parser = Parser(MAIN_MODE_GRAMMAR)
-        self.__selection_mode_parser = Parser()
-        self.__criteria_mode_parser = Parser()
+        self.__main_mode_parser = language.Parser(
+            language.grammars.main_grammar())
 
-        self.__transformer = Transformer()
+        self.__selection_mode_parser = language.Parser()
+        self.__criteria_mode_parser = language.Parser()
+
+        self.__transformer = language.Transformer()
         self.__evaluator = Evaluator()
 
         # Initialize in main mode
@@ -173,13 +173,10 @@ class SessionController(ISessionController):
     def _build_selection_and_criteria_grammars(self):
         active_modules = self.__module_controller.loaded_modules()
 
-        print(len(active_modules), "loaded modules")
-
         # Last module was just unloaded
         if len(active_modules) == 0:
-            self.__criteria_mode_parser = Parser()
-            self.__selection_mode_parser = Parser()
-            print("Resetting parsers")
+            self.__criteria_mode_parser = language.Parser()
+            self.__selection_mode_parser = language.Parser()
 
         # Merge all grammars from loaded modules
         else:
@@ -217,13 +214,14 @@ class SessionController(ISessionController):
                 assert(len(source_productions) > 0)
 
                 # Make a grammar that is just the rule 'source -> [each module source name]'
-                source_rule_grammar = Grammar({'source': source_productions})
+                source_rule_grammar = language.Grammar(
+                    {'source': source_productions})
 
                 source_grammars = [module.source_grammar()
                                    for module in active_modules]
 
-                self.__criteria_mode_parser = Parser(CRITERIA_MODE_GRAMMAR, *field_grammars, *source_grammars, source_rule_grammar)
-                self.__selection_mode_parser = Parser(SELECTION_MODE_GRAMMAR, *field_grammars, *source_grammars, source_rule_grammar)
+                self.__criteria_mode_parser = language.Parser(language.grammars.criteria_grammar(), *field_grammars, *source_grammars, source_rule_grammar)
+                self.__selection_mode_parser = language.Parser(language.grammars.selection_grammar(), *field_grammars, *source_grammars, source_rule_grammar)
             except DerpException as e:
                 raise e
 

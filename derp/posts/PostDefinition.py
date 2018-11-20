@@ -9,7 +9,7 @@ import collections
 import numbers
 import datetime
 
-from derp.language.Grammar import Grammar
+from derp.language import Grammar
 
 
 class PostDefinition:

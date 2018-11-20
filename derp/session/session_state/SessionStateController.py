@@ -5,10 +5,11 @@ Class definition for the SessionStateController object.
 """
 import os
 
-from derp.session.session_state import FileManager
-from derp.session.session_state.Buffer import Buffer
-from derp.session.session_state.ISessionStateController import ISessionStateController
-from derp.exceptions.exceptions import FileIOException
+from .FileManager import FileManager
+from .Buffer import Buffer
+from .ISessionStateController import ISessionStateController
+
+from derp.exceptions import FileIOException
 
 
 class SessionStateController(ISessionStateController):
@@ -29,7 +30,8 @@ class SessionStateController(ISessionStateController):
         :return: None
         """
         try:
-            self.__file_manager.write_file(os.path.join("criteria", name), self.__buffer.get_commands())
+            self.__file_manager.write_file(os.path.join(
+                "criteria", name), self.__buffer.get_commands())
         except FileIOException as e:
             raise e
 
@@ -64,7 +66,8 @@ class SessionStateController(ISessionStateController):
         :return: None
         """
         try:
-            self.__file_manager.write_file(os.path.join("selections", name), self.__buffer.get_commands())
+            self.__file_manager.write_file(os.path.join(
+                "selections", name), self.__buffer.get_commands())
         except FileIOException as e:
             raise e
 

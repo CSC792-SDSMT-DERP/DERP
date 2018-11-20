@@ -3,10 +3,10 @@ ModuleController.py
 
 Class definition for the ModuleController object.
 """
-from derp.modules.IModuleController import IModuleController
-from derp.exceptions.exceptions import ModuleRegistrationException
-from derp.exceptions.exceptions import ModuleNotRegisteredException
-from derp.exceptions.exceptions import ModuleNotLoadedException
+
+from derp.exceptions import ModuleRegistrationException, ModuleNotRegisteredException, ModuleNotLoadedException
+
+from .IModuleController import IModuleController
 
 
 class ModuleController(IModuleController):

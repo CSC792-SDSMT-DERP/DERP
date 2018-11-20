@@ -4,7 +4,7 @@ IModule.py
 Interface definition for DERP modules.
 """
 
-from derp.modules.IPostQueryable import IPostQueryable
+from .IPostQueryable import IPostQueryable
 
 
 class IModule(IPostQueryable):

@@ -8,16 +8,10 @@ TODO: Semantic checks for
 * Check that string data is non-empty
 """
 
-from derp.language.ITransformer import ITransformer
-from derp.exceptions.exceptions import SemanticException
+from .ITransformer import ITransformer
+from .qualifier_reductions import *
 
-from derp.language.qualifier_reductions.DateQualifierReducer import DateQualifierReducer
-from derp.language.qualifier_reductions.SubstringQualifierReducer import SubstringQualifierReducer
-from derp.language.qualifier_reductions.StringQualifierReducer import StringQualifierReducer
-from derp.language.qualifier_reductions.BoolQualifierReducer import BoolQualifierReducer
-from derp.language.qualifier_reductions.NumberQualifierReducer import NumberQualifierReducer
-from derp.language.qualifier_reductions.AboutQualifierReducer import AboutQualifierReducer
-from derp.language.qualifier_reductions.MatchingQualifierReducer import MatchingQualifierReducer
+from derp.exceptions import SemanticException
 
 from lark import Transformer as LarkTransformer
 from lark import Visitor as LarkVisitor

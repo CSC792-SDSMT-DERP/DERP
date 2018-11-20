@@ -1,6 +1,6 @@
 
-from derp.posts.IPost import IPost
-from derp.posts.PostDefinition import PostDefinition, FieldType
+from derp.posts import IPost, PostDefinition, FieldType
+
 
 class MockPost(IPost):
 

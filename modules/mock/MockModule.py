@@ -3,13 +3,14 @@ MockModule.py
 
 Class definition for the MockModule, used to mock Module behaviors for testing.
 """
-from derp.modules.IModule import IModule
-from derp.posts.PostDefinition import PostDefinition
-from derp.posts.PostDefinition import FieldType
-from derp.posts.PostIterator import PostIterator
-from derp.language.Grammar import Grammar
+from derp.modules import IModule
+from derp.posts import PostDefinition, FieldType, PostIterator
+from derp.language import Grammar
+
+from .MockPost import MockPost
+
 from datetime import date
-from modules.mock.MockPost import MockPost
+
 
 class MockModule(IModule):
 

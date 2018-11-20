@@ -3,7 +3,7 @@ PostReader.py
 
 Class definition for the PostReader object.
 """
-from frontend.IPostReader import IPostReader
+from .IPostReader import IPostReader
 
 
 class PostReader(IPostReader):

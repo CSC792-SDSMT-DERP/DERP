@@ -3,8 +3,8 @@ SelectionExecutorFactory.py
 
 Class definition for the SelectionExecutorFactory object.
 """
-from derp.modules.ModuleController import ModuleController
-from derp.session.selection_execution.AbstractSelectionExecutorFactory import AbstractSelectionExecutorFactory
+from derp.modules import ModuleController
+from .AbstractSelectionExecutorFactory import AbstractSelectionExecutorFactory
 
 
 class SelectionExecutorFactory(AbstractSelectionExecutorFactory):

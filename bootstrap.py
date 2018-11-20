@@ -4,14 +4,12 @@ bootstrap.py
 Responsible for constructing the Repl, PostReader, SessionController, SelectionExecutorFactory,
 ModuleController, and Module objects on startup. Performs any required dependency injection as necessary.
 """
-from derp.modules.ModuleController import ModuleController
-from derp.session.SessionController import SessionController
-from derp.session.session_state.SessionStateController import SessionStateController
-from derp.session.session_state.FileManager import FileManager
-from derp.session.selection_execution.SelectionExecutorFactory import SelectionExecutorFactory
-from frontend.Repl import Repl
-from frontend.PostReader import PostReader
-from modules.mock.MockModule import MockModule
+from derp.modules import ModuleController
+from derp.session import SessionController
+from derp.session.session_state import FileManager
+from derp.session.selection_execution import SelectionExecutorFactory
+from frontend import Repl, PostReader
+from modules import MockModule
 
 
 def main():

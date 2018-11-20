@@ -3,10 +3,8 @@ Repl.py
 
 Class definition for the Repl object.
 """
-from derp.session.UXAction import UXActionType
-from derp.session.UXAction import UXAction
-from derp.session.SessionController import SessionController
-from frontend.PostReader import PostReader
+from derp.session import UXActionType, UXAction, SessionController
+from .PostReader import PostReader
 
 
 class Repl:

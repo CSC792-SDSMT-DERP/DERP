@@ -4,7 +4,7 @@ IModuleController.py
 Interface definition for ModuleController objects.
 """
 
-from derp.modules.IPostQueryable import IPostQueryable
+from .IPostQueryable import IPostQueryable
 
 
 class IModuleController(IPostQueryable):

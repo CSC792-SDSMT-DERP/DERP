@@ -3,8 +3,8 @@ Evaluator.py
 
 Class definition for the Evaluator object
 """
-from derp.session.IEvaluator import IEvaluator
-from derp.session.SessionAction import *
+from .IEvaluator import IEvaluator
+from .SessionAction import *
 
 from lark import Visitor, v_args
 

@@ -4,7 +4,7 @@ from lark import Tree
 from datetime import date, timedelta
 from calendar import monthrange
 
-from derp.exceptions.exceptions import SemanticException
+from derp.exceptions import SemanticException
 
 # Map month names to which month number they are
 MONTH_NAME_TO_INDEX = {

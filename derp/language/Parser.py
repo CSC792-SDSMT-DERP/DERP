@@ -1,7 +1,8 @@
 
-from derp.language.IParser import IParser
-from derp.language.Grammar import *
-from derp.exceptions.exceptions import *
+from .IParser import IParser
+from .Grammar import *
+
+from derp.exceptions import *
 
 from lark import Lark
 from lark.exceptions import LarkError
