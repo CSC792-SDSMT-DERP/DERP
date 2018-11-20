@@ -1,5 +1,5 @@
-from derp.language.Grammar import Grammar
-from derp.language.Grammar import merge_grammars
+from .Grammar import Grammar
+from .Grammar import merge_grammars
 
 _basic_grammar = Grammar({
     '_ARTICLE':  ('"a"i', '"an"i', '"the"i'),
