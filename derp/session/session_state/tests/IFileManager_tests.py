@@ -12,7 +12,7 @@ def _random_num(lower, upper):
 
 def _random_str():
     return ''.join(random.choice(
-        string.ascii_letters) for _ in range(_random_num(10, 20)))
+        string.ascii_letters + string.digits + " ") for _ in range(_random_num(10, 20)))
 
 
 def _random_path(max_len):

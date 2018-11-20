@@ -74,3 +74,45 @@ class TestFileManager:
         filemanager_impl.write_file(target_path, ["single line of data"])
 
         assert(os.path.isfile(target_file))
+
+    # Test that file accesses are not allowed outside the root dir
+    def test_cant_work_above_root_dir(self, filemanager_impl):
+        dir_above_root_absolute = os.path.abspath(
+            os.path.join(filemanager_impl.root_dir(), ".."))
+
+        dir_next_to_root_absolute = os.path.join(
+            dir_above_root_absolute, "neighbor_dir")
+
+        dirs_to_test = [dir_above_root_absolute,
+                        dir_next_to_root_absolute, "..", os.path.join("..", "neighbor_dir")]
+        files_to_test = [os.path.join(x, "tmpfile.txt") for x in dirs_to_test]
+
+        for f in files_to_test:
+            got_exception = False
+            try:
+                filemanager_impl.write_file(f, ["single line of data"])
+            except FileIOException as e:
+                got_exception = True
+                assert(e.get_reason() == FileIOException.Reason.SECURITY)
+
+            assert(got_exception)
+
+        for f in files_to_test:
+            got_exception = False
+            try:
+                filemanager_impl.read_file(f)
+            except FileIOException as e:
+                got_exception = True
+                assert(e.get_reason() == FileIOException.Reason.SECURITY)
+
+            assert(got_exception)
+
+        for f in files_to_test:
+            got_exception = False
+            try:
+                filemanager_impl.delete_file(f)
+            except FileIOException as e:
+                got_exception = True
+                assert(e.get_reason() == FileIOException.Reason.SECURITY)
+
+            assert(got_exception)
