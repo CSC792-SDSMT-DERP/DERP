@@ -7,7 +7,7 @@ import shutil
 import tempfile
 
 
-# Use session scope to keep all files created/destroyed
+# Use class scope to keep all files created/destroyed
 # by the tests persistent
 @pytest.fixture(scope="class")
 def filemanager_impl(request):

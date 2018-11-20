@@ -2,24 +2,9 @@ import pytest
 import string
 import random
 import os
+from .random_data import *
 
 from derp.exceptions import FileIOException
-
-
-def _random_num(lower, upper):
-    return random.choice(range(lower, upper))
-
-
-def _random_str():
-    return ''.join(random.choice(
-        string.ascii_letters + string.digits + " ") for _ in range(_random_num(10, 20)))
-
-
-def _random_path(max_len):
-    path = _random_str()
-    for i in range(max_len):
-        path = os.path.join(path, _random_str())
-    return path
 
 
 class TestIFileManager:
@@ -41,88 +26,88 @@ class TestIFileManager:
         random_files = set()
         for i in range(5):
             random_files = random_files.union(
-                set([_random_path(i) for _ in range(5)]))
+                set([random_path(i) for _ in range(5)]))
 
         random_files = list(random_files)
 
         # Generate random text to store in the files
-        random_text_1 = [[_random_str() for i in range(
-            _random_num(5, 10))] for _ in range(len(random_files))]
+        random_text_1 = [[random_str() for i in range(
+            random_num(5, 10))] for _ in range(len(random_files))]
 
-        random_text_2 = [[_random_str() for i in range(
-            _random_num(5, 10))] for _ in range(len(random_files))]
+        random_text_2 = [[random_str() for i in range(
+            random_num(5, 10))] for _ in range(len(random_files))]
 
-        random_text_3 = [[_random_str() for i in range(
-            _random_num(5, 10))] for _ in range(len(random_files))]
+        random_text_3 = [[random_str() for i in range(
+            random_num(5, 10))] for _ in range(len(random_files))]
 
         # Merge the random files and random text lists into a set of tests
-        self.__random_tests = [
-            (random_files[i], random_text_1[i], random_text_2[i], random_text_3[i])]
+        self._random_tests = [
+            (random_files[i], random_text_1[i], random_text_2[i], random_text_3[i]) for i in range(len(random_files))]
 
     # Tests that exceptions are raised on read and delete errors
     def test_exception_on_read_fail(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             with pytest.raises(FileIOException):
                 filemanager_impl.read_file(case[0])
 
     def test_exception_on_delete_fail(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             with pytest.raises(FileIOException):
                 filemanager_impl.delete_file(case[0])
 
     # Test that files can be created without raising an exception
     def test_can_create_files(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             filemanager_impl.write_file(case[0], case[1])
 
     # Test that files can be read without raising an exception
     def test_can_read_files(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             filemanager_impl.read_file(case[0])
 
     # Test that file data persists when files were newly created
     def test_new_file_text_persists(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             text = filemanager_impl.read_file(case[0])
             assert text == case[1]
 
     # Test that files can be written over without raising an exception
     def test_can_overwrite_files(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             filemanager_impl.write_file(case[0], case[2])
 
     # Test that file data persists when files were newly created
     def test_overwrite_file_text_persists(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             text = filemanager_impl.read_file(case[0])
             assert text == case[2]
 
     # Tests that files can be deleted without raising an exception
     def test_can_delete_file(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             text = filemanager_impl.delete_file(case[0])
 
     # Tests that deleted files cannot be read
     def test_cannot_read_deleted_file(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             with pytest.raises(FileIOException):
                 filemanager_impl.read_file(case[0])
 
     # Test that files can be rewritten without raising an exception
     def test_can_rewrite_files(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             filemanager_impl.write_file(case[0], case[3])
 
     # Test that file data persists when files were deleted then rewritten
     def test_rewrite_file_text_persists(self, filemanager_impl):
-        for case in self.__random_tests:
+        for case in self._random_tests:
             text = filemanager_impl.read_file(case[0])
             assert text == case[3]
 
     # Test that empty strings are not written to file
     def test_ignore_empty_strings_on_write(self, filemanager_impl):
-        random_text = [_random_str() for i in range(
-            _random_num(5, 10))]
+        random_text = [random_str() for i in range(
+            random_num(5, 10))]
 
         random_text_with_empty = random_text.copy()
         for i in range(10):
