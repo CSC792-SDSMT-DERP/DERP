@@ -40,10 +40,15 @@ class SessionStateController(ISessionStateController):
         Loads the named criterion into the buffer.
         :raises FileIOException: raised if a load fails
         :param name: name of the criteria to load
-        :return: list of strings representing the criteria
+        :return: None
         """
         try:
-            return self.__file_manager.read_file(os.path.join("criteria", name))
+            lines = self.__file_manager.read_file(
+                os.path.join("criteria", name))
+
+            self.__buffer.clear()
+            for i in lines:
+                self.__buffer.add_command(i)
         except FileIOException as e:
             raise e
 
@@ -76,10 +81,15 @@ class SessionStateController(ISessionStateController):
         Loads the named selection into the buffer.
         :raises FileIOException: raised if a load fails
         :param name: name of the selection to load
-        :return: list of strings representing the criteria
+        :return: None
         """
         try:
-            self.__file_manager.read_file(os.path.join("selections", name))
+            lines = self.__file_manager.read_file(
+                os.path.join("selections", name))
+
+            self.__buffer.clear()
+            for i in lines:
+                self.__buffer.add_command(i)
         except FileIOException as e:
             raise e
 
