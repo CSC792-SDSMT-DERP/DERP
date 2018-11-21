@@ -19,6 +19,7 @@ class Repl:
     def __init__(self, session_controller, post_reader):
         self.__session_controller = session_controller  # type: SessionController
         self.__post_reader = post_reader  # type: PostReader
+        self.__exiting = False
 
         # UXAction handling dictionary
         self.__action_handling = {
@@ -27,6 +28,7 @@ class Repl:
             UXActionType.NO_OP: self._handle_no_op,
             UXActionType.RECALL: self._handle_recall,
             UXActionType.READ: self._handle_read,
+            UXActionType.EXIT: self._handle_exit
         }
 
     def _handle_error(self, action):
@@ -63,11 +65,14 @@ class Repl:
 
         self._print_warnings(action)
 
+    def _handle_exit(self, action):
+        self.__exiting = True
+
     def read_eval_print_loop(self):
         """
         Set the Repl object to reading from standard in until the program terminates
         :return: None
         """
-        while True:
+        while not self.__exiting:
             string_input = input(">>> ")
             self._handle_input(string_input)
