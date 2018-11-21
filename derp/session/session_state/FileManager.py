@@ -36,6 +36,16 @@ class FileManager(IFileManager):
 
         return real_target_file
 
+    def file_exists(self, file_path):
+        working_directory = self.__working_directory
+        target_file = self.__target_file_path(file_path)
+
+        if not target_file.startswith(working_directory):
+            raise FileIOException(
+                file_path, FileIOException.OperationType.READ, FileIOException.Reason.SECURITY)
+
+        return os.path.isfile(target_file)
+
     def read_file(self, file_path):
         """
         Reads input from the specified file and returns a list of strings

@@ -55,10 +55,18 @@ class TestIFileManager:
             with pytest.raises(FileIOException):
                 filemanager_impl.delete_file(case[0])
 
+    def test_files_dont_exist_at_start(self, filemanager_impl):
+        for case in self._random_tests:
+            assert not filemanager_impl.file_exists(case[0])
+
     # Test that files can be created without raising an exception
     def test_can_create_files(self, filemanager_impl):
         for case in self._random_tests:
             filemanager_impl.write_file(case[0], case[1])
+
+    def test_files_exist_after_creation(self, filemanager_impl):
+        for case in self._random_tests:
+            assert filemanager_impl.file_exists(case[0])
 
     # Test that files can be read without raising an exception
     def test_can_read_files(self, filemanager_impl):
@@ -86,6 +94,10 @@ class TestIFileManager:
     def test_can_delete_file(self, filemanager_impl):
         for case in self._random_tests:
             text = filemanager_impl.delete_file(case[0])
+
+    def test_files_dont_exist_after_delete(self, filemanager_impl):
+        for case in self._random_tests:
+            assert not filemanager_impl.file_exists(case[0])
 
     # Tests that deleted files cannot be read
     def test_cannot_read_deleted_file(self, filemanager_impl):

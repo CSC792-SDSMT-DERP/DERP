@@ -67,6 +67,14 @@ class TestISessionStateController:
             with pytest.raises(FileIOException):
                 sessionstate_impl.delete_selection(case[0])
 
+    def test_selections_dont_exist_on_start(self, sessionstate_impl):
+        for case in self._random_selections:
+            assert not sessionstate_impl.selection_exists(case[0])
+
+    def test_criteria_dont_exist_on_start(self, sessionstate_impl):
+        for case in self._random_criteria:
+            assert not sessionstate_impl.criteria_exists(case[0])
+
     # Tests that buffer does not copy in get_buffer()
     def test_buffer_persistent(self, sessionstate_impl):
         buffer1 = sessionstate_impl.get_buffer()
@@ -84,6 +92,14 @@ class TestISessionStateController:
         for case in self._random_selections:
             self._write_case_to_buffer(sessionstate_impl.get_buffer(), case[1])
             sessionstate_impl.save_selection(case[0])
+
+    def test_selections_exist_after_creation(self, sessionstate_impl):
+        for case in self._random_selections:
+            assert sessionstate_impl.selection_exists(case[0])
+
+    def test_criteria_exist_after_creation(self, sessionstate_impl):
+        for case in self._random_criteria:
+            assert sessionstate_impl.criteria_exists(case[0])
 
     # Tests that criteria and selections are distinct
     def test_cannot_load_criteria_as_selection(self, sessionstate_impl):
@@ -160,6 +176,14 @@ class TestISessionStateController:
     def test_can_delete_selection(self, sessionstate_impl):
         for case in self._random_selections:
             sessionstate_impl.delete_selection(case[0])
+
+    def test_selections_dont_exist_after_deletion(self, sessionstate_impl):
+        for case in self._random_selections:
+            assert not sessionstate_impl.selection_exists(case[0])
+
+    def test_criteria_dont_exist_after_deletion(self, sessionstate_impl):
+        for case in self._random_criteria:
+            assert not sessionstate_impl.criteria_exists(case[0])
 
     # Tests that deleted data cannot be loaded
     def test_cannot_load_deleted_criteria(self, sessionstate_impl):

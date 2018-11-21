@@ -104,6 +104,28 @@ class SessionStateController(ISessionStateController):
         except FileIOException as e:
             raise e
 
+    def selection_exists(self, name):
+        """
+        Checks if a selection exists with the given name. This does not
+        guarantee the selection will not fail to load
+        :param name: name of the selection to check for
+        """
+        try:
+            return self.__file_manager.file_exists(os.path.join("selections", name))
+        except FileIOException:
+            return False
+
+    def criteria_exists(self, name):
+        """
+        Checks if a criteria exists with the given name. This does not
+        guarantee the criteria will not fail to load
+        :param name: name of the criteria to check for
+        """
+        try:
+            return self.__file_manager.file_exists(os.path.join("criteria", name))
+        except FileIOException:
+            return False
+
     def get_buffer(self):
         """
         Returns the current buffer.

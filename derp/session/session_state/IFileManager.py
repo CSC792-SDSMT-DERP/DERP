@@ -28,6 +28,14 @@ class IFileManager:
         """
         pass
 
+    def file_exists(self, file_path):
+        """
+        Checks if a file exists
+        :param file_path: path to the file to check
+        :raises FileIOException: raised if checking is not possible
+        """
+        pass
+
     def delete_file(self, file_path):
         """
         Deletes the file at the specified path.

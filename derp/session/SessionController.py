@@ -72,9 +72,11 @@ class SessionController(ISessionController):
             assert(session_action.get_data() is not None)
             target_name = session_action.get_data()
 
-            # TODO : Handle if this is criteria or selection
-            # TODO : Handle if this fails, because filesystems
-            self.__session_state.load_criteria(target_name)
+            try:
+                self.__session_state.load_criteria(target_name)
+            except FileIOException:
+                self.__session_state.load_selection(target_name)
+                # If this raises an exception, the semantic checker is not doing its job
 
         list_commands = self.__session_state.get_buffer().get_commands()
         action = UXAction(UXActionType.RECALL, list_commands,
@@ -266,7 +268,7 @@ class SessionController(ISessionController):
         try:
             ux_action = None
             ast = self.__parser_controller.parse(string_input)
-            ast = self.__transformer.transform(ast)
+            ast = self._transform_ast(ast)
             session_action = self.__evaluator.evaluate(
                 ast)  # type: SessionAction
 
@@ -278,3 +280,34 @@ class SessionController(ISessionController):
             return UXAction(UXActionType.ERROR, e)
         except SemanticException as e:
             return UXAction(UXActionType.ERROR, e)
+
+    def _transform_ast(self, ast):
+        def load_criteria(criteria_name):
+            asts = []
+            self.__session_state.load_criteria(criteria_name)
+            for line in self.__session_state.get_buffer():
+                ast = self.__parser_controller.parse(line)
+                ast = self._transform_ast(ast)
+                asts.append(ast)
+            return asts
+
+        def get_loaded_fields():
+            fields = []
+            for module in self.__module_controller.loaded_modules():
+                definition = module.post_definition()
+                fields.append(list(definition.field_definitions.keys()))
+            return fields
+
+        def is_criteria(criteria_name):
+            return self.__session_state.criteria_exists(criteria_name)
+
+        def is_selection(selection_name):
+            return self.__session_state.criteria_exists(criteria_name)
+
+        def module_exists(module_name):
+            return self.__module_controller.module_is_registered(module_name)
+
+        def module_loaded(module_name):
+            return self.__module_controller.module_is_loaded(module_name)
+
+        return self.__transformer.transform(ast, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded)

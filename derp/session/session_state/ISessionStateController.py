@@ -63,10 +63,25 @@ class ISessionStateController:
         """
         pass
 
+    def selection_exists(self, name):
+        """
+        Checks if a selection exists with the given name. This does not
+        guarantee the selection will not fail to load
+        :param name: name of the selection to check for
+        """
+        pass
+
+    def criteria_exists(self, name):
+        """
+        Checks if a criteria exists with the given name. This does not
+        guarantee the criteria will not fail to load
+        :param name: name of the criteria to check for
+        """
+        pass
+
     def get_buffer(self):
         """
         Returns the current buffer.
         :return: returns the Buffer object that the SessionStateController is using
         """
         pass
-
