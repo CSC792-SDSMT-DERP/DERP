@@ -61,9 +61,7 @@ class SessionController(ISessionController):
             SessionActionType.SAVE_BUFFER: self._save_buffer_operation,
             SessionActionType.APPEND_TO_BUFFER: self._append_to_buffer_operation,
             SessionActionType.NOOP: self._no_op_operation,
-
-            # todo because clear x is main mode but possible right now
-            SessionActionType.CLEAR_BUFFER: self._clear_buffer_operation
+            SessionActionType.CLEAR_BUFFER: self._clear_operation
         }
 
     def _recall_operation(self, session_action):
@@ -73,28 +71,54 @@ class SessionController(ISessionController):
             assert(session_action.get_data() is not None)
             target_name = session_action.get_data()
 
-            try:
-                self.__session_state.load_criteria(target_name)
-            except FileIOException:
-                self.__session_state.load_selection(target_name)
-                # If this raises an exception, the semantic checker is not doing its job
+            # Already verified by semantic checker
+            assert self.__session_state.criteria_exists(
+                target_name) or self.__session_state.selection_exists(target_name)
 
-        list_commands = self.__session_state.get_buffer().get_commands()
-        action = UXAction(UXActionType.RECALL, list_commands,
-                          session_action.get_warnings())
-        return action
+            lines = None
+            try:
+                if self.__session_state.criteria_exists(target_name):
+                    lines = self.__session_state.load_criteria(target_name)
+                else:
+                    lines = self.__session_state.load_selection(target_name)
+            except FileIOException as e:
+                action = UXAction(UXActionType.ERROR, e)
+                return action
+
+            assert lines is not None
+
+            action = UXAction(UXActionType.RECALL, list_commands,
+                              session_action.get_warnings())
+            return action
+
+        else:
+            list_commands = self.__session_state.get_buffer().get_commands()
+            action = UXAction(UXActionType.RECALL, list_commands,
+                              session_action.get_warnings())
+            return action
 
     def _read_operation(self, session_action):
         # In main mode, there's not something in the buffer that needs
         # to persist, so load up the thing that was requested into the buffer
+        list_commands = None
         if(self.__current_mode == self.SessionModeType.MAIN):
             assert(session_action.get_data() is not None)
             target_name = session_action.get_data()
 
-            # TODO : Handle if this fails, because filesystems
-            self.__session_state.load_selection(target_name)
+            # Already verified by the semantic check
+            assert self.__session_state.selection_exists(target_name)
 
-        list_commands = self.__session_state.get_buffer().get_commands()
+            try:
+                list_commands = self.__session_state.load_selection(
+                    target_name)
+            except FileIOException as e:
+                action = UXAction(UXActionType.ERROR, e)
+                return action
+        else:
+            list_commands = self.__session_state.get_buffer().get_commands()
+
+        assert list_commands is not None
+
         executor = self._perform_query(list_commands)
 
         action = UXAction(UXActionType.READ, executor,
@@ -232,20 +256,46 @@ class SessionController(ISessionController):
         assert(save_action.get_data() is not None)
         new_name = save_action.get_data()
 
-        if self.__current_mode == self.SessionModeType.CRITERIA:
-            self.__session_state.save_criteria(new_name)
-        elif self.__current_mode == self.SessionModeType.SELECTION:
-            self.__session_state.save_selection(new_name)
-        else:
-            assert(False)
+        try:
+            if self.__current_mode == self.SessionModeType.CRITERIA:
+                self.__session_state.save_criteria(new_name)
+            elif self.__current_mode == self.SessionModeType.SELECTION:
+                self.__session_state.save_selection(new_name)
+            else:
+                assert(False)
+        except FileIOException as e:
+            action = UXAction(UXActionType.ERROR, e)
+            return action
+
         return self._no_op_operation(save_action)
 
     def _append_to_buffer_operation(self, append_action):
         self.__session_state.get_buffer().add_command(self.__last_input)
         return self._no_op_operation(append_action)
 
-    def _clear_buffer_operation(self, clear_action):
-        return self._no_op_operation(clear_action)
+    def _clear_operation(self, clear_action):
+        if(self.__current_mode == self.SessionModeType.MAIN):
+            assert(session_action.get_data() is not None)
+            target_name = session_action.get_data()
+
+            # Already verified by the semantic check
+            assert self.__session_state.criteria_exists(
+                target_name) or self.__session_state.selection_exists(target_name)
+
+            try:
+                if self.__session_state.criteria_exists(
+                        target_name):
+                    self.__session_state.delete_criteria(target_name)
+                else:
+                    self.__session_state.delete_selection(target_name)
+            except FileIOException as e:
+                action = UXAction(UXActionType.ERROR, e)
+                return action
+        else:
+            self.__session_state.get_buffer().clear()
+
+        action = UXAction(UXActionType.NO_OP, None)
+        return action
 
     def _switch_to_main_mode(self):
         self.__current_mode = self.SessionModeType.MAIN
@@ -285,8 +335,8 @@ class SessionController(ISessionController):
     def _transform_ast(self, ast):
         def load_criteria(criteria_name):
             asts = []
-            self.__session_state.load_criteria(criteria_name)
-            for line in self.__session_state.get_buffer().get_commands():
+            lines = self.__session_state.load_criteria(criteria_name)
+            for line in lines:
                 ast = self.__parser_controller.parse(line)
                 ast = self._transform_ast(ast)
                 asts.append(ast)

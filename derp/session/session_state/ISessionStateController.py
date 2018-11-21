@@ -22,7 +22,7 @@ class ISessionStateController:
 
     def load_criteria(self, name):
         """
-        Loads the named criterion into the buffer.
+        Loads the named criterion and returns it as a list of strings
         :raises FileIOException: raised if a load fails
         :param name: name of the criteria to load
         :return: list of strings representing the criteria
@@ -48,7 +48,7 @@ class ISessionStateController:
 
     def load_selection(self, name):
         """
-        Loads the named selection into the buffer.
+        Loads the named selection and returns it as a list of strings
         :raises FileIOException: raised if a load fails
         :param name: name of the selection to load
         :return: list of strings representing the criteria

@@ -134,15 +134,15 @@ class TestISessionStateController:
     # Tests that loaded data is not mutated
     def test_loaded_selection_is_unchanged(self, sessionstate_impl):
         for case in self._random_selections:
-            sessionstate_impl.load_selection(case[0])
+            lines = sessionstate_impl.load_selection(case[0])
 
-            assert(sessionstate_impl.get_buffer().get_commands() == case[1])
+            assert(lines == case[1])
 
     def test_loaded_criteria_is_unchanged(self, sessionstate_impl):
         for case in self._random_criteria:
-            sessionstate_impl.load_criteria(case[0])
+            lines = sessionstate_impl.load_criteria(case[0])
 
-            assert(sessionstate_impl.get_buffer().get_commands() == case[1])
+            assert(lines == case[1])
 
     # Tests that data can be overwritten
     def test_can_overwrite_criteria(self, sessionstate_impl):
@@ -158,15 +158,15 @@ class TestISessionStateController:
     # Tests that overwritten data is not mutated
     def test_overwritten_criteria_persists(self, sessionstate_impl):
         for case in self._random_criteria:
-            sessionstate_impl.load_criteria(case[0])
+            lines = sessionstate_impl.load_criteria(case[0])
 
-            assert(sessionstate_impl.get_buffer().get_commands() == case[2])
+            assert(lines == case[2])
 
     def test_overwritten_selection_persists(self, sessionstate_impl):
         for case in self._random_selections:
-            sessionstate_impl.load_selection(case[0])
+            lines = sessionstate_impl.load_selection(case[0])
 
-            assert(sessionstate_impl.get_buffer().get_commands() == case[2])
+            assert(lines == case[2])
 
     # Tests that data can be deleted
     def test_can_delete_criteria(self, sessionstate_impl):
@@ -210,12 +210,12 @@ class TestISessionStateController:
     # Tests that saving after deletion saves the correct data
     def test_resaved_selection_persists(self, sessionstate_impl):
         for case in self._random_criteria:
-            sessionstate_impl.load_criteria(case[0])
+            lines = sessionstate_impl.load_criteria(case[0])
 
-            assert(sessionstate_impl.get_buffer().get_commands() == case[3])
+            assert(lines == case[3])
 
     def test_resaved_criteria_persists(self, sessionstate_impl):
         for case in self._random_selections:
-            sessionstate_impl.load_selection(case[0])
+            lines = sessionstate_impl.load_selection(case[0])
 
-            assert(sessionstate_impl.get_buffer().get_commands() == case[3])
+            assert(lines == case[3])
