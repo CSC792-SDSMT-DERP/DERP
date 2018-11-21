@@ -62,3 +62,6 @@ class SessionActionType(Enum):
 
     CLEAR_BUFFER = 8
     # data : None
+
+    NOOP = 9
+    # data : None

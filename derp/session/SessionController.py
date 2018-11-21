@@ -60,6 +60,7 @@ class SessionController(ISessionController):
             SessionActionType.CHANGE_MODE: self._change_mode_operation,
             SessionActionType.SAVE_BUFFER: self._save_buffer_operation,
             SessionActionType.APPEND_TO_BUFFER: self._append_to_buffer_operation,
+            SessionActionType.NOOP: self._no_op_operation,
 
             # todo because clear x is main mode but possible right now
             SessionActionType.CLEAR_BUFFER: self._clear_buffer_operation

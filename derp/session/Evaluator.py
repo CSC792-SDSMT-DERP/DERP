@@ -22,7 +22,7 @@ class Evaluator(IEvaluator):
         :return: SessionAction representing commands for the SessionController to execute
         """
 
-        result_action = None
+        result_action = SessionAction(SessionActionType.NOOP, None)
 
         class EvalVisitor(Visitor):
             def stop_expression(self, tree):

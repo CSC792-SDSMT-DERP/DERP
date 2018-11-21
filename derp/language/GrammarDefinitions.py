@@ -6,7 +6,7 @@ _basic_grammar = Grammar({
     'NUMBER':   '/-?[0-9]+/',
     'string':   'ESCAPED_STRING',
 
-    'statement':    'expression',
+    'statement':    'expression?',
     'expression':   ('stop_expression',
                      'recall_expression'
                      ),
