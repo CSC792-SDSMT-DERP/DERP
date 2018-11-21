@@ -286,7 +286,7 @@ class SessionController(ISessionController):
         def load_criteria(criteria_name):
             asts = []
             self.__session_state.load_criteria(criteria_name)
-            for line in self.__session_state.get_buffer():
+            for line in self.__session_state.get_buffer().get_commands():
                 ast = self.__parser_controller.parse(line)
                 ast = self._transform_ast(ast)
                 asts.append(ast)
@@ -311,4 +311,7 @@ class SessionController(ISessionController):
         def module_loaded(module_name):
             return self.__module_controller.module_is_loaded(module_name)
 
-        return self.__transformer.transform(ast, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded)
+        def any_modules_loaded():
+            return len(self.__module_controller.loaded_modules()) != 0
+
+        return self.__transformer.transform(ast, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded, any_modules_loaded)
