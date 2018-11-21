@@ -22,6 +22,20 @@ class IModuleController(IPostQueryable):
         """
         pass
 
+    def module_is_registered(self, name):
+        """
+        Checks if a module is registered, regardless of if it is loaded
+        :param name: name of the module to check for
+        """
+        pass
+
+    def module_is_loaded(self, name):
+        """
+        Checks if a module is loaded
+        :param name: name of the module to check for
+        """
+        pass
+
     def load_module(self, name):
         """
         Marks a module as active in the module registry.

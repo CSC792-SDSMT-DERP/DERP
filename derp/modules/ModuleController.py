@@ -45,6 +45,20 @@ class ModuleController(IModuleController):
 
         self.__modules[module.name()] = module
 
+    def module_is_registered(self, name):
+        """
+        Checks if a module is registered, regardless of if it is loaded
+        :param name: name of the module to check for
+        """
+        return name in self.__modules
+
+    def module_is_loaded(self, name):
+        """
+        Checks if a module is loaded
+        :param name: name of the module to check for
+        """
+        return name in self.__active_modules
+
     def load_module(self, name):
         """
         Marks a module as active in the module registry.
