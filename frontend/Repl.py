@@ -3,7 +3,7 @@ Repl.py
 
 Class definition for the Repl object.
 """
-from derp.session import UXActionType, UXAction, SessionController
+from derp.session import UXActionType, UXAction, SessionController, UXActionModeType
 from .PostReader import PostReader
 
 
@@ -20,6 +20,12 @@ class Repl:
         self.__session_controller = session_controller  # type: SessionController
         self.__post_reader = post_reader  # type: PostReader
         self.__exiting = False
+        self.__prompts = {
+            UXActionModeType.MAIN: ">>> ",
+            UXActionModeType.CRITERIA: "(criteria) >>> ",
+            UXActionModeType.SELECTION: "(selection) >>> ",
+        }
+        self.__prompt = self.__prompts[UXActionModeType.MAIN]
 
         # UXAction handling dictionary
         self.__action_handling = {
@@ -35,7 +41,7 @@ class Repl:
         print(action.get_data())
 
     def _handle_change_mode(self, action):
-        print(action.get_data())
+        self.__prompt = self.__prompts[action.get_data()]
 
     def _handle_no_op(self, action):
         print("")
@@ -74,5 +80,5 @@ class Repl:
         :return: None
         """
         while not self.__exiting:
-            string_input = input(">>> ")
+            string_input = input(self.__prompt)
             self._handle_input(string_input)
