@@ -45,16 +45,40 @@ class SessionController(ISessionController):
         self.__selection_mode_parser = language.Parser()
         self.__criteria_mode_parser = language.Parser()
 
-        self.__transformer = language.Transformer()
+        # Set up the transformer. Requires a few helper functions to communicate with the
+        # rest of the system.
+        def load_criteria(criteria_name):
+            asts = []
+            lines = self.__session_state.load_criteria(criteria_name)
+            for line in lines:
+                line_ast = self.__parser_controller.parse(line)
+                line_ast = self.__transformer.transform(line_ast)
+                asts.append(line_ast)
+            return asts
+
+        def get_loaded_fields():
+            fields = []
+            for module in self.__module_controller.loaded_modules():
+                definition = module.post_definition()
+                fields.append(list(definition.field_definitions.keys()))
+            return fields
+
+        self.__transformer = language.Transformer(
+            load_criteria,
+            get_loaded_fields,
+            lambda criteria_name: self.__session_state.criteria_exists(criteria_name),
+            lambda selection_name: self.__session_state.selection_exists(selection_name),
+            lambda module_name: self.__module_controller.module_is_registered(module_name),
+            lambda module_name: self.__module_controller.module_is_loaded(module_name),
+            lambda: len(self.__module_controller.loaded_modules) != 0,
+        )
+
         self.__evaluator = Evaluator()
 
         # keep the latest line of input on hand in case it is needed while
         # handling a session action. Mainly used to append the current input to the buffer
         # during criteria/ selection creation.
         self.__last_input = None
-
-        # Initialize in main mode
-        self._switch_to_main_mode()
 
         # session action handling dictionary
         self.__action_handling = {
@@ -68,6 +92,9 @@ class SessionController(ISessionController):
             SessionActionType.NOOP: self._no_op_operation,
             SessionActionType.CLEAR_BUFFER: self._clear_operation
         }
+
+        # Initialize in main mode
+        self._switch_to_main_mode()
 
     def _recall_operation(self, session_action):
         # In main mode, there's not something in the buffer that needs
@@ -162,7 +189,7 @@ class SessionController(ISessionController):
         ast_list = []
         for line in lines:
             ast = self.__selection_mode_parser.parse(line)
-            ast = self._transform_ast(ast)
+            ast = self.__transformer.transform(ast)
             ast_list.append(ast)
 
         executor = self.__selection_executor_factory.build_selection_executor(
@@ -328,7 +355,7 @@ class SessionController(ISessionController):
         """
         try:
             ast = self.__parser_controller.parse(string_input)
-            ast = self._transform_ast(ast)
+            ast = self.__transformer.transform(ast)
             session_action = self.__evaluator.evaluate(
                 ast)  # type: SessionAction
 
@@ -340,37 +367,3 @@ class SessionController(ISessionController):
             return UXAction(UXActionType.ERROR, e)
         except SemanticException as e:
             return UXAction(UXActionType.ERROR, e)
-
-    def _transform_ast(self, ast):
-        def load_criteria(criteria_name):
-            asts = []
-            lines = self.__session_state.load_criteria(criteria_name)
-            for line in lines:
-                line_ast = self.__parser_controller.parse(line)
-                line_ast = self._transform_ast(line_ast)
-                asts.append(line_ast)
-            return asts
-
-        def get_loaded_fields():
-            fields = []
-            for module in self.__module_controller.loaded_modules():
-                definition = module.post_definition()
-                fields.append(list(definition.field_definitions.keys()))
-            return fields
-
-        def is_criteria(criteria_name):
-            return self.__session_state.criteria_exists(criteria_name)
-
-        def is_selection(selection_name):
-            return self.__session_state.criteria_exists(selection_name)
-
-        def module_exists(module_name):
-            return self.__module_controller.module_is_registered(module_name)
-
-        def module_loaded(module_name):
-            return self.__module_controller.module_is_loaded(module_name)
-
-        def any_modules_loaded():
-            return len(self.__module_controller.loaded_modules()) != 0
-
-        return self.__transformer.transform(ast, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded, any_modules_loaded)

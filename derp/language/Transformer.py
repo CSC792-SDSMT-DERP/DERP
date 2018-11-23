@@ -14,11 +14,30 @@ from .qualifier_reductions import *
 from derp.exceptions import SemanticException
 
 from lark import Transformer as LarkTransformer
-from lark import Visitor as LarkVisitor
 from lark import Tree as LarkTree, Token as LarkToken
 
 
 class Transformer(ITransformer):
+    """
+    :param load_criteria: function to get parse trees for each line of a criteria. Should raise TextParseException, SemanticException, or FileIOException on failure
+    :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
+    :param is_criteria: boolean function to check if a criteria exists
+    :param is_selection: boolean function to check if a selection exists
+    :param module_exists: boolean function to check if a module exists, loaded or unloaded
+    :param module_loaded: boolean function to check if a module is loaded
+    :param any_modules_loaded: boolean function to check if at least 1 module is loaded
+    """
+
+    def __init__(self, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded,
+                 any_modules_loaded):
+        self.__load_criteria = load_criteria
+        self.__get_loaded_fields = get_loaded_fields
+        self.__is_criteria = is_criteria
+        self.__is_selection = is_selection
+        self.__module_exists = module_exists
+        self.__module_loaded = module_loaded
+        self.__any_modules_loaded = any_modules_loaded
+
     """
     Defines the transform function which performs semantic analysis and macro expansion on an AST
     as provided by an IParser.
@@ -59,7 +78,7 @@ class Transformer(ITransformer):
 
             return LarkTree("source_module", [module_name, args[0]])
 
-    def transform(self, ast, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded, any_modules_loaded):
+    def transform(self, ast):
         """
         Performs semantic analysis on the input tree and macro expansion.
         Returns the transformed AST if the input is semantically correct.
@@ -82,13 +101,6 @@ class Transformer(ITransformer):
             * Save as X but X already exists as other type
 
         :param ast: a parse tree as created by an IParser
-        :param load_criteria: function to get parse trees for each line of a criteria. Should raise TextParseException, SemanticException, or FileIOException on failure
-        :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
-        :param is_criteria: boolean function to check if a criteria exists
-        :param is_selection: boolean function to check if a selection exists
-        :param module_exists: boolean function to check if a module exists, loaded or unloaded
-        :param module_loaded: boolean function to check if a module is loaded
-        :param any_modules_loaded: boolean function to check if at least 1 module is loaded
         :return: A transformed, semantically valid AST
         """
 
@@ -104,8 +116,8 @@ class Transformer(ITransformer):
 
         # Chain reducers in order
         reducer = string_reduce * qualifier_reduce * \
-            source_reduce * \
-            MatchingQualifierReducer(is_criteria, load_criteria)
+                  source_reduce * \
+                  MatchingQualifierReducer(self.__is_criteria, self.__load_criteria)
 
         # Reduce; may raise Semantic Exceptions
         ast = reducer.transform(ast)
