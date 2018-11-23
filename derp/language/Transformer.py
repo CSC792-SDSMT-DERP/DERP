@@ -18,18 +18,18 @@ from lark import Tree as LarkTree, Token as LarkToken
 
 
 class Transformer(ITransformer):
-    """
-    :param load_criteria: function to get parse trees for each line of a criteria. Should raise TextParseException, SemanticException, or FileIOException on failure
-    :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
-    :param is_criteria: boolean function to check if a criteria exists
-    :param is_selection: boolean function to check if a selection exists
-    :param module_exists: boolean function to check if a module exists, loaded or unloaded
-    :param module_loaded: boolean function to check if a module is loaded
-    :param any_modules_loaded: boolean function to check if at least 1 module is loaded
-    """
 
     def __init__(self, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded,
                  any_modules_loaded):
+        """
+        :param load_criteria: function to get parse trees for each line of a criteria. Should raise TextParseException, SemanticException, or FileIOException on failure
+        :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
+        :param is_criteria: boolean function to check if a criteria exists
+        :param is_selection: boolean function to check if a selection exists
+        :param module_exists: boolean function to check if a module exists, loaded or unloaded
+        :param module_loaded: boolean function to check if a module is loaded
+        :param any_modules_loaded: boolean function to check if at least 1 module is loaded
+        """
         self.__load_criteria = load_criteria
         self.__get_loaded_fields = get_loaded_fields
         self.__is_criteria = is_criteria
