@@ -48,6 +48,11 @@ class SessionController(ISessionController):
         self.__transformer = language.Transformer()
         self.__evaluator = Evaluator()
 
+        # keep the latest line of input on hand in case it is needed while
+        # handling a session action. Mainly used to append the current input to the buffer
+        # during criteria/ selection creation.
+        self.__last_input = None
+
         # Initialize in main mode
         self._switch_to_main_mode()
 
@@ -67,7 +72,7 @@ class SessionController(ISessionController):
     def _recall_operation(self, session_action):
         # In main mode, there's not something in the buffer that needs
         # to persist, so load up the thing that was requested into the buffer
-        if(self.__current_mode == self.SessionModeType.MAIN):
+        if self.__current_mode == self.SessionModeType.MAIN:
             assert(session_action.get_data() is not None)
             target_name = session_action.get_data()
 
@@ -75,7 +80,6 @@ class SessionController(ISessionController):
             assert self.__session_state.criteria_exists(
                 target_name) or self.__session_state.selection_exists(target_name)
 
-            lines = None
             try:
                 if self.__session_state.criteria_exists(target_name):
                     lines = self.__session_state.load_criteria(target_name)
@@ -87,7 +91,7 @@ class SessionController(ISessionController):
 
             assert lines is not None
 
-            action = UXAction(UXActionType.RECALL, list_commands,
+            action = UXAction(UXActionType.RECALL, lines,
                               session_action.get_warnings())
             return action
 
@@ -100,8 +104,7 @@ class SessionController(ISessionController):
     def _read_operation(self, session_action):
         # In main mode, there's not something in the buffer that needs
         # to persist, so load up the thing that was requested into the buffer
-        list_commands = None
-        if(self.__current_mode == self.SessionModeType.MAIN):
+        if self.__current_mode == self.SessionModeType.MAIN:
             assert(session_action.get_data() is not None)
             target_name = session_action.get_data()
 
@@ -133,7 +136,6 @@ class SessionController(ISessionController):
     def _change_mode_operation(self, session_action):
         assert(session_action.get_data() is not None)
         target_switch = session_action.get_data()
-        ux_mode = None
         ux_action = UXActionType.CHANGE_MODE
 
         if target_switch == SessionActionModeType.EXIT:
@@ -150,7 +152,7 @@ class SessionController(ISessionController):
             self._switch_to_criteria_mode()
             ux_mode = UXActionModeType.CRITERIA
         else:
-            assert(False)
+            assert False
 
         action = UXAction(ux_action, ux_mode,
                           warnings=session_action.get_warnings())
@@ -160,7 +162,7 @@ class SessionController(ISessionController):
         ast_list = []
         for line in lines:
             ast = self.__selection_mode_parser.parse(line)
-            ast = self.__transformer.transform(ast)
+            ast = self._transform_ast(ast)
             ast_list.append(ast)
 
         executor = self.__selection_executor_factory.build_selection_executor(
@@ -173,8 +175,6 @@ class SessionController(ISessionController):
             self.__module_controller.load_module(module_name)
         except ModuleNotRegisteredException as e:
             return UXAction(UXActionType.ERROR, e)
-
-        raised_exception = None
 
         try:
             self._build_selection_and_criteria_grammars()
@@ -242,13 +242,23 @@ class SessionController(ISessionController):
 
                 # Make a grammar that is just the rule 'source -> [each module source name]'
                 source_rule_grammar = language.Grammar(
-                    {'source': source_productions})
+                    {'source': source_productions}
+                )
 
-                source_grammars = [module.source_grammar()
-                                   for module in active_modules]
+                source_grammars = [module.source_grammar() for module in active_modules]
 
-                self.__criteria_mode_parser = language.Parser(language.grammars.criteria_grammar(), *field_grammars, *source_grammars, source_rule_grammar)
-                self.__selection_mode_parser = language.Parser(language.grammars.selection_grammar(), *field_grammars, *source_grammars, source_rule_grammar)
+                self.__criteria_mode_parser = language.Parser(
+                    language.grammars.criteria_grammar(),
+                    *field_grammars,
+                    *source_grammars,
+                    source_rule_grammar
+                )
+                self.__selection_mode_parser = language.Parser(
+                    language.grammars.selection_grammar(),
+                    *field_grammars,
+                    *source_grammars,
+                    source_rule_grammar
+                )
             except DerpException as e:
                 raise e
 
@@ -262,7 +272,7 @@ class SessionController(ISessionController):
             elif self.__current_mode == self.SessionModeType.SELECTION:
                 self.__session_state.save_selection(new_name)
             else:
-                assert(False)
+                assert False
         except FileIOException as e:
             action = UXAction(UXActionType.ERROR, e)
             return action
@@ -274,9 +284,9 @@ class SessionController(ISessionController):
         return self._no_op_operation(append_action)
 
     def _clear_operation(self, clear_action):
-        if(self.__current_mode == self.SessionModeType.MAIN):
-            assert(session_action.get_data() is not None)
-            target_name = session_action.get_data()
+        if self.__current_mode == self.SessionModeType.MAIN:
+            assert (clear_action.get_data() is not None)
+            target_name = clear_action.get_data()
 
             # Already verified by the semantic check
             assert self.__session_state.criteria_exists(
@@ -317,7 +327,6 @@ class SessionController(ISessionController):
         :return: UXAction instructing the Repl how to proceed
         """
         try:
-            ux_action = None
             ast = self.__parser_controller.parse(string_input)
             ast = self._transform_ast(ast)
             session_action = self.__evaluator.evaluate(
@@ -337,9 +346,9 @@ class SessionController(ISessionController):
             asts = []
             lines = self.__session_state.load_criteria(criteria_name)
             for line in lines:
-                ast = self.__parser_controller.parse(line)
-                ast = self._transform_ast(ast)
-                asts.append(ast)
+                line_ast = self.__parser_controller.parse(line)
+                line_ast = self._transform_ast(line_ast)
+                asts.append(line_ast)
             return asts
 
         def get_loaded_fields():
@@ -353,7 +362,7 @@ class SessionController(ISessionController):
             return self.__session_state.criteria_exists(criteria_name)
 
         def is_selection(selection_name):
-            return self.__session_state.criteria_exists(criteria_name)
+            return self.__session_state.criteria_exists(selection_name)
 
         def module_exists(module_name):
             return self.__module_controller.module_is_registered(module_name)
