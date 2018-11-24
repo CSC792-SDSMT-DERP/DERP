@@ -6,6 +6,14 @@ Class definition for the Repl object.
 from derp.session import UXActionType, UXAction, SessionController, UXActionModeType
 from .PostReader import PostReader
 
+import os
+import stat
+
+
+def executing_a_file():
+    mode = os.fstat(0).st_mode
+    return stat.S_ISFIFO(mode) or stat.S_ISREG(mode)
+
 
 class Repl:
     """
@@ -82,6 +90,9 @@ class Repl:
         while not self.__exiting:
             try:
                 string_input = input(self.__prompt)
+                if executing_a_file():
+                    print(string_input)
+
                 self._handle_input(string_input)
             except EOFError as e:
                 self.__exiting = True
