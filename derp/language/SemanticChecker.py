@@ -37,7 +37,6 @@ class SemanticChecker():
             * Going to creation or selection mode with no modules loaded
         * Selection/Criteria Mode
             * Matching X but criteria X does not exist
-            * Matching X but no modules are loaded to provide the fields used in X
             * Save as X but X already exists as other type
         """
         for visitor in self.__visitors:

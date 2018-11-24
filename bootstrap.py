@@ -9,7 +9,8 @@ from derp.session import SessionController
 from derp.session.session_state import FileManager
 from derp.selections.execution import SelectionExecutorFactory
 from frontend import Repl, PostReader
-from modules import MockModule
+
+from derp.session.tests.mock_module import MockModule
 
 
 def main():

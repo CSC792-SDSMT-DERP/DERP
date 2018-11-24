@@ -137,5 +137,6 @@ class Transformer(ITransformer):
         # Reduce; may raise Semantic Exceptions
         ast = reducer.transform(ast)
 
+        print(ast.pretty())
 
         return ast
