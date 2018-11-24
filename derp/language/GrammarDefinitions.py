@@ -97,7 +97,7 @@ _selection_mode_only_grammar = Grammar({
     'read_expression':  '"read"i',
 
     'add_selector': ('"from"i source qualifier_or? -> selector'),
-    'remove_selector': ('qualifier_or -> selector'),
+    'remove_selector': ('"from"i source qualifier_or? -> selector', 'qualifier_or -> selector'),
     'source':   ('source ( "and"i | "or"i ) source -> source_or', 'string -> source_selection')
 })
 
