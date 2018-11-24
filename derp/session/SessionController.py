@@ -11,7 +11,7 @@ from .ISessionController import ISessionController
 from .SessionAction import SessionAction, SessionActionType, SessionActionModeType
 from .UXAction import UXAction, UXActionType, UXActionModeType
 from .session_state import *
-from .selection_execution import *
+from derp.selections.execution import *
 
 from enum import Enum
 

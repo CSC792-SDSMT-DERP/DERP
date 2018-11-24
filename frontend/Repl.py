@@ -44,7 +44,7 @@ class Repl:
         self.__prompt = self.__prompts[action.get_data()]
 
     def _handle_no_op(self, action):
-        print("")
+        pass
 
     def _handle_recall(self, action):
         print("\n".join(action.get_data()))
