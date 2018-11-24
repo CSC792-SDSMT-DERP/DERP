@@ -1,0 +1,25 @@
+# example of a very simple runner configuration yaml file
+stages:
+#  - build
+  - test
+#  - package
+#  - deploy
+
+#build_phase_1:
+#  stage: build
+#  script: "its python so it basically doesn't build, but if we did have builds it could go here"
+# for example (with dotnet): dotnet build DERP.sln
+# or: msbuild DERP.dll Tests.dll /p:Framework=".NETStandard,v=2.0" /p:Platform="Any CPU"
+
+test_group_1:
+  stage: test
+  script: "python -m pytest"
+
+#packaging:
+#  stage: package
+#  script: "whatever freezing solution works"
+
+#example for linux runner (ignoring the problem of credentials which appears to have several solutions)
+#demo_machine_deployments:
+#  stage: deploy
+#  script: "scp -r /build_artifacts ourdemoaccount@our_demo_machine:/demo/folder/here/"
