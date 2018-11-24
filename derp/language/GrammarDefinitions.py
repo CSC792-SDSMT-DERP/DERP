@@ -87,16 +87,16 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
 })
 
 _criteria_mode_only_grammar = Grammar({
-    'remove_selector': 'qualifier_or',
-    'add_selector': 'qualifier_or'
+    'remove_selector': 'qualifier_or -> selector',
+    'add_selector': 'qualifier_or -> selector'
 })
 
 _selection_mode_only_grammar = Grammar({
     '_expression':       'read_expression',
     'read_expression':  '"read"i',
 
-    'add_selector': ('"from"i source qualifier_or?'),
-    'remove_selector': ('qualifier_or'),
+    'add_selector': ('"from"i source qualifier_or? -> selector'),
+    'remove_selector': ('qualifier_or -> selector'),
     'source':   ('source ( "and"i | "or"i ) source -> source_or', 'string -> source_selection')
 })
 

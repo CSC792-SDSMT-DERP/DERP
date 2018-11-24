@@ -58,6 +58,19 @@ class Transformer(ITransformer):
             return LarkToken('STRING', unquoted_string)
 
     class ModuleSourceTransformer(LarkTransformer):
+        def selector(self, args):
+            return LarkTree("selector", *args)
+
+        def source_or(self, args):
+            assert(len(args) == 2)
+
+            return args[0] + args[1]
+
+        def source_selection(self, args):
+            assert(len(args) == 1)
+
+            return [LarkTree("source_selection", args)]
+
         def source_module(self, args):
             # Should only have 1 child, an ast for some module source grammar
             assert(len(args) == 1)
@@ -76,7 +89,7 @@ class Transformer(ITransformer):
             module_name = "".join(
                 x if x.isalnum() else '' for x in name_parts[0].lower())
 
-            return LarkTree("source_module", [module_name, args[0]])
+            return [LarkTree("source_module", [module_name, args[0]])]
 
     def transform(self, ast):
         """
