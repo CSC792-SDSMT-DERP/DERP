@@ -19,10 +19,10 @@ from lark import Tree as LarkTree, Token as LarkToken
 
 class Transformer(ITransformer):
 
-    def __init__(self, load_criteria, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded,
+    def __init__(self, load_asts, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded,
                  any_modules_loaded):
         """
-        :param load_criteria: function to get parse trees for each line of a criteria. Should raise TextParseException, SemanticException, or FileIOException on failure
+        :param load_asts: function to get parse trees for each line of a criteria or selection. Should raise TextParseException, SemanticException, or FileIOException on failure
         :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
         :param is_criteria: boolean function to check if a criteria exists
         :param is_selection: boolean function to check if a selection exists
@@ -30,7 +30,7 @@ class Transformer(ITransformer):
         :param module_loaded: boolean function to check if a module is loaded
         :param any_modules_loaded: boolean function to check if at least 1 module is loaded
         """
-        self.__load_criteria = load_criteria
+        self.__load_asts = load_asts
         self.__get_loaded_fields = get_loaded_fields
         self.__is_criteria = is_criteria
         self.__is_selection = is_selection
@@ -58,6 +58,10 @@ class Transformer(ITransformer):
             return LarkToken('STRING', unquoted_string)
 
     class ModuleSourceTransformer(LarkTransformer):
+        def __init__(self, load_asts, selection_exists):
+            self.__load_asts = load_asts
+            self.__selection_exists = selection_exists
+
         def selector(self, args):
             return LarkTree("selector", *args)
 
@@ -69,7 +73,15 @@ class Transformer(ITransformer):
         def source_selection(self, args):
             assert(len(args) == 1)
 
-            return [LarkTree("source_selection", args)]
+            selection_name = args[0]
+
+            if not self.__selection_exists(selection_name):
+                raise SemanticException(
+                    "Selection '" + selection_name + "' does not exist")
+
+            asts = get_subtitute_ast_list(self.__load_asts, selection_name)
+
+            return [LarkTree("source_selection", [asts, selection_name])]
 
         def source_module(self, args):
             # Should only have 1 child, an ast for some module source grammar
@@ -124,13 +136,14 @@ class Transformer(ITransformer):
 
         # Parse module names in source nodes
         # And convert string nodes to STRING tokens with no quotes around them
-        source_reduce = self.ModuleSourceTransformer()
+        source_reduce = self.ModuleSourceTransformer(
+            self.__load_asts, self.__is_selection)
         string_reduce = self.StringQuoteRemover()
 
         # Chain reducers in order
         reducer = string_reduce * qualifier_reduce * \
-                  source_reduce * \
-                  MatchingQualifierReducer(self.__is_criteria, self.__load_criteria)
+            source_reduce * \
+            MatchingQualifierReducer(self.__is_criteria, self.__load_asts)
 
         # Reduce; may raise Semantic Exceptions
         ast = reducer.transform(ast)

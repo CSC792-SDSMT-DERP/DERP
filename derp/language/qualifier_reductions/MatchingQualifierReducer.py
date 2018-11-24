@@ -4,6 +4,38 @@ from lark import Tree, Token
 from derp.exceptions import *
 
 
+def get_subtitute_ast_list(acquire_asts, criteria_or_selection_name):
+    asts = None
+    try:
+        asts = acquire_asts(criteria_or_selection_name)
+
+    # Already checked that the item exists, so the only way this fails is a file read error
+    except FileIOException as e:
+        raise SemanticException("Unable to load '" + criteria_or_selection_name + "' from disk") from e
+
+    # Text in file was semantically checked when it was saved, so this only happens if the set of valid fields
+    # changes. (Or the file was modified after it was written or not written by interpreter)
+    except TextParseException as e:
+        raise SemanticException("Unable to parse '" + criteria_or_selection_name + "': " + e.args[0]) from e
+
+    # Should only happen if there is a 'matching' qualifier in the loaded criteria or selection, and it fails to parse
+    # or if the criteria/selection substituted was not written by the interpreter
+    except SemanticException as e:
+        raise
+
+    # Criteria or selection contains a circular reference
+    except RecursionError as e:
+        raise SemanticException("'" + criteria_or_selection_name + "' contains a circular reference") from e
+
+    # No other exceptions should happen
+    except Exception as e:
+        assert False
+
+    assert(asts is not None)
+
+    return asts
+
+
 class MatchingQualifierReducer(Transformer):
     """
     Find matching check expressions and evaluate the data contained, converting the
@@ -32,32 +64,6 @@ class MatchingQualifierReducer(Transformer):
             raise SemanticException(
                 "Criteria '" + criteria_name + "' does not exist")
 
-        asts = None
-        try:
-            asts = self.__get_asts(criteria_name)
+        asts = get_subtitute_ast_list(self.__get_asts, criteria_name)
 
-        # Already checked that the criteria exists, so the only way this fails is a file read error
-        except FileIOException as e:
-            raise SemanticException("Unable to load '" + criteria_name + "' from disk") from e
-
-        # Text in file was semantically checked when it was saved, so this only happens if the set of valid fields
-        # changes. (Or the file was modified after it was written or not written by interpreter)
-        except TextParseException as e:
-            raise SemanticException("Unable to parse '" + criteria_name + "': " + e.args[0]) from e
-
-        # Should only happen if there is a 'matching' qualifier in the loaded criteria, and it fails to parse
-        # or if the criteria was not written by the interpreter
-        except SemanticException as e:
-            raise
-
-        # Criteria contains a circular reference
-        except RecursionError as e:
-            raise SemanticException("Criteria '" + criteria_name + "' contains a circular reference") from e
-
-        # No other exceptions should happen
-        except Exception as e:
-            assert False
-
-        assert(asts is not None)
-
-        return Tree('match_qualifier', [asts, negate])
+        return Tree('match_qualifier', [asts, negate, criteria_name])

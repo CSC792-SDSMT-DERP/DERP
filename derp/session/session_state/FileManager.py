@@ -68,7 +68,8 @@ class FileManager(IFileManager):
 
                     # Remove \n from lines, and remove empty lines
                     delimited_lines = list(filter(lambda l: len(
-                        l) != 0, map(lambda s: str(s[0:-1]), lines)))
+                        # Unsure why, but it seems like removing the \n is required only sometimes?
+                        l) != 0, map(lambda s: str(s[0:-1]) if s.endswith('\n') else s, lines)))
                     return delimited_lines
             except IOError as e:
                 raise FileIOException(target_file, FileIOException.OperationType.READ,

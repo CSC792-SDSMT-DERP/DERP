@@ -47,11 +47,26 @@ class SessionController(ISessionController):
 
         # Set up the transformer. Requires a few helper functions to communicate with the
         # rest of the system.
-        def load_criteria(criteria_name):
+        def load_asts(criteria_or_selection_name):
             asts = []
-            lines = self.__session_state.load_criteria(criteria_name)
+
+            assert self.__session_state.criteria_exists(
+                criteria_or_selection_name) or self.__session_state.selection_exists(criteria_or_selection_name)
+
+            lines = None
+            parser = None
+
+            if self.__session_state.criteria_exists(criteria_or_selection_name):
+                lines = self.__session_state.load_criteria(
+                    criteria_or_selection_name)
+                parser = self.__criteria_mode_parser
+            else:
+                lines = self.__session_state.load_selection(
+                    criteria_or_selection_name)
+                parser = self.__selection_mode_parser
+
             for line in lines:
-                line_ast = self.__criteria_mode_parser.parse(line)
+                line_ast = parser.parse(line)
                 line_ast = self.__transformer.transform(line_ast)
                 asts.append(line_ast)
             return asts
@@ -64,7 +79,7 @@ class SessionController(ISessionController):
             return fields
 
         self.__transformer = language.Transformer(
-            load_criteria,
+            load_asts,
             get_loaded_fields,
             lambda criteria_name: self.__session_state.criteria_exists(
                 criteria_name),

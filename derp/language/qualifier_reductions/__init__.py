@@ -1,7 +1,7 @@
 from .AboutQualifierReducer import AboutQualifierReducer
 from .BoolQualifierReducer import BoolQualifierReducer
 from .DateQualifierReducer import DateQualifierReducer
-from .MatchingQualifierReducer import MatchingQualifierReducer
+from .MatchingQualifierReducer import MatchingQualifierReducer, get_subtitute_ast_list
 from .NumberQualifierReducer import NumberQualifierReducer
 from .StringQualifierReducer import StringQualifierReducer
 from .SubstringQualifierReducer import SubstringQualifierReducer
