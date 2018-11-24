@@ -1,6 +1,7 @@
 from .Grammar import Grammar
 from .Parser import Parser
 from .Transformer import Transformer
+from .SemanticChecker import SemanticChecker
 
 
 class __DerpGrammars:

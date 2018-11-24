@@ -10,7 +10,6 @@ TODO: Semantic checks for
 
 from .ITransformer import ITransformer
 from .qualifier_reductions import *
-
 from derp.exceptions import SemanticException
 
 from lark import Transformer as LarkTransformer
@@ -19,24 +18,15 @@ from lark import Tree as LarkTree, Token as LarkToken
 
 class Transformer(ITransformer):
 
-    def __init__(self, load_asts, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded,
-                 any_modules_loaded):
+    def __init__(self, load_asts, is_criteria, is_selection):
         """
         :param load_asts: function to get parse trees for each line of a criteria or selection. Should raise TextParseException, SemanticException, or FileIOException on failure
-        :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
         :param is_criteria: boolean function to check if a criteria exists
         :param is_selection: boolean function to check if a selection exists
-        :param module_exists: boolean function to check if a module exists, loaded or unloaded
-        :param module_loaded: boolean function to check if a module is loaded
-        :param any_modules_loaded: boolean function to check if at least 1 module is loaded
         """
         self.__load_asts = load_asts
-        self.__get_loaded_fields = get_loaded_fields
         self.__is_criteria = is_criteria
         self.__is_selection = is_selection
-        self.__module_exists = module_exists
-        self.__module_loaded = module_loaded
-        self.__any_modules_loaded = any_modules_loaded
 
     """
     Defines the transform function which performs semantic analysis and macro expansion on an AST
@@ -110,25 +100,19 @@ class Transformer(ITransformer):
 
     def transform(self, ast):
         """
-        Performs semantic analysis on the input tree and macro expansion.
-        Returns the transformed AST if the input is semantically correct.
+        Reduces the Lark AST, producing the defined DERP interpreter ast
+        Performs some DERP semantic checks. The remaining semantic checks are performed
+        by the SemanticChecker type
+        Returns the transformed AST
         May raise derp.exceptions.SemanticException.
 
         Semantic Checks
-        * Date provided which doesn't exist
-        * Exact date check requested, but month and/or day not specified
-
-        * Main Mode
-            * Recall X or Clear X but X does not exist
-            * Read X but selection X does not exist
-            * Load X but X doesn't exist
-            * Load X but X is loaded
-            * Unload X but X not loaded
-            * Going to creation or selection mode with no modules loaded
-        * Selection/Criteria Mode
-            * Matching X but criteria X does not exist
-            * Matching X but no modules are loaded to provide the fields used in X
-            * Save as X but X already exists as other type
+           * Date used in date check is not a valid date
+           * Date used in 'on date' check does not specify day and month
+           * matching criteria check or add from selection results in recursive query
+           * Matching X but criteria X does not exist
+           * Matching X but no modules are loaded to provide the fields used in X
+           * Add from X but selection X does not exist
 
         :param ast: a parse tree as created by an IParser
         :return: A transformed, semantically valid AST
@@ -153,6 +137,5 @@ class Transformer(ITransformer):
         # Reduce; may raise Semantic Exceptions
         ast = reducer.transform(ast)
 
-        # Perform other semantic checks
 
         return ast

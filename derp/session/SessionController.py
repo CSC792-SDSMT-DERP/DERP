@@ -68,6 +68,7 @@ class SessionController(ISessionController):
             for line in lines:
                 line_ast = parser.parse(line)
                 line_ast = self.__transformer.transform(line_ast)
+                self.__semantic_check.check(line_ast)
                 asts.append(line_ast)
             return asts
 
@@ -80,7 +81,13 @@ class SessionController(ISessionController):
 
         self.__transformer = language.Transformer(
             load_asts,
-            get_loaded_fields,
+            lambda criteria_name: self.__session_state.criteria_exists(
+                criteria_name),
+            lambda selection_name: self.__session_state.selection_exists(
+                selection_name)
+        )
+
+        self.__semantic_check = language.SemanticChecker(get_loaded_fields,
             lambda criteria_name: self.__session_state.criteria_exists(
                 criteria_name),
             lambda selection_name: self.__session_state.selection_exists(
@@ -89,8 +96,9 @@ class SessionController(ISessionController):
                 module_name),
             lambda module_name: self.__module_controller.module_is_loaded(
                 module_name),
-            lambda: len(self.__module_controller.loaded_modules) != 0,
-        )
+            lambda: len(self.__module_controller.loaded_modules()) != 0,
+            lambda: self.__current_mode == self.SessionModeType.SELECTION,
+            lambda: len(self.__session_state.get_buffer().get_commands()))
 
         self.__evaluator = Evaluator()
 
@@ -209,6 +217,7 @@ class SessionController(ISessionController):
         for line in lines:
             ast = self.__selection_mode_parser.parse(line)
             ast = self.__transformer.transform(ast)
+            self.__semantic_check.check(ast)
             ast_list.append(ast)
 
         executor = self.__selection_executor_factory.build_selection_executor(
@@ -378,6 +387,7 @@ class SessionController(ISessionController):
         try:
             ast = self.__parser_controller.parse(string_input)
             ast = self.__transformer.transform(ast)
+            self.__semantic_check.check(ast)
             session_action = self.__evaluator.evaluate(
                 ast)  # type: SessionAction
 
