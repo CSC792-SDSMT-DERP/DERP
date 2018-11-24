@@ -80,5 +80,9 @@ class Repl:
         :return: None
         """
         while not self.__exiting:
-            string_input = input(self.__prompt)
-            self._handle_input(string_input)
+            try:
+                string_input = input(self.__prompt)
+                self._handle_input(string_input)
+            except EOFError as e:
+                self.__exiting = True
+                print("[EOF, exiting...]")
