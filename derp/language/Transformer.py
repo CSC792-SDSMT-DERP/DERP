@@ -62,13 +62,18 @@ class Transformer(ITransformer):
             self.__load_asts = load_asts
             self.__selection_exists = selection_exists
 
-        def selector(self, args):
-            return LarkTree("selector", *args)
-
         def source_or(self, args):
             assert(len(args) == 2)
 
-            return args[0] + args[1]
+            new_children = []
+
+            for child in args:
+                if child.data == "source_or":
+                    new_children = new_children + child.children
+                else:
+                    new_children.append(child)
+
+            return LarkTree("source_or", new_children)
 
         def source_selection(self, args):
             assert(len(args) == 1)
@@ -81,7 +86,7 @@ class Transformer(ITransformer):
 
             asts = get_subtitute_ast_list(self.__load_asts, selection_name)
 
-            return [LarkTree("source_selection", [asts, selection_name])]
+            return LarkTree("source_selection", [asts, selection_name])
 
         def source_module(self, args):
             # Should only have 1 child, an ast for some module source grammar
@@ -101,7 +106,7 @@ class Transformer(ITransformer):
             module_name = "".join(
                 x if x.isalnum() else '' for x in name_parts[0].lower())
 
-            return [LarkTree("source_module", [module_name, args[0]])]
+            return LarkTree("source_module", [module_name, args[0]])
 
     def transform(self, ast):
         """
