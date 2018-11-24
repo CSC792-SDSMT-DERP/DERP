@@ -51,7 +51,7 @@ class SessionController(ISessionController):
             asts = []
             lines = self.__session_state.load_criteria(criteria_name)
             for line in lines:
-                line_ast = self.__parser_controller.parse(line)
+                line_ast = self.__criteria_mode_parser.parse(line)
                 line_ast = self.__transformer.transform(line_ast)
                 asts.append(line_ast)
             return asts
