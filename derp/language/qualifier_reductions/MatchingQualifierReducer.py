@@ -9,19 +9,6 @@ class MatchingQualifierReducer(Transformer):
     Find matching check expressions and evaluate the data contained, converting the
     node to the AST for the qualifiers of the criteria to be matched
     """
-    class __AddRemoveReducer(Transformer):
-        """
-        Ignores statement and expression nodes in the parse tree, leaving only add_expression or remove_expression
-        as the root node
-        """
-
-        def statement(self, children):
-            assert len(children) == 1
-            return children[0]
-
-        def expression(self, children):
-            assert len(children) == 1
-            return children[0]
 
     def __init__(self, criteria_exists, load_criteria):
         self.__get_asts = load_criteria
@@ -73,11 +60,4 @@ class MatchingQualifierReducer(Transformer):
 
         assert(asts is not None)
 
-        # Pull out the add_expression and remove_expression in each of the loaded asts
-        reduced_asts = []
-        t = self.__AddRemoveReducer()
-
-        for ast in asts:
-            reduced_asts.append(t.transform(ast))
-
-        return Tree('match_qualifier', [reduced_asts, negate])
+        return Tree('match_qualifier', [asts, negate])

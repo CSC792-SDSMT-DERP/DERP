@@ -7,7 +7,7 @@ ModuleController, and Module objects on startup. Performs any required dependenc
 from derp.modules import ModuleController
 from derp.session import SessionController
 from derp.session.session_state import FileManager
-from derp.session.selection_execution import SelectionExecutorFactory
+from derp.selections.execution import SelectionExecutorFactory
 from frontend import Repl, PostReader
 from modules import MockModule
 

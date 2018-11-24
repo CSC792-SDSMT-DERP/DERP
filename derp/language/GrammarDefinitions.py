@@ -6,8 +6,8 @@ _basic_grammar = Grammar({
     'NUMBER':   '/-?[0-9]+/',
     'string':   'ESCAPED_STRING',
 
-    'statement':    'expression?',
-    'expression':   ('stop_expression',
+    'statement':    '_expression?',
+    '_expression':   ('stop_expression',
                      'recall_expression'
                      ),
 
@@ -15,7 +15,7 @@ _basic_grammar = Grammar({
 }, 'statement')
 
 _main_mode_only_grammar = Grammar({
-    'expression': ('load_expression',
+    '_expression': ('load_expression',
                    'unload_expression',
                    'clear_expression',
                    'read_expression',
@@ -33,7 +33,7 @@ _main_mode_only_grammar = Grammar({
 })
 
 _criteria_and_selection_modes_shared_grammar = Grammar({
-    'expression':           ('save_expression',
+    '_expression':           ('save_expression',
                              'add_expression',
                              'remove_expression'),
 
@@ -43,12 +43,12 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     'remove_expression':    '"remove posts"i selector',
 
     '?qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
-    '?qualifier_and':    ('qualifier_and "and"i? qualifier', 'qualifier'),
+    '?qualifier_and':    ('qualifier_and "and"i? _qualifier', '_qualifier'),
 
-    'qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
+    '_qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
                      'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
-    'date_qualifier':       'WITH_EXP _ARTICLE? FIELD _date_check date',
+    'date_qualifier':       'WITH_EXP _ARTICLE? FIELD "date"i _date_check date',
     'substring_qualifier':  'WITH_EXP string _substring_check FIELD',
     'boolean_qualifier':    '_boolean_check FIELD',
     'string_qualifier':     '_string_check FIELD string',
@@ -91,7 +91,7 @@ _criteria_mode_only_grammar = Grammar({
 })
 
 _selection_mode_only_grammar = Grammar({
-    'expression':       'read_expression',
+    '_expression':       'read_expression',
     'read_expression':  '"read"i',
 
     'selector': ('qualifier_or', '"from"i source qualifier_or?'),
