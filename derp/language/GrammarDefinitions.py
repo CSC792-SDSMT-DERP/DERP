@@ -8,18 +8,18 @@ _basic_grammar = Grammar({
 
     'statement':    '_expression?',
     '_expression':   ('stop_expression',
-                     'recall_expression'
-                     ),
+                      'recall_expression'
+                      ),
 
     'stop_expression': ('"stop"i', '"exit"i')
 }, 'statement')
 
 _main_mode_only_grammar = Grammar({
     '_expression': ('load_expression',
-                   'unload_expression',
-                   'clear_expression',
-                   'read_expression',
-                   'create_expression'),
+                    'unload_expression',
+                    'clear_expression',
+                    'read_expression',
+                    'create_expression'),
 
     'load_expression':      '"load"i string',
     'unload_expression':    '"unload"i string',
@@ -34,19 +34,19 @@ _main_mode_only_grammar = Grammar({
 
 _criteria_and_selection_modes_shared_grammar = Grammar({
     '_expression':           ('save_expression',
-                             'add_expression',
-                             'remove_expression'),
+                              'add_expression',
+                              'remove_expression'),
 
     'recall_expression':    '"recall"i',
     'save_expression':      '"save as"i string',
-    'add_expression':       '"add posts"i selector',
-    'remove_expression':    '"remove posts"i selector',
+    'add_expression':       '"add posts"i add_selector',
+    'remove_expression':    '"remove posts"i remove_selector',
 
     '?qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
     '?qualifier_and':    ('qualifier_and "and"i? _qualifier', '_qualifier'),
 
     '_qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
-                     'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
+                      'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
     'date_qualifier':       'WITH_EXP _ARTICLE? FIELD "date"i _date_check date',
     'substring_qualifier':  'WITH_EXP string _substring_check FIELD',
@@ -87,14 +87,16 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
 })
 
 _criteria_mode_only_grammar = Grammar({
-    'selector': 'qualifier_or'
+    'remove_selector': 'qualifier_or',
+    'add_selector': 'qualifier_or'
 })
 
 _selection_mode_only_grammar = Grammar({
     '_expression':       'read_expression',
     'read_expression':  '"read"i',
 
-    'selector': ('qualifier_or', '"from"i source qualifier_or?'),
+    'add_selector': ('"from"i source qualifier_or?'),
+    'remove_selector': ('qualifier_or'),
     'source':   ('source ( "and"i | "or"i ) source -> source_or', 'string -> source_selection')
 })
 
