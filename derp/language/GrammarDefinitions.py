@@ -8,7 +8,8 @@ _basic_grammar = Grammar({
 
     'statement':    '_expression?',
     '_expression':   ('stop_expression',
-                      'recall_expression'
+                      'recall_expression',
+                      'clear_expression'
                       ),
 
     'stop_expression': ('"stop"i', '"exit"i')
@@ -17,7 +18,6 @@ _basic_grammar = Grammar({
 _main_mode_only_grammar = Grammar({
     '_expression': ('load_expression',
                     'unload_expression',
-                    'clear_expression',
                     'read_expression',
                     'create_expression'),
 
@@ -38,6 +38,7 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
                               'remove_expression'),
 
     'recall_expression':    '"recall"i',
+    'clear_expression':     '"clear"i',
     'save_expression':      '"save as"i string',
     'add_expression':       '"add posts"i add_selector',
     'remove_expression':    '"remove posts"i remove_selector',

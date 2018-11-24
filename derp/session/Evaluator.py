@@ -48,10 +48,12 @@ class Evaluator(IEvaluator):
 
             def clear_expression(self, tree):
                 nonlocal result_action
-                assert(len(tree.children) == 1)
+                assert(len(tree.children) == 1 or len(tree.children) == 0)
+
+                target = None if len(tree.children) == 0 else tree.children[0]
 
                 result_action = SessionAction(
-                    SessionActionType.CLEAR_BUFFER, tree.children[0])
+                    SessionActionType.CLEAR_BUFFER, target)
 
             def save_expression(self, tree):
                 nonlocal result_action
