@@ -66,10 +66,14 @@ class SessionController(ISessionController):
         self.__transformer = language.Transformer(
             load_criteria,
             get_loaded_fields,
-            lambda criteria_name: self.__session_state.criteria_exists(criteria_name),
-            lambda selection_name: self.__session_state.selection_exists(selection_name),
-            lambda module_name: self.__module_controller.module_is_registered(module_name),
-            lambda module_name: self.__module_controller.module_is_loaded(module_name),
+            lambda criteria_name: self.__session_state.criteria_exists(
+                criteria_name),
+            lambda selection_name: self.__session_state.selection_exists(
+                selection_name),
+            lambda module_name: self.__module_controller.module_is_registered(
+                module_name),
+            lambda module_name: self.__module_controller.module_is_loaded(
+                module_name),
             lambda: len(self.__module_controller.loaded_modules) != 0,
         )
 
@@ -263,7 +267,8 @@ class SessionController(ISessionController):
                             grammar_source = key
 
                     assert(grammar_source is not None)
-                    source_productions.append(grammar_source)
+                    source_productions.append(
+                        grammar_source + " -> source_module")
 
                 assert(len(source_productions) > 0)
 
@@ -272,7 +277,8 @@ class SessionController(ISessionController):
                     {'source': source_productions}
                 )
 
-                source_grammars = [module.source_grammar() for module in active_modules]
+                source_grammars = [module.source_grammar()
+                                   for module in active_modules]
 
                 self.__criteria_mode_parser = language.Parser(
                     language.grammars.criteria_grammar(),
