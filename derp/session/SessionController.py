@@ -337,6 +337,7 @@ class SessionController(ISessionController):
     def _switch_to_main_mode(self):
         self.__current_mode = self.SessionModeType.MAIN
         self.__parser_controller = self.__main_mode_parser
+        self.__session_state.get_buffer().clear()
 
     def _switch_to_criteria_mode(self):
         self.__current_mode = self.SessionModeType.CRITERIA
