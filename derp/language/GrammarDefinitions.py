@@ -49,7 +49,7 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
     '_qualifier':    ('date_qualifier', 'substring_qualifier', 'boolean_qualifier',
                       'string_qualifier', 'number_qualifier', 'about_qualifier', 'match_qualifier'),
 
-    'date_qualifier':       'WITH_EXP _ARTICLE? FIELD "date"i _date_check date',
+    'date_qualifier':       'WITH_EXP _ARTICLE? FIELD _date_check date',
     'substring_qualifier':  'WITH_EXP string _substring_check FIELD',
     'boolean_qualifier':    '_boolean_check FIELD',
     'string_qualifier':     '_string_check FIELD string',
