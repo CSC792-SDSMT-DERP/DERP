@@ -19,6 +19,7 @@ class IModuleController(IPostQueryable):
         :raises ModuleRegistrationException: raised if a module is already registered with a given name
         :raises ModuleDefinitionException: raised if the module is malformed
         :param module: A derp.module.IModule to register
+        :raises ModuleNotLoadedException: module queried is not loaded
         """
         pass
 

@@ -25,9 +25,19 @@ class ModuleController(IModuleController):
         :param source_ast: A source_ast handled entirely by a single module.
         :param qualifier_tree: A tree representing a logical expression which the posts must match.
         :return: a PostIterator which iterates over the returned set of posts
+        :raises ModuleNotLoadedException: module queried is not loaded
         """
-        # TODO: I'm not sure how the source ast will be parsed at the moment
-        pass
+        assert(source_ast.data == "source_module")
+
+        module_name = source_ast.children[0].lower()
+        module_source_ast = source_ast.children[1]
+
+        if not self.module_is_loaded(module_name):
+            raise ModuleNotLoadedException(
+                "Module " + module_name + " not loaded")
+
+        return self.__modules[module_name].get_posts(
+            module_source_ast, qualifier_tree)
 
     def register_module(self, module):
         """
@@ -39,25 +49,26 @@ class ModuleController(IModuleController):
 
         # TODO: Find a way to enforce IModule on the module and raise ModuleDefinitionException if needed
 
-        if module.name() in self.__modules:
+        module_name = module.name().lower()
+        if module_name in self.__modules:
             raise ModuleRegistrationException(
-                "Module " + module.name() + " registered twice")
+                "Module " + module_name + " registered twice")
 
-        self.__modules[module.name()] = module
+        self.__modules[module_name] = module
 
     def module_is_registered(self, name):
         """
         Checks if a module is registered, regardless of if it is loaded
         :param name: name of the module to check for
         """
-        return name in self.__modules
+        return name.lower() in self.__modules
 
     def module_is_loaded(self, name):
         """
         Checks if a module is loaded
         :param name: name of the module to check for
         """
-        return name in self.__active_modules
+        return name.lower() in self.__active_modules
 
     def load_module(self, name):
         """
@@ -66,11 +77,12 @@ class ModuleController(IModuleController):
         :param name: name of the module to load
         :type name: str
         """
-        if name not in self.__modules:
+        module_name = name.lower()
+        if module_name not in self.__modules:
             raise ModuleNotRegisteredException(
-                "Module " + name + " not registered")
+                "Module " + module_name + " not registered")
 
-        self.__active_modules.add(name)
+        self.__active_modules.add(module_name)
 
     def unload_module(self, name):
         """
@@ -80,10 +92,12 @@ class ModuleController(IModuleController):
         :type name: str
         """
         # TODO : Is this really an exception?
-        if name not in self.__active_modules:
-            raise ModuleNotLoadedException("Module " + name + " not loaded")
+        module_name = name.lower()
+        if module_name not in self.__active_modules:
+            raise ModuleNotLoadedException(
+                "Module " + module_name + " not loaded")
 
-        self.__active_modules.remove(name)
+        self.__active_modules.remove(module_name)
 
     def loaded_modules(self):
         """
