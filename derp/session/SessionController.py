@@ -191,6 +191,9 @@ class SessionController(ISessionController):
         assert(session_action.get_data() is not None)
         target_switch = session_action.get_data()
         ux_action = UXActionType.CHANGE_MODE
+        ux_mode = None
+
+        print("Switch mode: ", session_action.get_data())
 
         if target_switch == SessionActionModeType.EXIT:
             if self.__current_mode == self.SessionModeType.MAIN:
@@ -208,6 +211,7 @@ class SessionController(ISessionController):
         else:
             assert False
 
+        print("Switch mode: ", ux_action, ux_mode)
         action = UXAction(ux_action, ux_mode,
                           warnings=session_action.get_warnings())
         return action

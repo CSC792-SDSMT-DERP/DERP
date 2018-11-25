@@ -25,5 +25,5 @@ def execute_and_check_derp_statements(sessioncontroller_impl, statements_and_che
                 print("Check exception is type", command[2])
                 assert isinstance(result.get_data(), command[2])
             else:
-                print("Check result data is", command[2])
+                print("Check result data is", command[2], result.get_data())
                 assert command[2] == result.get_data()
