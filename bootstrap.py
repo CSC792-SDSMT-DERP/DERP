@@ -7,10 +7,14 @@ ModuleController, and Module objects on startup. Performs any required dependenc
 from derp.modules import ModuleController
 from derp.session import SessionController
 from derp.session.session_state import FileManager
+from derp.exceptions import ModuleInitializationException
 from derp.selections.execution import SelectionExecutorFactory
 from frontend import Repl, PostReader
 
 from derp.session.tests.mock_module import MockModule
+from modules import RedditModule
+
+import json
 
 
 def main():
@@ -33,6 +37,29 @@ def main():
     # in the future this could do discovery
     mock_module = MockModule()
     module_controller.register_module(mock_module)
+
+    reddit_creds_json = open("reddit_credentials.json", "r")
+    reddit_creds = json.load(reddit_creds_json)
+
+    """
+    At minimum, reddit_credentials.json must contain
+    {
+        "client_id": "",
+        "client_secret": ""
+    }
+
+    It may optionally provide
+    {
+        "username": "",
+        "password": ""
+    }
+    """
+
+    try:
+        reddit_module = RedditModule(**reddit_creds)
+        module_controller.register_module(reddit_module)
+    except ModuleInitializationException as e:
+        print("Failed to load reddit module: ", e)
 
     repl.read_eval_print_loop()
 

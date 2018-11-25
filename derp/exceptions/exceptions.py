@@ -6,15 +6,20 @@ class DerpException(Exception):
     pass
 
 
+class ModuleInitializationException(DerpException):
+    """ Base class of exceptions thrown when creating module instances """
+    pass
+
+
 class FileIOException(DerpException):
     """ Indicates that reading or writing files failed"""
 
     def __init__(self, path, operation, reason):
         """
         Create a new FileIOException with the path, the operation that failed, and the reason.
-        :param path: path that was involved in the IO operation
-        :param operation: type of IO operation
-        :param reason: reason for failure
+        : param path: path that was involved in the IO operation
+        : param operation: type of IO operation
+        : param reason: reason for failure
         """
         self.__path = path
         self.__operation = operation

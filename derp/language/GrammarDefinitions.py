@@ -101,17 +101,6 @@ _selection_mode_only_grammar = Grammar({
     'source':   ('source ( "and"i | "or"i ) source -> source_or', 'string -> source_selection')
 })
 
-_temporary_reddit_grammar = Grammar({
-    # Would be added by interpreter
-    'source':                  ('reddit_source -> source_module'),
-    'FIELD':                   ('"nsfw"', '"author"', '"title"', '"upvotes"', '"date"'),
-
-    # Would be defined by module
-    #   * Source rule must not begin with ? and must not begin with _
-    #   * Source rule may begin with ! or be all caps
-    'reddit_source':            ('"reddit"', '"subreddit" string')
-})
-
 MAIN_MODE_GRAMMAR = merge_grammars(_basic_grammar, _main_mode_only_grammar)
 
 # NOTE: Criteria and Selection mode grammars are not valid
