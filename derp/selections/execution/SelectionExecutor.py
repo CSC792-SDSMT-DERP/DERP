@@ -5,7 +5,7 @@ Class definition for the SelectionExecutor object.
 """
 
 
-class SelectionExecqutor:
+class SelectionExecutor:
     """
     Returns the results of a DERP selection.
     """
