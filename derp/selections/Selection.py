@@ -39,15 +39,15 @@ class AddSelectionExpression(SelectionExpression):
 
     def __init__(self, selector):
         self.__source_asts = []
-        source_node = selector.children[0]
 
-        if source_node.data == "source_or":
-            # TODO: Handle all of the children instead of only the first; all children will be either
-            #       source_module or source_selection nodes
-            source_node = source_node.children[0]
+        source_node = selector.children[0]
+        source_asts = [source_node]
+
+        if(source_node.data == "source_or"):
+            source_asts = source_node.children
 
         # TODO: If source_node is source_selection, handle nested selections
-        self.__source_asts = source_node.children
+        self.__source_asts = source_asts
 
         # TODO: Don't crash here if no qualifiers are given
         root_qualifier = selector.children[1]
