@@ -23,6 +23,7 @@ class IPost:
         Returns the module object which created a given post
         :return: the module object which created this post
         """
+        pass
 
     def field_data(self, field_name):
         """
