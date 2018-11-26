@@ -40,5 +40,5 @@ class MockModule(IModule):
 
     def filter_posts(self, qualifier_tree):
         for post in self.posts:
-            if qualifier_tree.evaluate(post):
+            if qualifier_tree is None or (qualifier_tree is not None and qualifier_tree.evaluate(post)):
                 yield post

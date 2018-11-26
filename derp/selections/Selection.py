@@ -114,7 +114,7 @@ class AddSelectionExpression(SelectionExpression):
 
         self.__source_asts = source_asts
 
-        if len(selector.children) != 0:
+        if len(selector.children) > 1:
             root_qualifier = selector.children[1]
             self.__q_tree = LarkQualifierConverter.convert(root_qualifier)
         else:
