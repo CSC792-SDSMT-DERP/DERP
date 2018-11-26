@@ -1,3 +1,7 @@
+from .RedditDefinitions import RedditInitializationException, RedditPostDefinition
+import prawcore
+import praw
+from derp.exceptions import ModuleInitializationException
 """
 RedditModule.py
 
@@ -6,21 +10,12 @@ Class definition for the RedditModule, the core module of the language.
 from derp.language import Grammar
 from derp.posts import PostDefinition, FieldType
 from derp.modules import IModule
-from derp.exceptions import ModuleInitializationException
-
-import praw
-import prawcore
-
-
-class RedditInitializationException(ModuleInitializationException):
-    pass
 
 
 class RedditModule(IModule):
     def __init__(self, client_id, client_secret, password=None, username=None):
         try:
-            user_agent = "dekstop-python:edu.sdsmt.derp.redditmodule:v1 (by {0})".format(
-                username)
+            user_agent = "dekstop-python:edu.sdsmt.derp.redditmodule:v1 (by /u/CompilersDERP)"
 
             self.__reddit = praw.Reddit(
                 client_id=client_id,
@@ -71,33 +66,26 @@ class RedditModule(IModule):
         """
         :return: the PostDefinition which all posts returned from get_posts must match.
         """
-        return PostDefinition(
-            {
-                "nsfw": FieldType.BOOLEAN,
-                "author": FieldType.STRING,
-                "title": FieldType.STRING,
-                "upvotes": FieldType.NUMBER,
-                "date": FieldType.DATE
-            }
-        )
+        return RedditPostDefinition()
 
-    def get_posts(self, source_ast, qualifier_tree):
-        """
-        Retrieves posts from a source specified in the source AST which match a
-        given qualifier tree.
 
-        :param source_ast: A AST representing the source clause of a selection.
-        :param qualifier_tree: A tree representing a logical expression which the posts must match.
-        :return: a PostIterator which iterates over the returned set of posts
-        """
+def get_posts(self, source_ast, qualifier_tree):
+    """
+    Retrieves posts from a source specified in the source AST which match a
+    given qualifier tree.
 
-        source_reddit = self.__reddit.front
+    :param source_ast: A AST representing the source clause of a selection.
+    :param qualifier_tree: A tree representing a logical expression which the posts must match.
+    :return: a PostIterator which iterates over the returned set of posts
+    """
 
-        if len(source_ast.children) > 0:
-            assert(len(source_ast.children) == 1)
+    source_reddit = self.__reddit.front
 
-            # Lop off "" surrounding the name
-            subreddit_name = source_ast.children[0][1:-1]
-            source_reddit = self.__reddit.subreddit(subreddit_name)
+    if len(source_ast.children) > 0:
+        assert(len(source_ast.children) == 1)
 
-        return RedditPostIterator(source_reddit)
+        # Lop off "" surrounding the name
+        subreddit_name = source_ast.children[0][1:-1]
+        source_reddit = self.__reddit.subreddit(subreddit_name)
+
+    return RedditPostIterator(self, source_reddit)

@@ -1,3 +1,5 @@
+from .RedditPost import RedditPost
+
 from derp.posts import PostIterator
 
 from praw.exceptions import PRAWException as PrawException
@@ -5,8 +7,9 @@ from prawcore.exceptions import PrawcoreException
 
 
 class RedditPostIterator(PostIterator):
-    def __init__(self, praw_reddit_or_subreddit):
+    def __init__(self, reddit_module, praw_reddit_or_subreddit):
         self.__source = praw_reddit_or_subreddit
+        self.__derp_module = reddit_module
 
     def __construct_new_iterator(self):
         # If creating a new child iterator fails, then
@@ -16,6 +19,7 @@ class RedditPostIterator(PostIterator):
             # 'after' the full name of the last yielded post (See Reddit API)
             extra_args = {} if self.__last_full_name is None else {
                 "after": self.__last_full_name}
+
 
             listing = self.__source.top(params=extra_args)
             self.__current_iterator = iter(listing)
@@ -50,5 +54,4 @@ class RedditPostIterator(PostIterator):
         assert(result_submission is not None)
         self.__last_full_name = result_submission.fullname
 
-        # TODO : Wrap in a derp.Post type
-        return result_submission
+        return RedditPost(self.__derp_module, result_submission)
