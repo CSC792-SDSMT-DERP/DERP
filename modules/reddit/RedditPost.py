@@ -78,7 +78,7 @@ class RedditPost(IPost):
             if "created_utc" in self.__sub_data:
                 date_utc = self.__sub_data["created_utc"]
 
-                dt = datetime.fromtimestamp(date_utc).date
+                dt = datetime.fromtimestamp(date_utc).date()
                 return dt
         except OverflowError as e:
             return None
