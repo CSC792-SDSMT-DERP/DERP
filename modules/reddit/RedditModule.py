@@ -4,7 +4,7 @@ RedditModule.py
 Class definition for the RedditModule, the core module of the language.
 """
 from derp.language import Grammar
-from derp.posts import PostDefinition, FieldType, PostIterator
+from derp.posts import PostDefinition, FieldType
 from derp.modules import IModule
 from derp.exceptions import ModuleInitializationException
 
@@ -90,4 +90,14 @@ class RedditModule(IModule):
         :param qualifier_tree: A tree representing a logical expression which the posts must match.
         :return: a PostIterator which iterates over the returned set of posts
         """
-        return PostIterator()
+
+        source_reddit = self.__reddit.front
+
+        if len(source_ast.children) > 0:
+            assert(len(source_ast.children) == 1)
+
+            # Lop off "" surrounding the name
+            subreddit_name = source_ast.children[0][1:-1]
+            source_reddit = self.__reddit.subreddit(subreddit_name)
+
+        return RedditPostIterator(source_reddit)
