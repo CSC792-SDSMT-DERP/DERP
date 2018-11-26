@@ -6,6 +6,7 @@ Class definition for the SelectionExecutorFactory object.
 from derp.modules import ModuleController
 from derp.selections import Selection
 from .PostIteratorMuxer import *
+from .PostIteratorFilter import *
 from .SelectionExecutor import *
 from .AbstractSelectionExecutorFactory import AbstractSelectionExecutorFactory
 
@@ -27,6 +28,10 @@ class SelectionExecutorFactory(AbstractSelectionExecutorFactory):
         for source_ast, qualifier_tree in source_ast_qualifier_tree_map.items():
             print("Retrieving posts from {0} matching {1}".format(source_ast, qualifier_tree))
             assert source_ast.data == "source_module"
-            post_iterators.append(self.__module_controller.get_posts(source_ast, qualifier_tree)
-                                  )
+            post_iterators.append(
+                PostIteratorFilter(
+                    self.__module_controller.get_posts(source_ast, qualifier_tree),
+                    qualifier_tree
+                )
+            )
         return SelectionExecutor(PostIteratorMuxer(post_iterators))
