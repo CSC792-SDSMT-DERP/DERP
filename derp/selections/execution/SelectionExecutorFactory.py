@@ -26,7 +26,6 @@ class SelectionExecutorFactory(AbstractSelectionExecutorFactory):
 
         post_iterators = []
         for source_ast, qualifier_tree in source_ast_qualifier_tree_map.items():
-            print("Retrieving posts from {0} matching {1}".format(source_ast, qualifier_tree))
             assert source_ast.data == "source_module"
             post_iterators.append(
                 PostIteratorFilter(

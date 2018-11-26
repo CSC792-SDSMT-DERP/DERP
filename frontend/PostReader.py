@@ -25,8 +25,13 @@ class PostReader(IPostReader):
         :param executor: an IPostReader that provides the posts to read
         :return: None
         """
+        print("Retrieving posts...")
+        print("Press Enter to fetch the next post. Type 'exit' or 'quit' to return to the DERP console.")
+        print("")
         for post in executor.results():
             print("Source: {0}".format(post.source().name()))
             for field_name in post.definition().field_definitions():
                 print("{0}: {1}".format(field_name, post.field_data(field_name)))
-            print("")
+            cmd = input("")
+            if cmd.lower() == "exit" or cmd.lower() == "quit":
+                break

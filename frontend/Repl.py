@@ -97,3 +97,5 @@ class Repl:
             except EOFError as e:
                 self.__exiting = True
                 print("[EOF, exiting...]")
+            except KeyboardInterrupt:
+                self.__exiting = True
