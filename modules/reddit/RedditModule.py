@@ -2,6 +2,7 @@ from .RedditDefinitions import RedditInitializationException, RedditPostDefiniti
 import prawcore
 import praw
 from derp.exceptions import ModuleInitializationException
+
 """
 RedditModule.py
 
@@ -10,6 +11,12 @@ Class definition for the RedditModule, the core module of the language.
 from derp.language import Grammar
 from derp.posts import PostDefinition, FieldType
 from derp.modules import IModule
+from derp.exceptions import ModuleInitializationException
+from derp.qualifiers import *
+from modules.reddit.RedditPostIterator import RedditPostIterator
+
+import praw
+import prawcore
 
 
 class RedditModule(IModule):
@@ -68,24 +75,56 @@ class RedditModule(IModule):
         """
         return RedditPostDefinition()
 
+    def get_posts(self, source_ast, qualifier_tree):
+        """
+        Retrieves posts from a source specified in the source AST which match a
+        given qualifier tree.
 
-def get_posts(self, source_ast, qualifier_tree):
-    """
-    Retrieves posts from a source specified in the source AST which match a
-    given qualifier tree.
+        :param source_ast: A AST representing the source clause of a selection.
+        :param qualifier_tree: A tree representing a logical expression which the posts must match.
+        :return: a PostIterator which iterates over the returned set of posts
+        """
 
-    :param source_ast: A AST representing the source clause of a selection.
-    :param qualifier_tree: A tree representing a logical expression which the posts must match.
-    :return: a PostIterator which iterates over the returned set of posts
-    """
+        source_reddit = self.__reddit.front
 
-    source_reddit = self.__reddit.front
+        if len(source_ast.children) > 0:
+            assert (len(source_ast.children) == 1)
 
-    if len(source_ast.children) > 0:
-        assert(len(source_ast.children) == 1)
+            # Lop off "" surrounding the name
+            subreddit_name = source_ast.children[0][1:-1]
+            source_reddit = self.__reddit.subreddit(subreddit_name)
 
-        # Lop off "" surrounding the name
-        subreddit_name = source_ast.children[0][1:-1]
-        source_reddit = self.__reddit.subreddit(subreddit_name)
+        query_string = self._create_query_string(qualifier_tree)
 
-    return RedditPostIterator(self, source_reddit)
+        print(query_string)
+
+        return RedditPostIterator(self, source_reddit, query_string)
+
+    def _create_query_string(self, qualifier_tree):
+        query_string = ""
+        if isinstance(qualifier_tree, ParentNode):
+            joins = {type(AndNode): "AND",
+                     type(OrNode): "OR",
+                     type(NotNode): "NOT"}
+            join_string = joins[type(qualifier_tree)]
+            fragments = []
+
+            for child in qualifier_tree.children():
+                fragments.append("(" + self._create_query_string(child) + ")")
+            fragments = [s for s in fragments if s != ""]
+            query_string = join_string.join(fragments)
+
+            if isinstance(qualifier_tree, NotNode):
+                query_string = "NOT" + query_string
+
+        elif isinstance(qualifier_tree, FieldCheckNode):
+            queries = {"body": "selftext:{0}",
+                       "author": "author:{0}",
+                       "title": "title:{0}"}
+            field = qualifier_tree.field()
+            if field == "nsfw":
+                query_string = "nsfw:{0}".format("yes" if qualifier_tree.data() else "no")
+            else:
+                query_string = queries[field].format(qualifier_tree.data())
+
+        return query_string

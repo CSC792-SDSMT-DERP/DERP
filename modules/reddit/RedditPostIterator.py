@@ -7,8 +7,9 @@ from prawcore.exceptions import PrawcoreException
 
 
 class RedditPostIterator(PostIterator):
-    def __init__(self, reddit_module, praw_reddit_or_subreddit):
+    def __init__(self,reddit_module, praw_reddit_or_subreddit, query_string):
         self.__source = praw_reddit_or_subreddit
+        self.__query_string = query_string
         self.__derp_module = reddit_module
 
     def __construct_new_iterator(self):
@@ -21,7 +22,8 @@ class RedditPostIterator(PostIterator):
                 "after": self.__last_full_name}
 
 
-            listing = self.__source.top(params=extra_args)
+            # listing = self.__source.top(params=extra_args)
+            listing = self.__source.search(self.__query_string)
             self.__current_iterator = iter(listing)
         except (PrawException, PrawcoreException) as e:
             raise StopIteration from e
