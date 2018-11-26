@@ -1,6 +1,6 @@
 from derp.posts import IPost
 
-from . import RedditPostDefinition
+from .RedditDefinitions import RedditPostDefinition
 
 from praw import Reddit
 from praw.models import Redditor

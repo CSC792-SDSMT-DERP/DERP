@@ -85,7 +85,8 @@ class RedditModule(IModule):
         :return: a PostIterator which iterates over the returned set of posts
         """
 
-        source_reddit = self.__reddit.front
+        source_reddit = self.__reddit.subreddit("all")
+        subreddit_name = "all"
 
         if len(source_ast.children) > 0:
             assert (len(source_ast.children) == 1)
@@ -94,11 +95,9 @@ class RedditModule(IModule):
             subreddit_name = source_ast.children[0][1:-1]
             source_reddit = self.__reddit.subreddit(subreddit_name)
 
-        query_string = self._create_query_string(qualifier_tree)
+        query_string = self._create_query_string(qualifier_tree) + " self:yes"
 
-        print(query_string)
-
-        return RedditPostIterator(self, source_reddit, query_string)
+        return iter(RedditPostIterator(self, source_reddit, query_string))
 
     def _create_query_string(self, qualifier_tree):
         query_string = ""
@@ -106,7 +105,16 @@ class RedditModule(IModule):
             joins = {type(AndNode): "AND",
                      type(OrNode): "OR",
                      type(NotNode): "NOT"}
-            join_string = joins[type(qualifier_tree)]
+            join_string = None
+            if isinstance(qualifier_tree, AndNode):
+                join_string = "AND"
+            elif isinstance(qualifier_tree, OrNode):
+                join_string = "OR"
+            elif isinstance(qualifier_tree, NotNode):
+                join_string = "NOT"
+            else:
+                assert(False)
+
             fragments = []
 
             for child in qualifier_tree.children():
@@ -123,8 +131,11 @@ class RedditModule(IModule):
                        "title": "title:{0}"}
             field = qualifier_tree.field()
             if field == "nsfw":
-                query_string = "nsfw:{0}".format("yes" if qualifier_tree.data() else "no")
-            else:
+                query_string = "nsfw:{0}".format(
+                    "yes" if qualifier_tree.data() else "no")
+            elif field in queries:
                 query_string = queries[field].format(qualifier_tree.data())
+            else:
+                return ""
 
         return query_string
