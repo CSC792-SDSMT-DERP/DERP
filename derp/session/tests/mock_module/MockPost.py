@@ -7,18 +7,18 @@ class MockPost(IPost):
     def __init__(self, source_module, date, number, string, bool_val):
         self.__source_module = source_module
         self.__data = {
-            "mock_date": date,
-            "mock_number": number,
-            "mock_string": string,
-            "mock_boolean": bool_val
+            "post date": date,
+            "points": number,
+            "title": string,
+            "verified": bool_val
         }
 
     def definition(self):
         return PostDefinition({
-            "mock_date": FieldType.DATE,
-            "mock_number": FieldType.NUMBER,
-            "mock_string": FieldType.STRING,
-            "mock_boolean": FieldType.BOOLEAN
+            "title": FieldType.STRING,
+            "points": FieldType.NUMBER,
+            "verified": FieldType.BOOLEAN,
+            "post date": FieldType.DATE,
         })
 
     def source(self):

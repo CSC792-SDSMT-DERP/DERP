@@ -89,7 +89,7 @@ class NotNode(ParentNode):
         return self.__children
 
     def evaluate(self, post):
-        return not self.__children[0].evaluate()
+        return not self.__children[0].evaluate(post)
 
 
 class DateCheck(FieldCheckNode):

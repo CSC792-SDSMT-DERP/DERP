@@ -43,7 +43,7 @@ class LarkQualifierConverter:
 
     @staticmethod
     def __or(qualifier_node):
-        return AndNode(
+        return OrNode(
             LarkQualifierConverter.convert(qualifier_node.children[0]),
             LarkQualifierConverter.convert(qualifier_node.children[1])
         )

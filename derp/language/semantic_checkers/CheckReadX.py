@@ -8,7 +8,7 @@ class CheckReadX(Visitor):
         self.__is_selection = is_selection
 
     def read_expression(self, node):
-        assert(len(node.children) == 0 or len(node.children == 1))
+        assert (len(node.children) == 0 or len(node.children) == 1)
 
         if len(node.children) == 1:
             selection_name = node.children[0]

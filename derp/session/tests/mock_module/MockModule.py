@@ -16,7 +16,7 @@ class MockModule(IModule):
 
     def __init__(self):
         self.posts = [
-            MockPost(self, date(1970, 1, i % 31 + 1), i, chr(i) + "est", i % 2 == 0) for i in range(100)
+            MockPost(self, date(1970, 1, i % 31 + 1), i, "{0}est".format(i), i % 2 == 0) for i in range(100)
         ]
 
     def name(self):
@@ -32,7 +32,7 @@ class MockModule(IModule):
             "title": FieldType.STRING,
             "points": FieldType.NUMBER,
             "verified": FieldType.BOOLEAN,
-            "post": FieldType.DATE,
+            "post date": FieldType.DATE,
         })
 
     def get_posts(self, source_ast, qualifier_tree):
