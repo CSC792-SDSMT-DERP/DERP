@@ -3,3 +3,4 @@
 *.cache*
 selections/*
 criteria/*
+env/
