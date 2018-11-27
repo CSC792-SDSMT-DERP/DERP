@@ -1,6 +1,24 @@
 from derp.qualifiers import *
 
 
+class ASTKey:
+    """
+    Allows us to hash Lark ASTs based on their string values
+    """
+
+    def __init__(self, ast):
+        self.__ast = ast
+
+    def ast(self):
+        return self.__ast
+
+    def __eq__(self, other):
+        return str(self.__ast) == str(other.__ast)
+
+    def __hash__(self):
+        return hash(str(self.__ast))
+
+
 class Selection:
     """
     Represents a selection using a list of SelectionExpressions.
@@ -37,15 +55,16 @@ class Selection:
                 # Add expressions may reference multiple module sources or selection sources
                 for source_ast in expression.source_asts():
                     if source_ast.data == "source_module":
+                        source_ast_key = ASTKey(source_ast)
                         # Module sources are easy, we just or the qualifier tree for the
                         # expression with the existing tree for that source
-                        if source_ast in self.__source_ast_qualifier_tree_map:
-                            self.__source_ast_qualifier_tree_map[source_ast] = OrNode(
-                                self.__source_ast_qualifier_tree_map[source_ast],
+                        if source_ast_key in self.__source_ast_qualifier_tree_map:
+                            self.__source_ast_qualifier_tree_map[source_ast_key] = OrNode(
+                                self.__source_ast_qualifier_tree_map[source_ast_key],
                                 expression.qualifier_tree()
                             )
                         else:
-                            self.__source_ast_qualifier_tree_map[source_ast] = expression.qualifier_tree()
+                            self.__source_ast_qualifier_tree_map[source_ast_key] = expression.qualifier_tree()
                     elif source_ast.data == "source_selection":
                         # Selection sources are a bit more difficult.
                         # We need to get the source ast - qualifier tree map for the referenced
@@ -54,30 +73,29 @@ class Selection:
                         # qualifier tree with the one in this selection's map
                         nested_selection = Selection(source_ast.children[0])
                         nested_source_ast_qualifier_tree_map = nested_selection.source_ast_qualifier_tree_map()
-                        # TODO: Check the validity of doing this
-                        for nested_source_ast in nested_source_ast_qualifier_tree_map:
-                            if nested_source_ast in self.__source_ast_qualifier_tree_map:
-                                self.__source_ast_qualifier_tree_map[nested_source_ast] = OrNode(
-                                    self.__source_ast_qualifier_tree_map[nested_source_ast],
+                        for nested_source_ast_key in nested_source_ast_qualifier_tree_map:
+                            if nested_source_ast_key in self.__source_ast_qualifier_tree_map:
+                                self.__source_ast_qualifier_tree_map[nested_source_ast_key] = OrNode(
+                                    self.__source_ast_qualifier_tree_map[nested_source_ast_key],
                                     AndNode(
-                                        nested_source_ast_qualifier_tree_map[nested_source_ast],
+                                        nested_source_ast_qualifier_tree_map[nested_source_ast_key],
                                         expression.qualifier_tree()
                                     )
                                 )
                             else:
-                                self.__source_ast_qualifier_tree_map[nested_source_ast] = AndNode(
-                                    nested_source_ast_qualifier_tree_map[nested_source_ast],
+                                self.__source_ast_qualifier_tree_map[nested_source_ast_key] = AndNode(
+                                    nested_source_ast_qualifier_tree_map[nested_source_ast_key],
                                     expression.qualifier_tree()
                                 )
 
             elif isinstance(expression, RemoveSelectionExpression):
                 # NOTE: We could support "Remove from module_source" here
-                for source_ast in self.__source_ast_qualifier_tree_map:
+                for source_ast_key in self.__source_ast_qualifier_tree_map:
                     # each source must already have a corresponding tree
                     # as REMOVE statements may only come after at least one
                     # ADD statement
-                    self.__source_ast_qualifier_tree_map[source_ast] = AndNode(
-                        self.__source_ast_qualifier_tree_map[source_ast],
+                    self.__source_ast_qualifier_tree_map[source_ast_key] = AndNode(
+                        self.__source_ast_qualifier_tree_map[source_ast_key],
                         NotNode(expression.qualifier_tree())
                     )
 
