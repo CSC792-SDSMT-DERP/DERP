@@ -27,7 +27,7 @@ class SessionAction:
         return []
 
 
-class SessionActionModeType(Enum):
+class ModeChangeType(Enum):
     EXIT = 1
     # Exit the current mode
 

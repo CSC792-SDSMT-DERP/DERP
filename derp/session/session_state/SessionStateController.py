@@ -6,7 +6,8 @@ Class definition for the SessionStateController object.
 import os
 
 from .FileManager import FileManager
-from .Buffer import Buffer
+from .Buffer import SelectionBuffer, CriterionBuffer
+from .IBuffer import IBuffer
 from .ISessionStateController import ISessionStateController
 
 from derp.exceptions import FileIOException
@@ -19,7 +20,7 @@ class SessionStateController(ISessionStateController):
     """
 
     def __init__(self, file_manager):
-        self.__buffer = Buffer()
+        self.__buffer = None
         self.__file_manager = file_manager  # type: FileManager
 
     def save_criteria(self, name):
@@ -122,9 +123,28 @@ class SessionStateController(ISessionStateController):
         except FileIOException:
             return False
 
+    def set_buffer_to_new_criteria_buffer(self):
+        """
+        Ensures the result from get_buffer is an empty buffer for building criteria
+        """
+        self.__buffer = CriterionBuffer()
+
+    def set_buffer_to_new_selection_buffer(self):
+        """
+        Ensures the result from get_buffer is an empty buffer for building selections
+        """
+        self.__buffer = SelectionBuffer()
+
+    def disable_buffer(self):
+        """
+        Ensures the result from get_buffer is None (used for main mode)
+        """
+        self.__buffer = None
+
     def get_buffer(self):
         """
         Returns the current buffer.
-        :return:
+        :rtype: IBuffer
+        :return: the current buffer
         """
         return self.__buffer

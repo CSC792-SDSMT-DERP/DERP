@@ -1,5 +1,5 @@
 from derp.qualifiers import *
-
+from derp.exceptions import SemanticException
 
 class ASTKey:
     """
@@ -85,10 +85,10 @@ class Selection:
                         )
 
     def __append_remove_expression(self, expression):
-        # NOTE: We could support "Remove from module_source" here
+        # TODO: Support "Remove from module_source" here (or disable remove from module_source)
 
-        # TODO Make this a proper exception
-        assert len(self.__source_ast_qualifier_tree_map) != 0
+        if len(self.__source_ast_qualifier_tree_map) == 0:
+            raise SemanticException("Posts must be added before they may be removed from a selection")
 
         for source_ast_key in self.__source_ast_qualifier_tree_map:
             # each source must already have a corresponding tree

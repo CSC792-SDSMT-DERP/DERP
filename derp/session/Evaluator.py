@@ -8,16 +8,16 @@ from .SessionAction import *
 
 from lark import Visitor, v_args
 
-
 class Evaluator(IEvaluator):
     """
     The Evaluator determines what SessionAction the SessionController should perform for a given input.
     """
 
-    def evaluate(self, semantic_tree):
+    def evaluate(self, input_line, semantic_tree):
         """
         Determines what action to take given the provided semantically analyzed AST.
         These actions may include performing a query or passing a UXAction to the REPL.
+        :param input_line: the line that was parsed into the semantic tree
         :param semantic_tree: semantic_tree to evaluate
         :return: SessionAction representing commands for the SessionController to execute
         """
@@ -30,7 +30,7 @@ class Evaluator(IEvaluator):
                 assert(len(tree.children) == 0)
 
                 result_action = SessionAction(
-                    SessionActionType.CHANGE_MODE, SessionActionModeType.EXIT)
+                    SessionActionType.CHANGE_MODE, ModeChangeType.EXIT)
 
             def load_expression(self, tree):
                 nonlocal result_action
@@ -67,14 +67,18 @@ class Evaluator(IEvaluator):
                 assert(len(tree.children) == 1)
 
                 result_action = SessionAction(
-                    SessionActionType.APPEND_TO_BUFFER, None)
+                    SessionActionType.APPEND_TO_BUFFER,
+                    (input_line, semantic_tree)
+                )
 
             def remove_expression(self, tree):
                 nonlocal result_action
                 assert(len(tree.children) == 1)
 
                 result_action = SessionAction(
-                    SessionActionType.APPEND_TO_BUFFER, None)
+                    SessionActionType.APPEND_TO_BUFFER,
+                    (input_line, semantic_tree)
+                )
 
             def read_expression(self, tree):
                 nonlocal result_action
@@ -100,9 +104,9 @@ class Evaluator(IEvaluator):
 
                 new_mode = None
                 if create_type == "CRITERIA":
-                    new_mode = SessionActionModeType.CRITERIA
+                    new_mode = ModeChangeType.CRITERIA
                 elif create_type == "SELECTION":
-                    new_mode = SessionActionModeType.SELECTION
+                    new_mode = ModeChangeType.SELECTION
                 else:
                     assert(False)
 

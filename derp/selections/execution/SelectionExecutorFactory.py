@@ -27,6 +27,7 @@ class SelectionExecutorFactory(AbstractSelectionExecutorFactory):
         post_iterators = []
         for source_ast_key, qualifier_tree in source_ast_qualifier_tree_map.items():
             assert source_ast_key.ast().data == "source_module"
+            print("{0} {1}".format(source_ast_key.ast(), qualifier_tree))
             post_iterators.append(
                 PostIteratorFilter(
                     self.__module_controller.get_posts(source_ast_key.ast(), qualifier_tree),

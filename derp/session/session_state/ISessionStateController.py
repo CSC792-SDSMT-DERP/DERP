@@ -79,6 +79,24 @@ class ISessionStateController:
         """
         pass
 
+    def set_buffer_to_new_criteria_buffer(self):
+        """
+        Ensures the result from get_buffer is an empty buffer for building criteria
+        """
+        pass
+
+    def set_buffer_to_new_selection_buffer(self):
+        """
+        Ensures the result from get_buffer is an empty buffer for building selections
+        """
+        pass
+
+    def disable_buffer(self):
+        """
+        Ensures the result from get_buffer is None (used for main mode)
+        """
+        pass
+
     def get_buffer(self):
         """
         Returns the current buffer.

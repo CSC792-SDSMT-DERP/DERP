@@ -8,7 +8,7 @@ from derp.exceptions import *
 
 from .Evaluator import Evaluator
 from .ISessionController import ISessionController
-from .SessionAction import SessionAction, SessionActionType, SessionActionModeType
+from .SessionAction import SessionAction, SessionActionType, ModeChangeType
 from .UXAction import UXAction, UXActionType, UXActionModeType
 from .session_state import *
 from derp.selections.execution import *
@@ -102,11 +102,6 @@ class SessionController(ISessionController):
 
         self.__evaluator = Evaluator()
 
-        # keep the latest line of input on hand in case it is needed while
-        # handling a session action. Mainly used to append the current input to the buffer
-        # during criteria/ selection creation.
-        self.__last_input = None
-
         # session action handling dictionary
         self.__action_handling = {
             SessionActionType.QUERY: self._read_operation,
@@ -172,6 +167,8 @@ class SessionController(ISessionController):
                 action = UXAction(UXActionType.ERROR, e)
                 return action
         else:
+            # We could probably reroute the SEF and such to accept the
+            # currently built selection, but for now we just rebuild it...
             list_commands = self.__session_state.get_buffer().get_commands()
 
         assert list_commands is not None
@@ -193,17 +190,17 @@ class SessionController(ISessionController):
         ux_action = UXActionType.CHANGE_MODE
         ux_mode = None
 
-        if target_switch == SessionActionModeType.EXIT:
+        if target_switch == ModeChangeType.EXIT:
             if self.__current_mode == self.SessionModeType.MAIN:
                 ux_mode = None
                 ux_action = UXActionType.EXIT
             else:
                 self._switch_to_main_mode()
                 ux_mode = UXActionModeType.MAIN
-        elif target_switch == SessionActionModeType.SELECTION:
+        elif target_switch == ModeChangeType.SELECTION:
             self._switch_to_selection_mode()
             ux_mode = UXActionModeType.SELECTION
-        elif target_switch == SessionActionModeType.CRITERIA:
+        elif target_switch == ModeChangeType.CRITERIA:
             self._switch_to_criteria_mode()
             ux_mode = UXActionModeType.CRITERIA
         else:
@@ -338,7 +335,13 @@ class SessionController(ISessionController):
         return self._no_op_operation(save_action)
 
     def _append_to_buffer_operation(self, append_action):
-        self.__session_state.get_buffer().add_command(self.__last_input)
+        input_line, semantic_tree = append_action.get_data()
+        try:
+            self.__session_state.get_buffer().add_command(input_line, semantic_tree)
+        except SemanticException as e:
+            # May happen if we try to remove something we haven't added
+            return UXAction(UXActionType.ERROR, e)
+
         return self._no_op_operation(append_action)
 
     def _clear_operation(self, clear_action):
@@ -368,15 +371,17 @@ class SessionController(ISessionController):
     def _switch_to_main_mode(self):
         self.__current_mode = self.SessionModeType.MAIN
         self.__parser_controller = self.__main_mode_parser
-        self.__session_state.get_buffer().clear()
+        self.__session_state.disable_buffer()
 
     def _switch_to_criteria_mode(self):
         self.__current_mode = self.SessionModeType.CRITERIA
         self.__parser_controller = self.__criteria_mode_parser
+        self.__session_state.set_buffer_to_new_criteria_buffer()
 
     def _switch_to_selection_mode(self):
         self.__current_mode = self.SessionModeType.SELECTION
         self.__parser_controller = self.__selection_mode_parser
+        self.__session_state.set_buffer_to_new_selection_buffer()
 
     def run_input(self, string_input):
         """
@@ -389,10 +394,7 @@ class SessionController(ISessionController):
             ast = self.__parser_controller.parse(string_input)
             ast = self.__transformer.transform(ast)
             self.__semantic_check.check(ast)
-            session_action = self.__evaluator.evaluate(
-                ast)  # type: SessionAction
-
-            self.__last_input = string_input
+            session_action = self.__evaluator.evaluate(string_input, ast)  # type: SessionAction
             ux_action = self.__action_handling[session_action.get_type()](
                 session_action)
             return ux_action
