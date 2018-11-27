@@ -17,7 +17,7 @@ def execute_and_check_derp_statements(sessioncontroller_impl, statements_and_che
         result = sessioncontroller_impl.run_input(command[0])
 
         if len(command) > 1:
-            print("Check action type is", command[1])
+            print("Check action type is", command[1], result.get_type())
             assert command[1] == result.get_type()
 
         if len(command) > 2:
