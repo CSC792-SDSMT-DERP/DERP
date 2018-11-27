@@ -55,7 +55,7 @@ class Selection:
                 source_ast_key = ASTKey(source_ast)
 
                 if source_ast_key in self.__source_ast_qualifier_tree_map:
-                    self.__source_ast_qualifier_tree_map[source_ast_key] = OrNode(
+                    self.__source_ast_qualifier_tree_map[source_ast_key] = self.__insert_or(
                         self.__source_ast_qualifier_tree_map[source_ast_key],
                         expression.qualifier_tree()
                     )
@@ -71,15 +71,15 @@ class Selection:
                 nested_source_ast_qualifier_tree_map = nested_selection.source_ast_qualifier_tree_map()
                 for nested_source_ast_key in nested_source_ast_qualifier_tree_map:
                     if nested_source_ast_key in self.__source_ast_qualifier_tree_map:
-                        self.__source_ast_qualifier_tree_map[nested_source_ast_key] = OrNode(
+                        self.__source_ast_qualifier_tree_map[nested_source_ast_key] = self.__insert_or(
                             self.__source_ast_qualifier_tree_map[nested_source_ast_key],
-                            AndNode(
+                            self.__insert_and(
                                 nested_source_ast_qualifier_tree_map[nested_source_ast_key],
                                 expression.qualifier_tree()
                             )
                         )
                     else:
-                        self.__source_ast_qualifier_tree_map[nested_source_ast_key] = AndNode(
+                        self.__source_ast_qualifier_tree_map[nested_source_ast_key] = self.__insert_and(
                             nested_source_ast_qualifier_tree_map[nested_source_ast_key],
                             expression.qualifier_tree()
                         )
@@ -90,14 +90,39 @@ class Selection:
         if len(self.__source_ast_qualifier_tree_map) == 0:
             raise SemanticException("Posts must be added before they may be removed from a selection")
 
-        for source_ast_key in self.__source_ast_qualifier_tree_map:
+        for source_ast_key, source_qualifier_tree in self.__source_ast_qualifier_tree_map.items():
             # each source must already have a corresponding tree
             # as REMOVE statements may only come after at least one
             # ADD statement
-            self.__source_ast_qualifier_tree_map[source_ast_key] = AndNode(
+            self.__source_ast_qualifier_tree_map[source_ast_key] = self.__insert_and(
                 self.__source_ast_qualifier_tree_map[source_ast_key],
                 NotNode(expression.qualifier_tree())
             )
+
+    @staticmethod
+    def __insert_and(tree1, tree2):
+        """
+        Helper to remove None checks as Add statements without qualifiers produce None trees.
+        """
+        if tree1 is None:
+            return tree2
+        elif tree2 is None:
+            return tree1
+        else:
+            return AndNode(tree1, tree2)
+
+    @staticmethod
+    def __insert_or(tree1, tree2):
+        """
+        Helper to remove None checks as Add statements without qualifiers produce None trees.
+        """
+        if tree1 is None:
+            return tree2
+        elif tree2 is None:
+            return tree1
+        else:
+            return OrNode(tree1, tree2)
+
 
     def source_ast_qualifier_tree_map(self):
         return self.__source_ast_qualifier_tree_map
