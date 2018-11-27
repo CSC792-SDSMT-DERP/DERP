@@ -2,7 +2,7 @@ from .Grammar import Grammar
 from .Grammar import merge_grammars
 
 _basic_grammar = Grammar({
-    '_ARTICLE':  ('"a"i', '"an"i', '"the"i'),
+    '_ARTICLE':  ('"an"i', '"a"i', '"the"i'),
     'NUMBER':   '/-?[0-9]+/',
     'string':   'ESCAPED_STRING',
 
