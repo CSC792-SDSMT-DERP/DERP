@@ -89,6 +89,8 @@ class RedditModule(IModule):
         source_reddit = self.__reddit.subreddit(subreddit_name)
         query_string = self._create_query_string(qualifier_tree)
 
+        # print("QUERY STRING: " + query_string)
+
         return iter(RedditPostIterator(self, source_reddit, query_string))
 
     def _create_query_string(self, qualifier_tree):
@@ -106,11 +108,15 @@ class RedditModule(IModule):
             fragments = []
 
             for child in qualifier_tree.children():
-                fragments.append("(" + self._create_query_string(child) + ")")
+                fragment = "(" + self._create_query_string(child) + ")"
+                if fragment != "()":
+                    fragments.append(fragment)
+            # todo: this may not be necessary anymore
             fragments = [s for s in fragments if s != ""]
             query_string = join_string.join(fragments)
 
-            if isinstance(qualifier_tree, NotNode):
+            # todo: might be able to simplify this condition
+            if isinstance(qualifier_tree, NotNode) and query_string != "()" and query_string != "":
                 query_string = "NOT" + query_string
 
         elif isinstance(qualifier_tree, FieldCheckNode):

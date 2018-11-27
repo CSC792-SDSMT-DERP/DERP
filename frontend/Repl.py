@@ -3,6 +3,7 @@ Repl.py
 
 Class definition for the Repl object.
 """
+from derp.exceptions import *
 from derp.session import UXActionType, UXAction, SessionController, UXActionModeType
 from .PostReader import PostReader
 
@@ -99,3 +100,22 @@ class Repl:
                 print("[EOF, exiting...]")
             except KeyboardInterrupt:
                 self.__exiting = True
+            except DerpException as e:
+                if isinstance(e, FileIOException):
+                    print("Failed to save/load a selection or criteria")
+                if isinstance(e, TextParseException):
+                    print("Invalid syntax, statement failed to parse")
+                if isinstance(e, GrammarMergeException):
+                    print("Attempt to merge grammars failed, module grammars are incompatible")
+                if isinstance(e, GrammarDefinitionException):
+                    print("Failed to define a grammar for the module")
+                if isinstance(e, SemanticException):
+                    print("Invalid semantics, statement was semantically incorrect")
+                if isinstance(e, ModuleDefinitionException):
+                    print("Module definition is invalid, failed to register module")
+                if isinstance(e, ModuleRegistrationException):
+                    print("Module failed to register")
+                if isinstance(e, ModuleNotRegisteredException):
+                    print("An unregistered module was referenced")
+                if isinstance(e, ModuleNotLoadedException):
+                    print("An unloaded module was referenced")
