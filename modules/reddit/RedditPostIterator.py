@@ -1,12 +1,12 @@
 from .RedditPost import RedditPost
 
-from derp.posts import PostIterator
+from derp.posts import IPostIterator
 
 from praw.exceptions import PRAWException as PrawException
 from prawcore.exceptions import PrawcoreException
 
 
-class RedditPostIterator(PostIterator):
+class RedditPostIterator(IPostIterator):
     def __init__(self, reddit_module, praw_reddit_or_subreddit, query_string):
         self.__source = praw_reddit_or_subreddit
         self.__query_string = query_string
@@ -23,7 +23,6 @@ class RedditPostIterator(PostIterator):
             # 'after' the full name of the last yielded post (See Reddit API)
             extra_args = {} if self.__last_full_name is None else {
                 "after": self.__last_full_name, "count": self.__count}
-
 
             # listing = self.__source.top(params=extra_args)
             listing = self.__source.search(self.__query_string, params=extra_args) if len(
@@ -46,7 +45,6 @@ class RedditPostIterator(PostIterator):
         if self.__current_iterator is None:
             self.__construct_new_iterator()
 
-        result_submission = None
         try:
             # Try to step the iterator, if it hits the end
             # Make a new one

@@ -2,8 +2,7 @@ from derp.posts import IPost
 
 from .RedditDefinitions import RedditPostDefinition
 
-from praw import Reddit
-from praw.models import Redditor
+from newspaper import Article
 
 from datetime import datetime
 
@@ -26,7 +25,7 @@ class RedditPost(IPost):
 
         # Verify that we have a handler function for every field defined for the
         # module
-        assert(set(self.__get_field.keys()) == set(
+        assert (set(self.__get_field.keys()) == set(
             RedditPostDefinition().field_definitions().keys()))
 
         # This forces the entire submission to load, making it non-lazy
@@ -34,10 +33,10 @@ class RedditPost(IPost):
         # There's no hard rules for what attributes will actually be included
         # in the submission, so all of the checks below are going to essentially be
         # 'check all known attributes, return the first one that's not None, else return None'
-        t = self.__submission.title
+        _ = self.__submission.title
         self.__sub_data = vars(self.__submission)
 
-    def __get_nsfw(self, submission):
+    def __get_nsfw(self):
         if "nsfw" in self.__sub_data:
             return self.__sub_data["nsfw"]
 
@@ -46,25 +45,37 @@ class RedditPost(IPost):
 
         return None
 
-    def __get_body(self, submission):
+    def __get_body(self):
+        if not self.__sub_data["is_self"] and "url" in self.__sub_data:
+            # HACK store the retrieved text in selftext
+            article = Article(self.__sub_data["url"])
+            article.download()
+            article.parse()
+            self.__sub_data["selftext"] = article.text
+            # TODO consider the following
+            # The following summarizes the news as was Kyle's initial vision.
+            # requires nltk.download("punkt")
+            # article.nlp()
+            # self.__sub_data["selftext"] = article.summary
+
         if "selftext" in self.__sub_data:
             return self.__sub_data["selftext"]
 
         return None
 
-    def __get_author(self, submission):
+    def __get_author(self):
         if "author" in self.__sub_data:
             return self.__sub_data["author"].name
 
         return None
 
-    def __get_title(self, submission):
+    def __get_title(self):
         if "title" in self.__sub_data:
             return self.__sub_data["title"]
 
         return None
 
-    def __get_upvotes(self, submission):
+    def __get_upvotes(self):
         if "score" in self.__sub_data:
             return self.__sub_data["score"]
 
@@ -73,14 +84,14 @@ class RedditPost(IPost):
 
         return None
 
-    def __get_date(self, submission):
+    def __get_date(self):
         try:
             if "created_utc" in self.__sub_data:
                 date_utc = self.__sub_data["created_utc"]
 
                 dt = datetime.fromtimestamp(date_utc).date()
                 return dt
-        except OverflowError as e:
+        except OverflowError:
             return None
 
     def _submission(self):
@@ -108,8 +119,7 @@ class RedditPost(IPost):
         :return: Field data matching the FieldType declared in the PostDefinition
         """
         field = field_name.lower()
-        return self.__get_field[field](
-            self.__submission) if field in self.__get_field else None
+        return self.__get_field[field]() if field in self.__get_field else None
 
     def about(self, string):
         """

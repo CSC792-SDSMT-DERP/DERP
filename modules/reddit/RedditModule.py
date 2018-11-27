@@ -1,21 +1,16 @@
-from .RedditDefinitions import RedditInitializationException, RedditPostDefinition
-import prawcore
-import praw
-from derp.exceptions import ModuleInitializationException
-
 """
 RedditModule.py
 
 Class definition for the RedditModule, the core module of the language.
 """
 from derp.language import Grammar
-from derp.posts import PostDefinition, FieldType
 from derp.modules import IModule
-from derp.exceptions import ModuleInitializationException
 from derp.qualifiers import *
 from modules.reddit.RedditPostIterator import RedditPostIterator
+from .RedditDefinitions import RedditInitializationException, RedditPostDefinition
 
 import praw
+import praw.exceptions
 import prawcore
 
 
@@ -37,8 +32,7 @@ class RedditModule(IModule):
             self.__reddit.read_only = True
 
             # Retrieve the top post on reddit to verify that credentials are valid
-            for top in self.__reddit.front.hot(limit=1):
-                pass
+            next(self.__reddit.front.hot(limit=1))
 
         except prawcore.exceptions.OAuthException as e:
             raise RedditInitializationException("Unable to authenticate reddit account: " + str(e)) from e
@@ -85,27 +79,21 @@ class RedditModule(IModule):
         :return: a PostIterator which iterates over the returned set of posts
         """
 
-        source_reddit = self.__reddit.subreddit("all")
         subreddit_name = "all"
 
         if len(source_ast.children) > 0:
             assert (len(source_ast.children) == 1)
-
             # Lop off "" surrounding the name
             subreddit_name = source_ast.children[0][1:-1]
-            source_reddit = self.__reddit.subreddit(subreddit_name)
 
-        query_string = self._create_query_string(qualifier_tree) + " self:yes"
+        source_reddit = self.__reddit.subreddit(subreddit_name)
+        query_string = self._create_query_string(qualifier_tree)
 
         return iter(RedditPostIterator(self, source_reddit, query_string))
 
     def _create_query_string(self, qualifier_tree):
         query_string = ""
         if isinstance(qualifier_tree, ParentNode):
-            joins = {type(AndNode): "AND",
-                     type(OrNode): "OR",
-                     type(NotNode): "NOT"}
-            join_string = None
             if isinstance(qualifier_tree, AndNode):
                 join_string = "AND"
             elif isinstance(qualifier_tree, OrNode):
@@ -113,7 +101,7 @@ class RedditModule(IModule):
             elif isinstance(qualifier_tree, NotNode):
                 join_string = "NOT"
             else:
-                assert(False)
+                assert False
 
             fragments = []
 
@@ -126,8 +114,7 @@ class RedditModule(IModule):
                 query_string = "NOT" + query_string
 
         elif isinstance(qualifier_tree, FieldCheckNode):
-            queries = {"body": "selftext:{0}",
-                       "author": "author:{0}",
+            queries = {"author": "author:{0}",
                        "title": "title:{0}"}
             field = qualifier_tree.field()
             if field == "nsfw":
