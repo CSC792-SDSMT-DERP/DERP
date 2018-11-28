@@ -4,44 +4,42 @@ create a new selection
 add posts from reddit
 read
 
-***multiple sources***
+GOOD***multiple sources***
 load "reddit"
 create a new selection
-add posts from reddit and subreddit "news"
+add posts from subreddit "jokes" and subreddit "news"
 read
 
-***single criterion (substring match)***
+GOOD***single qualifier (substring match)***
 load "reddit"
 create a new selection
-add posts from reddit without "crime" in the body
+add posts from reddit with "jokes" with "Tesla" in the title
 read
 
-***single criterion (boolean check)***
+MEH***single qualifier (boolean check)***
 load "reddit"
 create a new selection
 add posts from reddit which are not nsfw
 read
 
-***single criterion (numeric check)***
+GOOD***single qualifier (numeric check)***
 load "reddit"
 create a new selection
-add posts from reddit with over 1000 upvotes
+add posts from subreddit "politics" with over 20000 upvotes
 read
 
-***multiple criteria*** NOTE: gives empty bodied results
+MEH***single qualifier (date check)***
 load "reddit"
 create a new selection
-add posts from reddit with over 500 upvotes and with under 10000 upvotes
-read
+add posts from subreddit "ultimate" with a date before November 28 2018
 
-
-***multiple criteria***
+GOOD***multiple qualifiers, one line***
 load "reddit"
 create a new selection
 add posts from subreddit "news" without "trump" in the title and with over 500 upvotes
 read
 
-***multiple criteria, multiple lines***
+GOOD***multiple qualifiers, multiple lines***
 load "reddit"
 create a new selection
 add posts from subreddit "news"
@@ -49,21 +47,31 @@ remove posts with "trump" in the title
 remove posts with under 500 upvotes
 read
 
-***stored criteria***
-load "reddit"
-create a new criteria
-remove posts with under 1000 upvotes
-save as "popularityfilter"
-exit
-create a new selection
-add posts from subreddit "news" matching "popularityfilter"
-read
 
-***stored selection***
+GOOD***stored selection***
 load "reddit"
 create a new selection
 add posts from subreddit "news" with "france" in the title or with "britain" in the title
-save as "europenews"
+save as "europe news"
 clear
-add posts from reddit and "europenews" with "germany" in the title
+add posts from reddit and "europe news" with "germany" in the title
 read
+
+GOOD***Multiline, stored criterion, stored selection***
+load "reddit"
+create a new criteria
+add posts with "Musk" in the title
+remove posts with "Tesla" in the title
+save as "News on Elon Musk"
+exit
+create a new selection
+add posts from subreddit "technology" 
+or subreddit "futurology" or subreddit "space"
+remove posts with under 1000 upvotes
+save as "tech news"
+exit
+create a new selection
+add posts from "tech news" matching 
+"News on Elon Musk"
+read
+
