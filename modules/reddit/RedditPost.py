@@ -45,6 +45,29 @@ class RedditPost(IPost):
         except ArticleException:
             self.__sub_data["selftext"] = "[Unable to retrieve URL " + self.__sub_data["url"] + "]"
 
+    def __str__(self):
+        """
+        print the available fields on the post in a predefined order. 'Header' information is
+        printed first, followed by the body of the post.
+        :return: string representing the post
+        """
+        result = ""
+
+        if self.__get_title() is not None:
+            result += "Title:{0}\n".format(self.__get_title())
+        if self.__get_author() is not None:
+            result += "Author:{0}\n".format(self.__get_author())
+        if self.__get_date() is not None:
+            result += "Date:{0}\n".format(self.__get_date())
+        if self.__get_upvotes() is not None:
+            result += "Upvotes:{0}\n".format(self.__get_upvotes())
+        if self.__get_nsfw() is not None:
+            result += "NSFW:{0}\n".format(self.__get_nsfw())
+        if self.__get_body() is not None:
+            result += self.__get_body()
+
+        return result
+
     def __get_nsfw(self):
         if "nsfw" in self.__sub_data:
             return self.__sub_data["nsfw"]

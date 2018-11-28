@@ -41,3 +41,11 @@ class IPost:
         :return: True if the post matches, and False if it does not.
         """
         pass
+
+    def __str__(self):
+        """
+        Posts must define a to-string method that presents the information in the post in a
+        clear text format.
+        :return: string representing the post
+        """
+        pass

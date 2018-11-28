@@ -30,9 +30,7 @@ class PostReader(IPostReader):
         print("")
         for post in executor.results():
             print("Source: {0}".format(post.source().name()))
-            for field_name in post.definition().field_definitions():
-                print("{0}: {1}".format(field_name, post.field_data(field_name)))
-
+            print(post)
             cmd = input("")
             if cmd.lower() == "exit" or cmd.lower() == "stop":
                 break
