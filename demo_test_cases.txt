@@ -1,0 +1,69 @@
+***hello world***
+load "reddit"
+create a new selection
+add posts from reddit
+read
+
+***multiple sources***
+load "reddit"
+create a new selection
+add posts from reddit and subreddit "news"
+read
+
+***single criterion (substring match)***
+load "reddit"
+create a new selection
+add posts from reddit without "crime" in the body
+read
+
+***single criterion (boolean check)***
+load "reddit"
+create a new selection
+add posts from reddit which are not nsfw
+read
+
+***single criterion (numeric check)***
+load "reddit"
+create a new selection
+add posts from reddit with over 1000 upvotes
+read
+
+***multiple criteria*** NOTE: gives empty bodied results
+load "reddit"
+create a new selection
+add posts from reddit with over 500 upvotes and with under 10000 upvotes
+read
+
+
+***multiple criteria***
+load "reddit"
+create a new selection
+add posts from subreddit "news" without "trump" in the title and with over 500 upvotes
+read
+
+***multiple criteria, multiple lines***
+load "reddit"
+create a new selection
+add posts from subreddit "news"
+remove posts with "trump" in the title
+remove posts with under 500 upvotes
+read
+
+***stored criteria***
+load "reddit"
+create a new criteria
+remove posts with under 1000 upvotes
+save as "popularityfilter"
+exit
+create a new selection
+add posts from subreddit "news" matching "popularityfilter"
+read
+
+***stored selection***
+load "reddit"
+create a new selection
+add posts from subreddit "news" with "france" in the title or with "britain" in the title
+save as "europenews"
+clear
+add posts from reddit and "europenews" with "germany" in the title
+read
