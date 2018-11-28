@@ -39,8 +39,7 @@ class SessionController(ISessionController):
         self.__session_state = SessionStateController(file_manager)
 
         # other members
-        self.__main_mode_parser = language.Parser(
-            language.grammars.main_grammar())
+        self.__main_mode_parser = language.build_main_mode_parser()
 
         self.__selection_mode_parser = language.Parser()
         self.__criteria_mode_parser = language.Parser()
@@ -230,7 +229,7 @@ class SessionController(ISessionController):
             return UXAction(UXActionType.ERROR, e)
 
         try:
-            self._build_selection_and_criteria_grammars()
+            self._build_selection_and_criteria_parsers()
         except DerpException as e:
             self.__module_controller.unload_module(module_name)
             return UXAction(UXActionType.ERROR, e)
@@ -247,10 +246,10 @@ class SessionController(ISessionController):
         except ModuleNotLoadedException as e:
             return UXAction(UXActionType.ERROR, e)
 
-        self._build_selection_and_criteria_grammars()
+        self._build_selection_and_criteria_parsers()
         return self._no_op_operation(unload_action)
 
-    def _build_selection_and_criteria_grammars(self):
+    def _build_selection_and_criteria_parsers(self):
         active_modules = self.__module_controller.loaded_modules()
 
         # Last module was just unloaded
@@ -260,60 +259,10 @@ class SessionController(ISessionController):
 
         # Merge all grammars from loaded modules
         else:
-
-            # TODO enforce that source grammars are valid
             try:
-                field_grammars = [module.post_definition().field_grammar()
-                                  for module in active_modules]
-                source_grammars = [(module.name(), module.source_grammar(),)
-                                   for module in active_modules]
 
-                # Build a list of all the {modulename}_source rules
-                # that exist
-                source_productions = []
-                for name, grammar in source_grammars:
-                    # Module grammars must not define a start symbol
-                    assert(grammar.start_symbol() is None)
-
-                    # Do all text matching with lower case
-                    name_source = name.lower() + "_source"
-                    grammar_source = None
-
-                    # Find the grammar rule that is {modulename}_source
-                    # It can be all caps (token) or all lower case (rule), and may begin with !
-                    for key, productions in grammar.productions():
-                        alnum_key = ''.join(
-                            x if x.isalnum() or x == '_' else '' for x in key.lower())
-
-                        if name_source == alnum_key:
-                            grammar_source = key
-
-                    assert(grammar_source is not None)
-                    source_productions.append(
-                        grammar_source + " -> source_module")
-
-                assert(len(source_productions) > 0)
-
-                # Make a grammar that is just the rule 'source -> [each module source name]'
-                source_rule_grammar = language.Grammar(
-                    {'source': source_productions}
-                )
-
-                source_grammars = [module.source_grammar()
-                                   for module in active_modules]
-
-                self.__criteria_mode_parser = language.Parser(
-                    language.grammars.criteria_grammar(),
-                    *field_grammars,
-                    *source_grammars,
-                    source_rule_grammar
-                )
-                self.__selection_mode_parser = language.Parser(
-                    language.grammars.selection_grammar(),
-                    *field_grammars,
-                    *source_grammars,
-                    source_rule_grammar
-                )
+                self.__selection_mode_parser, self.__criteria_mode_parser = \
+                language.build_selection_and_criteria_parsers(active_modules)
             except DerpException as e:
                 raise e
 

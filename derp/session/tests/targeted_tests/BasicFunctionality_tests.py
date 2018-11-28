@@ -122,8 +122,7 @@ class TestCriteriaAndSelectionMode:
                                             qualifier_string, UXActionType.NO_OP,),
                                            ('read', UXActionType.READ,)])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('qualifier_bits', list(range(128)))
     def test_qualifier_statements(self, qualifier_bits, create_type, add_remove, from_stmt, sessioncontroller_impl):
         qualifiers = []
@@ -147,8 +146,7 @@ class TestCriteriaAndSelectionMode:
                                             UXActionType.CHANGE_MODE,),
                                            (add_remove + ' posts ' + from_stmt + qualifier_string,)])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     def test_selection_no_qualifiers(self, create_type, add_remove, from_stmt, sessioncontroller_impl):
         execute_and_check_derp_statements(sessioncontroller_impl,
                                           [('load "MockModule"', UXActionType.NO_OP,),
@@ -156,8 +154,7 @@ class TestCriteriaAndSelectionMode:
                                             UXActionType.CHANGE_MODE,),
                                            (add_remove + ' posts ' + from_stmt,)])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('and_bits', list(range(64)))
     def test_qualifier_and_or(self, create_type, add_remove, from_stmt, and_bits, sessioncontroller_impl):
         qualifiers = self.__possible_qualifiers.copy()
@@ -187,8 +184,7 @@ class TestCriteriaAndSelectionMode:
 
 @pytest.mark.slow
 class TestQualifierVariations:
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('field_article', ["a", "an", "the"])
     @pytest.mark.parametrize('date_when', ["on", "before", "after"])
     @pytest.mark.parametrize('with_exp', ["with", "without"])
@@ -204,8 +200,7 @@ class TestQualifierVariations:
                                             UXActionType.CHANGE_MODE,),
                                            (add_line, UXActionType.NO_OP,), ])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('with_exp', ["with", "without"])
     @pytest.mark.parametrize('the', ['the', ''])
     def test_substring_check_variations(self, create_type, with_exp, from_stmt, add_remove, the, sessioncontroller_impl):
@@ -219,8 +214,7 @@ class TestQualifierVariations:
                                             UXActionType.CHANGE_MODE,),
                                            (add_line, UXActionType.NO_OP,), ])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('negate', ["not", ""])
     def test_bool_check_variations(self, create_type, from_stmt, add_remove, negate, sessioncontroller_impl):
         qualifier_string = ' which are {0} verified'.format(negate)
@@ -232,8 +226,7 @@ class TestQualifierVariations:
                                             UXActionType.CHANGE_MODE,),
                                            (add_line, UXActionType.NO_OP,), ])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('with_exp', ["with", "without"])
     @pytest.mark.parametrize('compare', ["over", "greater than", "under", "less than", "exactly", "roughly"])
     def test_number_check_variations(self, create_type, from_stmt, add_remove, with_exp, compare, sessioncontroller_impl):
@@ -246,8 +239,7 @@ class TestQualifierVariations:
                                             UXActionType.CHANGE_MODE,),
                                            (add_line, UXActionType.NO_OP,), ])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('negate', ["not", ""])
     def test_on_check_variations(self, create_type, from_stmt, add_remove, negate, sessioncontroller_impl):
         qualifier_string = ' {0} on "hello world"'.format(negate)
@@ -259,8 +251,7 @@ class TestQualifierVariations:
                                             UXActionType.CHANGE_MODE,),
                                            (add_line, UXActionType.NO_OP,), ])
 
-    @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
-    @pytest.mark.parametrize("add_remove", ["add", "remove"])
+    @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('negate', ["not", ""])
     def test_on_check_variations(self, create_type, from_stmt, add_remove, negate, sessioncontroller_impl):
         qualifier_string = ' {0} matching "hello world"'.format(negate)

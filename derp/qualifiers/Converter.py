@@ -78,13 +78,13 @@ class LarkQualifierConverter:
             return NotNode(ExactNumberCheck(field, number))
         elif check_type == "~":
             return AndNode(
-                OverNumberCheck(field + ROUGHLY_INTERVAL_PERCENTAGE * field, number),
-                UnderNumberCheck(field - ROUGHLY_INTERVAL_PERCENTAGE * field, number)
+                OverNumberCheck(field, number + ROUGHLY_INTERVAL_PERCENTAGE * number),
+                UnderNumberCheck(field, number - ROUGHLY_INTERVAL_PERCENTAGE * number)
             )
         elif check_type == "!~":
             return NotNode(AndNode(
-                OverNumberCheck(field + ROUGHLY_INTERVAL_PERCENTAGE * field, number),
-                UnderNumberCheck(field - ROUGHLY_INTERVAL_PERCENTAGE * field, number)
+                OverNumberCheck(field, number + ROUGHLY_INTERVAL_PERCENTAGE * number),
+                UnderNumberCheck(field, number - ROUGHLY_INTERVAL_PERCENTAGE * number)
             ))
         else:
             assert False
