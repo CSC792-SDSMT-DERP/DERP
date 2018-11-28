@@ -89,7 +89,7 @@ class RedditModule(IModule):
         source_reddit = self.__reddit.subreddit(subreddit_name)
         query_string = self._create_query_string(qualifier_tree)
 
-        # print("QUERY STRING: " + query_string)
+        print("QUERY STRING: " + query_string)
 
         return iter(RedditPostIterator(self, source_reddit, query_string))
 
@@ -119,6 +119,9 @@ class RedditModule(IModule):
             if isinstance(qualifier_tree, NotNode) and query_string != "()" and query_string != "":
                 query_string = "NOT" + query_string
 
+        elif isinstance(qualifier_tree, AboutCheck):
+            text = qualifier_tree.data()
+            return "'"+text+"'"
         elif isinstance(qualifier_tree, FieldCheckNode):
             queries = {"author": "author:{0}",
                        "title": "title:{0}"}

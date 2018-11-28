@@ -6,6 +6,7 @@ from newspaper import Article, ArticleException
 
 from datetime import datetime
 
+import re
 
 class RedditPost(IPost):
     def __init__(self, parent, praw_submission):
@@ -144,7 +145,8 @@ class RedditPost(IPost):
     def about(self, string):
         """
         Decides whether the field data contained in the post matches a given search string.
+        Always True, we trust the server-side search algorithm to do this better than we can
         :param string: the search string to consider
         :return: True if the post matches, and False if it does not.
         """
-        return string in self.__submission.title or string in self.__submission.selftext
+        return True
