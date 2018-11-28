@@ -3,8 +3,6 @@ PostReader.py
 
 Class definition for the PostReader object.
 """
-from newspaper import ArticleException
-
 from .IPostReader import IPostReader
 
 
@@ -33,10 +31,10 @@ class PostReader(IPostReader):
         for post in executor.results():
             print("Source: {0}".format(post.source().name()))
             for field_name in post.definition().field_definitions():
-                try:
-                    print("{0}: {1}".format(field_name, post.field_data(field_name)))
-                except ArticleException as e:
-                    print("Article read timed out, continuing to next article.")
+                print("{0}: {1}".format(field_name, post.field_data(field_name)))
+
             cmd = input("")
             if cmd.lower() == "exit" or cmd.lower() == "stop":
                 break
+            print("\n-------Retrieving next post-------")
+

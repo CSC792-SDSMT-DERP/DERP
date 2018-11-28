@@ -47,7 +47,26 @@ class Repl:
         }
 
     def _handle_error(self, action):
-        print(action.get_data())
+        e = action.get_data()
+        
+        if isinstance(e, FileIOException):
+            print("Failed to save/load a selection or criteria")
+        elif isinstance(e, TextParseException):
+            print("Invalid syntax, statement failed to parse")
+        elif isinstance(e, GrammarMergeException):
+            print("Attempt to merge grammars failed, module grammars are incompatible")
+        elif isinstance(e, GrammarDefinitionException):
+            print("Failed to define a grammar for the module")
+        elif isinstance(e, SemanticException):
+            print("Invalid semantics, statement was semantically incorrect")
+        elif isinstance(e, ModuleDefinitionException):
+            print("Module definition is invalid, failed to register module")
+        elif isinstance(e, ModuleNotRegisteredException):
+            print("An unregistered module was referenced")
+        elif isinstance(e, ModuleNotLoadedException):
+            print("An unloaded module was referenced")
+        else:
+            print(e)
 
     def _handle_change_mode(self, action):
         self.__prompt = self.__prompts[action.get_data()]
@@ -100,22 +119,3 @@ class Repl:
                 print("[EOF, exiting...]")
             except KeyboardInterrupt:
                 self.__exiting = True
-            except DerpException as e:
-                if isinstance(e, FileIOException):
-                    print("Failed to save/load a selection or criteria")
-                if isinstance(e, TextParseException):
-                    print("Invalid syntax, statement failed to parse")
-                if isinstance(e, GrammarMergeException):
-                    print("Attempt to merge grammars failed, module grammars are incompatible")
-                if isinstance(e, GrammarDefinitionException):
-                    print("Failed to define a grammar for the module")
-                if isinstance(e, SemanticException):
-                    print("Invalid semantics, statement was semantically incorrect")
-                if isinstance(e, ModuleDefinitionException):
-                    print("Module definition is invalid, failed to register module")
-                if isinstance(e, ModuleRegistrationException):
-                    print("Module failed to register")
-                if isinstance(e, ModuleNotRegisteredException):
-                    print("An unregistered module was referenced")
-                if isinstance(e, ModuleNotLoadedException):
-                    print("An unloaded module was referenced")

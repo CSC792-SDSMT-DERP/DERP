@@ -2,7 +2,7 @@ from derp.posts import IPost
 
 from .RedditDefinitions import RedditPostDefinition
 
-from newspaper import Article
+from newspaper import Article, ArticleException
 
 from datetime import datetime
 
@@ -36,6 +36,15 @@ class RedditPost(IPost):
         _ = self.__submission.title
         self.__sub_data = vars(self.__submission)
 
+        try:
+            if not self.__sub_data["is_self"] and "url" in self.__sub_data:
+                article = Article(self.__sub_data["url"])
+                article.download()
+                article.parse()
+                self.__sub_data["selftext"] = article.text
+        except ArticleException:
+            self.__sub_data["selftext"] = "[Unable to retrieve URL " + self.__sub_data["url"] + "]"
+
     def __get_nsfw(self):
         if "nsfw" in self.__sub_data:
             return self.__sub_data["nsfw"]
@@ -46,18 +55,6 @@ class RedditPost(IPost):
         return None
 
     def __get_body(self):
-        if not self.__sub_data["is_self"] and "url" in self.__sub_data:
-            # HACK store the retrieved text in selftext
-            article = Article(self.__sub_data["url"])
-            article.download()
-            article.parse()
-            self.__sub_data["selftext"] = article.text
-            # TODO consider the following
-            # The following summarizes the news as was Kyle's initial vision.
-            # requires nltk.download("punkt")
-            # article.nlp()
-            # self.__sub_data["selftext"] = article.summary
-
         if "selftext" in self.__sub_data:
             return self.__sub_data["selftext"]
 
