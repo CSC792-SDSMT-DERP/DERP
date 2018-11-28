@@ -1,5 +1,5 @@
 """
-bootstrap.py
+derp.py
 
 Responsible for constructing the Repl, PostReader, SessionController, SelectionExecutorFactory,
 ModuleController, and Module objects on startup. Performs any required dependency injection as necessary.
