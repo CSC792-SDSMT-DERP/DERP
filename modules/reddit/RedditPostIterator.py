@@ -25,10 +25,16 @@ class RedditPostIterator(IPostIterator):
                 "after": self.__last_full_name, "count": self.__count}
 
             # listing = self.__source.top(params=extra_args)
-            listing = self.__source.search(self.__query_string, params=extra_args) if len(
-                self.__query_string) else self.__source.hot(params=extra_args)
+            if len(self.__query_string):
+                listing = self.__source.search(self.__query_string, params=extra_args)
+            else:
+                # print("before hot")
+                listing = self.__source.hot(params=extra_args)
+                # print("after hot")
 
+            # print("before iter")
             self.__current_iterator = iter(listing)
+            # print("after iter")
         except (PrawException, PrawcoreException) as e:
             raise StopIteration from e
 
@@ -48,7 +54,9 @@ class RedditPostIterator(IPostIterator):
         try:
             # Try to step the iterator, if it hits the end
             # Make a new one
+            # print("before next")
             result_submission = next(self.__current_iterator)
+            # print("after next")
         except StopIteration:
             # Will either succeed, and then yield a new submission, or raise StopIteration
             # again, in which case this post iterator is done

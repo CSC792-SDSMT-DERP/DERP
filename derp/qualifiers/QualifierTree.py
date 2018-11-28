@@ -153,7 +153,7 @@ class SubstringCheck(StringCheck):
         post_data = post.field_data(self.field())
         if not isinstance(post_data, str):
             return False
-        return self.data() in post_data
+        return self.data().lower() in post_data.lower()
 
 
 class ExactStringCheck(StringCheck):
