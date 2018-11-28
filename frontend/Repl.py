@@ -53,12 +53,13 @@ class Repl:
             print("Failed to save/load a selection or criteria")
         elif isinstance(e, TextParseException):
             print("Invalid syntax, statement failed to parse")
+            print(str(e)[0:-1])
         elif isinstance(e, GrammarMergeException):
             print("Attempt to merge grammars failed, module grammars are incompatible")
         elif isinstance(e, GrammarDefinitionException):
             print("Failed to define a grammar for the module")
         elif isinstance(e, SemanticException):
-            print("Invalid semantics, statement was semantically incorrect")
+            print(e)
         elif isinstance(e, ModuleDefinitionException):
             print("Module definition is invalid, failed to register module")
         elif isinstance(e, ModuleNotRegisteredException):

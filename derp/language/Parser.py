@@ -5,7 +5,7 @@ from .Grammar import *
 from derp.exceptions import *
 
 from lark import Lark
-from lark.exceptions import LarkError
+from lark.exceptions import UnexpectedInput, ParseError
 
 
 class Parser (IParser):
@@ -41,9 +41,11 @@ class Parser (IParser):
         ast = None
         try:
             ast = self._parser.parse(text)
-        except LarkError as ex:
+        except UnexpectedInput as ex:
             raise TextParseException(
-                "error parsing text '" + text + "' (" + ex.args[0] + ")") from ex
+                '%s at line %s, column %s.\n\n%s' % ("Parse Error", ex.line, ex.column, ex.get_context(text))) from ex
+        except ParseError as ex:
+            raise TextParseException(str(ex)) from ex
 
         # Can this even happen?
         if ast is None:
