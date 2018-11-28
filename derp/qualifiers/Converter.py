@@ -26,7 +26,7 @@ class LarkQualifierConverter:
             "string_qualifier": LarkQualifierConverter.__string_check,
             "date_qualifier": LarkQualifierConverter.__date_check
         }
-        default_case = lambda qualifier_node: print("\n" + qualifier_node.pretty())
+        default_case = lambda qualifier_node: print("Default Case:\n" + qualifier_node.pretty())
 
         if root_qualifier.data in switch_cases:
             return switch_cases[root_qualifier.data](root_qualifier)
