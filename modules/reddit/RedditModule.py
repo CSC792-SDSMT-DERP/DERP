@@ -89,7 +89,7 @@ class RedditModule(IModule):
         source_reddit = self.__reddit.subreddit(subreddit_name)
         query_string = self._create_query_string(qualifier_tree)
 
-        print("QUERY STRING: " + query_string)
+        # print("QUERY STRING: " + query_string)
 
         return iter(RedditPostIterator(self, source_reddit, query_string))
 
