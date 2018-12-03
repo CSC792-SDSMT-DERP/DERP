@@ -85,8 +85,6 @@ class Selection:
                         )
 
     def __append_remove_expression(self, expression):
-        # TODO: Support "Remove from module_source" here (or disable remove from module_source)
-
         if len(self.__source_ast_qualifier_tree_map) == 0:
             raise SemanticException("Posts must be added before they may be removed from a selection")
 

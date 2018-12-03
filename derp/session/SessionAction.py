@@ -22,7 +22,7 @@ class SessionAction:
     def get_data(self):
         return self.__data
 
-    # TODO : Is this something we need?
+    # TODO : Implement warnings
     def get_warnings(self):
         return []
 

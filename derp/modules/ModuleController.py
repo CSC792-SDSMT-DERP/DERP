@@ -91,7 +91,6 @@ class ModuleController(IModuleController):
         :param name: name of the module to unload
         :type name: str
         """
-        # TODO : Is this really an exception?
         module_name = name.lower()
         if module_name not in self.__active_modules:
             raise ModuleNotLoadedException(

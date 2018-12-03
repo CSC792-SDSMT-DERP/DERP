@@ -3,9 +3,10 @@ Transformer.py
 Implementation for Transformer objects.
 
 TODO: Semantic checks for
-* Reading or Recalling a non-existing selection/criteria
-* Reading a selection that requires unloaded modules
-* Check that string data is non-empty
+* (VERIFY) Reading a selection that requires unloaded modules
+* (VERIFY) Check that string data is non-empty
+* Querying fields not supported by a module
+* Querying fields of multiple types (type checking)
 """
 
 from .ITransformer import ITransformer

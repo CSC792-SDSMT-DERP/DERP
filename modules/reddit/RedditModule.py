@@ -111,11 +111,11 @@ class RedditModule(IModule):
                 fragment = "(" + self._create_query_string(child) + ")"
                 if fragment != "()":
                     fragments.append(fragment)
-            # todo: this may not be necessary anymore
+            # note: this may not be necessary anymore
             fragments = [s for s in fragments if s != ""]
             query_string = join_string.join(fragments)
 
-            # todo: might be able to simplify this condition
+            # note: might be able to simplify this condition
             if isinstance(qualifier_tree, NotNode) and query_string != "()" and query_string != "":
                 query_string = "NOT" + query_string
 
