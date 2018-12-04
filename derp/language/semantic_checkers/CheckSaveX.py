@@ -20,5 +20,5 @@ class CheckSaveX(Visitor):
                     "Criteria named '" + save_name + "' already exists")
         else:
             if self.__is_selection(save_name):
-                raise SaveSelectionAsCriteriaSException(
+                raise SaveCriteriaAsSelectionSException(
                     "Selection named '" + save_name + "' already exists")

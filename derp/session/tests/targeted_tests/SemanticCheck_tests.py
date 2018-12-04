@@ -6,6 +6,7 @@ from derp.session import UXActionType, UXActionModeType
 from derp.exceptions import *
 
 
+@pytest.mark.slow
 class TestMainModeSemanticChecks:
 
     @pytest.mark.parametrize("keyword", ["load", "unload", "read", "recall", "clear"])
@@ -71,5 +72,79 @@ class TestMainModeSemanticChecks:
         ])
 
 
+@pytest.mark.slow
 class TestCriteriaAndSelectionModeSemanticChecks:
-    pass
+    @pytest.mark.parametrize("create_type,from_expr", [('criteria', ''), ('selection', 'from mock')])
+    def test_save_as_empty_name(self, create_type, from_expr, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('add posts {0} with "hello world" in the title'.format(
+                from_expr), UXActionType.NO_OP,),
+            ('save as ""', UXActionType.ERROR, EmptyStringLiteralSException,)
+        ])
+
+    def test_save_selection_as_criteria(self, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new criteria', UXActionType.CHANGE_MODE,),
+            ('add posts with "hello world" in the title', UXActionType.NO_OP,),
+            ('save as "mycriteria"', UXActionType.NO_OP,),
+            ('stop', UXActionType.CHANGE_MODE,),
+
+            ('create a new selection', UXActionType.CHANGE_MODE,),
+            ('add posts from mock with "hello world" in the title', UXActionType.NO_OP,),
+            ('save as "mycriteria"', UXActionType.ERROR,
+             SaveSelectionAsCriteriaSException,),
+        ])
+
+    def test_save_criteria_as_selection(self, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new selection', UXActionType.CHANGE_MODE,),
+            ('add posts from mock with "hello world" in the title', UXActionType.NO_OP,),
+            ('save as "myselection"', UXActionType.NO_OP,),
+            ('stop', UXActionType.CHANGE_MODE,),
+
+            ('create a new criteria', UXActionType.CHANGE_MODE,),
+            ('add posts with "hello world" in the title', UXActionType.NO_OP,),
+            ('save as "myselection"', UXActionType.ERROR,
+             SaveCriteriaAsSelectionSException,),
+        ])
+
+    @pytest.mark.parametrize("create_type", ['criteria', 'selection'])
+    def test_save_empty_buffer(self, create_type, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('save as "mything"', UXActionType.ERROR,
+             EmptySelectionOrCriteriaSException,),
+        ])
+
+    def test_cant_remove_before_add_selection(self, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new selection', UXActionType.CHANGE_MODE,),
+            ('remove posts with "hello world" in the title',
+             UXActionType.ERROR, NoPostsAddedSException,),
+        ])
+
+    def test_can_remove_before_add_criteria(self, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new criteria', UXActionType.CHANGE_MODE,),
+            ('remove posts with "hello world" in the title',
+             UXActionType.NO_OP,),
+        ])
+
+    def test_add_from_missing_selection(self, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new selection', UXActionType.CHANGE_MODE,),
+            ('add posts from "myselection"',
+             UXActionType.ERROR, MissingSelectionSException,),
+        ])
+
+
