@@ -35,6 +35,7 @@ class TestMainModeBasicFunctionality:
                                            (command+type[0], UXActionType.CHANGE_MODE, type[1],)])
 
 
+@pytest.mark.slow
 class TestMainModeAdvancedFunctionality:
     @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
     def test_can_recall(self, create_type, from_stmt, sessioncontroller_impl):

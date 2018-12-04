@@ -1,6 +1,6 @@
 from lark import Visitor
 
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 
 class CheckSaveNonEmpty(Visitor):
@@ -10,5 +10,5 @@ class CheckSaveNonEmpty(Visitor):
 
     def save_expression(self, node):
         if self.__buffer_size() == 0:
-            raise SemanticException(
+            raise EmptySelectionOrCriteriaSException(
                 "Unable to save empty " + "selection" if self.__selection_mode() else "criteria")

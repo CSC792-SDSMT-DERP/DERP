@@ -1,5 +1,6 @@
 from derp.qualifiers import *
-from derp.exceptions import SemanticException
+from derp.exceptions import *
+
 
 class ASTKey:
     """
@@ -42,9 +43,11 @@ class Selection:
         add_remove_expr = selection_ast.children[0]
         # Add expressions and remove expressions need different handlers
         if add_remove_expr.data == "add_expression":
-            self.__append_add_expression(AddSelectionExpression(add_remove_expr.children[0]))
+            self.__append_add_expression(
+                AddSelectionExpression(add_remove_expr.children[0]))
         else:
-            self.__append_remove_expression(RemoveSelectionExpression(add_remove_expr.children[0]))
+            self.__append_remove_expression(
+                RemoveSelectionExpression(add_remove_expr.children[0]))
 
     def __append_add_expression(self, expression):
         # Add expressions may reference multiple module sources or selection sources
@@ -60,7 +63,8 @@ class Selection:
                         expression.qualifier_tree()
                     )
                 else:
-                    self.__source_ast_qualifier_tree_map[source_ast_key] = expression.qualifier_tree()
+                    self.__source_ast_qualifier_tree_map[source_ast_key] = expression.qualifier_tree(
+                    )
             elif source_ast.data == "source_selection":
                 # Selection sources are a bit more difficult.
                 # We need to get the source ast - qualifier tree map for the referenced
@@ -86,7 +90,8 @@ class Selection:
 
     def __append_remove_expression(self, expression):
         if len(self.__source_ast_qualifier_tree_map) == 0:
-            raise SemanticException("Posts must be added before they may be removed from a selection")
+            raise NoPostsAddedSException(
+                "Posts must be added before they may be removed from a selection")
 
         for source_ast_key, source_qualifier_tree in self.__source_ast_qualifier_tree_map.items():
             # each source must already have a corresponding tree
@@ -120,7 +125,6 @@ class Selection:
             return tree1
         else:
             return OrNode(tree1, tree2)
-
 
     def source_ast_qualifier_tree_map(self):
         return self.__source_ast_qualifier_tree_map

@@ -11,7 +11,7 @@ TODO: Semantic checks for
 
 from .ITransformer import ITransformer
 from .qualifier_reductions import *
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 from lark import Transformer as LarkTransformer
 from lark import Tree as LarkTree, Token as LarkToken
@@ -44,7 +44,7 @@ class Transformer(ITransformer):
             unquoted_string = args[0][1:-1]
 
             if len(unquoted_string) == 0:
-                raise SemanticException("Strings must not be empty")
+                raise EmptyStringLiteralSException("Strings must not be empty")
 
             return LarkToken('STRING', unquoted_string)
 
@@ -72,7 +72,7 @@ class Transformer(ITransformer):
             selection_name = args[0]
 
             if not self.__selection_exists(selection_name):
-                raise SemanticException(
+                raise MissingSelectionSException(
                     "Selection '" + selection_name + "' does not exist")
 
             asts = get_subtitute_ast_list(self.__load_asts, selection_name)

@@ -1,6 +1,6 @@
 from lark import Visitor
 
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 
 class CheckReadX(Visitor):
@@ -14,5 +14,5 @@ class CheckReadX(Visitor):
             selection_name = node.children[0]
 
             if not self.__is_selection(selection_name):
-                raise SemanticException(
+                raise MissingSelectionSException(
                     "Selection '" + selection_name + "' does not exist")

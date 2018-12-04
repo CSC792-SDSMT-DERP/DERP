@@ -11,12 +11,12 @@ def get_subtitute_ast_list(acquire_asts, criteria_or_selection_name):
 
     # Already checked that the item exists, so the only way this fails is a file read error
     except FileIOException as e:
-        raise SemanticException("Unable to load '" + criteria_or_selection_name + "' from disk") from e
+        raise FailToLoadExistingSException("Unable to load '" + criteria_or_selection_name + "' from disk") from e
 
     # Text in file was semantically checked when it was saved, so this only happens if the set of valid fields
     # changes. (Or the file was modified after it was written or not written by interpreter)
     except TextParseException as e:
-        raise SemanticException("Unable to parse '" + criteria_or_selection_name + "': " + e.args[0]) from e
+        raise FailToParseExistingSException("Unable to parse '" + criteria_or_selection_name + "': " + e.args[0]) from e
 
     # Should only happen if there is a 'matching' qualifier in the loaded criteria or selection, and it fails to parse
     # or if the criteria/selection substituted was not written by the interpreter
@@ -25,7 +25,7 @@ def get_subtitute_ast_list(acquire_asts, criteria_or_selection_name):
 
     # Criteria or selection contains a circular reference
     except RecursionError as e:
-        raise SemanticException("'" + criteria_or_selection_name + "' contains a circular reference") from e
+        raise CircularReferenceSException("'" + criteria_or_selection_name + "' contains a circular reference") from e
 
     # No other exceptions should happen
     except Exception as e:
@@ -61,7 +61,7 @@ class MatchingQualifierReducer(Transformer):
         assert(criteria_name is not None)
 
         if not self.__criteria_exists(criteria_name):
-            raise SemanticException(
+            raise MissingCriteriaSException(
                 "Criteria '" + criteria_name + "' does not exist")
 
         asts = get_subtitute_ast_list(self.__get_asts, criteria_name)

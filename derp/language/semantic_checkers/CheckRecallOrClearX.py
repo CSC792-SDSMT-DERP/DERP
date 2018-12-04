@@ -1,6 +1,6 @@
 from lark import Visitor
 
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 
 class CheckRecallOrClearX(Visitor):
@@ -15,7 +15,7 @@ class CheckRecallOrClearX(Visitor):
             selection_or_criteria_name = node.children[0]
 
             if not self.__is_criteria(selection_or_criteria_name) and not self.__is_selection(selection_or_criteria_name):
-                raise SemanticException(
+                raise MissingIdSException(
                     "Selection or Criteria '" + selection_or_criteria_name + "' does not exist")
 
     def recall_expression(self, node):

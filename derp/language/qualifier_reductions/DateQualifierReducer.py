@@ -4,7 +4,7 @@ from lark import Tree
 from datetime import date, timedelta
 from calendar import monthrange
 
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 # Map month names to which month number they are
 MONTH_NAME_TO_INDEX = {
@@ -62,7 +62,7 @@ class DateQualifierReducer(Transformer):
         if month is not None and day is not None:
             last_valid_day = monthrange(year, month)[1]
             if day == 0 or day > last_valid_day:
-                raise SemanticException(str(
+                raise InvalidDateSException(str(
                     day) + " is not a valid day of the month in " + month_str + " of " + str(year))
 
         return [[year, True],
@@ -88,7 +88,7 @@ class DateQualifierReducer(Transformer):
 
         assert(year_found)
         if check_type.type == "DATE_EXACT" and (not day_found or not month_found):
-            raise SemanticException(
+            raise MissingExactDateSException(
                 "Exact date check requires month, day, and year all be specified")
 
         elif check_type.type == "DATE_BEFORE":
@@ -117,7 +117,7 @@ class DateQualifierReducer(Transformer):
         try:
             target_date = date(year, month, day)
         except ValueError as e:
-            raise SemanticException(
+            raise InvalidDateSException(
                 "Unable to create date type from " + str(month) + "/" + str(day) + "/" + str(year) + ": " + e.args[0]) from e
 
         if with_exp.lower() == "without":

@@ -1,6 +1,6 @@
 from lark import Visitor
 
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 
 class CheckCreateStatement(Visitor):
@@ -9,5 +9,5 @@ class CheckCreateStatement(Visitor):
 
     def create_expression(self, node):
         if not self.__any_modules():
-            raise SemanticException(
+            raise NoLoadedModulesSException(
                 "Cannot create a selection or criteria with no modules loaded")

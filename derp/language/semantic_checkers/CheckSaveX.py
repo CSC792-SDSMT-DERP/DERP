@@ -1,6 +1,6 @@
 from lark import Visitor
 
-from derp.exceptions import SemanticException
+from derp.exceptions import *
 
 
 class CheckSaveX(Visitor):
@@ -16,9 +16,9 @@ class CheckSaveX(Visitor):
 
         if self.__is_selection_mode():
             if self.__is_criteria(save_name):
-                raise SemanticException(
+                raise SaveSelectionAsCriteriaSException(
                     "Criteria named '" + save_name + "' already exists")
         else:
             if self.__is_selection(save_name):
-                raise SemanticException(
+                raise SaveSelectionAsCriteriaSException(
                     "Selection named '" + save_name + "' already exists")
