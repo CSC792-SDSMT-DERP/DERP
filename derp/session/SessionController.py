@@ -31,6 +31,7 @@ class SessionController(ISessionController):
     def __init__(self, selection_executor_factory, module_controller, file_manager):
         # external dependencies
         self.__module_controller = module_controller
+        self.__field_types = {}
 
         # type: SelectionExecutorFactory
         self.__selection_executor_factory = selection_executor_factory
@@ -97,7 +98,8 @@ class SessionController(ISessionController):
                 module_name),
             lambda: len(self.__module_controller.loaded_modules()) != 0,
             lambda: self.__current_mode == self.SessionModeType.SELECTION,
-            lambda: len(self.__session_state.get_buffer().get_commands()))
+            lambda: len(self.__session_state.get_buffer().get_commands()),
+            lambda name, t: str(t) in self.__field_types[name])
 
         self.__evaluator = Evaluator()
 
@@ -231,13 +233,39 @@ class SessionController(ISessionController):
             self.__module_controller.unload_module(module_name)
             return UXAction(UXActionType.ERROR, e)
 
+        self._update_field_types(load_action)
         return self._no_op_operation(load_action)
+
+    def _update_field_types(self, action=None):
+        self.__field_types = {}
+        warn_fields = []
+        for m in self.__module_controller.loaded_modules():
+            pd = m.post_definition()
+            fd = pd.field_definitions()
+
+            for name, t in fd.items():
+                t = str(t)
+                if name not in self.__field_types:
+                    self.__field_types[name] = set()
+                self.__field_types[name].add(t)
+
+            if action is not None:
+                for name, types in self.__field_types.items():
+                    if len(types) > 1:
+                        warn_fields.append(name)
+
+                if len(warn_fields) == 1:
+                    action.add_warning("Field '" + ''.join(warn_fields) + "' has multiple data types. Using it may yield poor filtering results")
+                elif len(warn_fields) > 1:
+                    action.add_warning("Fields '" + ','.join(warn_fields) + "' have multiple data types. Using them may yield poor filtering results")
+
 
     def _unload_operation(self, unload_action):
         module_name = unload_action.get_data()
 
         self.__module_controller.unload_module(module_name)
         self._build_selection_and_criteria_parsers()
+        self._update_field_types()
         return self._no_op_operation(unload_action)
 
     def _build_selection_and_criteria_parsers(self):
@@ -337,6 +365,7 @@ class SessionController(ISessionController):
             session_action = self.__evaluator.evaluate(string_input, ast)  # type: SessionAction
             ux_action = self.__action_handling[session_action.get_type()](
                 session_action)
+
             return ux_action
         except TextParseException as e:
             return UXAction(UXActionType.ERROR, e)

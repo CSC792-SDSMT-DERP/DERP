@@ -67,3 +67,7 @@ class FailToParseExistingSException(SemanticException):
 
 class FailToLoadExistingSException(SemanticException):
     pass
+
+
+class InvalidFieldDataTypeException(SemanticException):
+    pass

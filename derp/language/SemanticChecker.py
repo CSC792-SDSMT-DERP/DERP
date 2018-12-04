@@ -3,7 +3,7 @@ from .semantic_checkers import *
 
 class SemanticChecker():
     def __init__(self, get_loaded_fields, is_criteria, is_selection, module_exists, module_loaded,
-                 any_modules_loaded, is_selection_mode, buffer_size):
+                 any_modules_loaded, is_selection_mode, buffer_size, field_is_type):
         """
         :param get_loaded_fields: function to get fields provided by loaded modules on a per-module basis. Returns tuple(tuple(str))
         :param is_criteria: boolean function to check if a criteria exists
@@ -13,6 +13,7 @@ class SemanticChecker():
         :param any_modules_loaded: boolean function to check if at least 1 module is loaded
         :param is_selection_mode: boolean function to check if current parse mode is for creating selections
         :param buffer_size: int function to get size of current create buffer
+        :param field_is_type: string, FieldType to bool to check if FieldType is a valid type for the field specified
         """
 
         self.__visitors = [CheckCreateStatement(any_modules_loaded),
@@ -22,7 +23,8 @@ class SemanticChecker():
                            CheckSaveNonEmpty(buffer_size, is_selection_mode),
                            CheckSaveX(is_criteria, is_selection,
                                       is_selection_mode),
-                           CheckUnloadX(module_loaded)]
+                           CheckUnloadX(module_loaded),
+                           CheckFieldDataType(field_is_type)]
 
     def check(self, ast):
         """
@@ -38,6 +40,7 @@ class SemanticChecker():
         * Selection/Criteria Mode
             * Matching X but criteria X does not exist
             * Save as X but X already exists as other type
+            * Field is not used for wrong data type
         """
         for visitor in self.__visitors:
             visitor.visit(ast)

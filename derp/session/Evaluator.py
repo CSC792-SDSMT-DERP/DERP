@@ -8,6 +8,7 @@ from .SessionAction import *
 
 from lark import Visitor, v_args
 
+
 class Evaluator(IEvaluator):
     """
     The Evaluator determines what SessionAction the SessionController should perform for a given input.
@@ -22,7 +23,7 @@ class Evaluator(IEvaluator):
         :return: SessionAction representing commands for the SessionController to execute
         """
 
-        result_action = SessionAction(SessionActionType.NOOP, None)
+        result_action = SessionAction(SessionActionType.NOOP, None, [])
 
         class EvalVisitor(Visitor):
             def stop_expression(self, tree):

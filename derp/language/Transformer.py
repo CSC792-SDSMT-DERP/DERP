@@ -1,11 +1,6 @@
 """
 Transformer.py
 Implementation for Transformer objects.
-
-TODO: Semantic checks for
-* (VERIFY) Reading a selection that requires unloaded modules
-* Querying fields not supported by a module
-* Querying fields of multiple types (type checking)
 """
 
 from .ITransformer import ITransformer

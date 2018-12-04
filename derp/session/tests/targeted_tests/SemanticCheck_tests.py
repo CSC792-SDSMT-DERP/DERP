@@ -4,6 +4,7 @@ from . import execute_and_check_derp_statements
 
 from derp.session import UXActionType, UXActionModeType
 from derp.exceptions import *
+from derp.posts import FieldType
 
 
 @pytest.mark.slow
@@ -192,4 +193,26 @@ class TestQualifierSemanticChecks:
              UXActionType.CHANGE_MODE,),
             ('add posts {0} matching "fake criteria"'.format(from_expr),
              UXActionType.ERROR, MissingCriteriaSException,),
+        ])
+
+    @pytest.mark.parametrize("field,field_type", [('post date', FieldType.DATE),
+                                                  ('points', FieldType.NUMBER),
+                                                  ('title', FieldType.STRING),
+                                                  ('verified', FieldType.BOOLEAN)])
+    @pytest.mark.parametrize("check, check_type", [('with "hello world" in the {0}', FieldType.STRING), ('with the exact {0} "hello world"', FieldType.STRING),
+                                                   ('with roughly 10 {0}', FieldType.NUMBER), (
+                                                       'which are {0}', FieldType.BOOLEAN),
+                                                   ('with a {0} before 2018', FieldType.DATE)])
+    @pytest.mark.parametrize("create_type, from_expr", [('criteria', ''), ('selection', 'from mock')])
+    def test_data_type_checks(self, field, field_type, check, check_type, create_type, from_expr, sessioncontroller_impl):
+        desired_action = UXActionType.ERROR if field_type != check_type else UXActionType.NO_OP
+        desired_data = InvalidFieldDataTypeException if field_type != check_type else None
+
+        qualifier = check.format(field)
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('add posts {0} {1}'.format(from_expr, qualifier),
+             desired_action, desired_data,),
         ])

@@ -12,9 +12,13 @@ class SessionAction:
     performing a query.
     """
 
-    def __init__(self, session_action_type, data):
+    def __init__(self, session_action_type, data, warnings=None):
         self.__action_type = session_action_type
         self.__data = data
+        self.__warnings = warnings or list()
+
+    def add_warning(self, warning):
+        self.__warnings.append(warning)
 
     def get_type(self):
         return self.__action_type
@@ -22,9 +26,8 @@ class SessionAction:
     def get_data(self):
         return self.__data
 
-    # TODO : Implement warnings
     def get_warnings(self):
-        return []
+        return self.__warnings
 
 
 class ModeChangeType(Enum):

@@ -48,7 +48,7 @@ class Repl:
 
     def _handle_error(self, action):
         e = action.get_data()
-        
+
         if isinstance(e, FileIOException):
             print("Failed to save/load a selection or criteria")
         elif isinstance(e, TextParseException):
@@ -85,7 +85,7 @@ class Repl:
         warnings = action.get_warnings()
         if warnings is not None:
             for warning in warnings:
-                print(warning)
+                print("\t[[WARNING]] :: " + warning)
 
     def _handle_input(self, string_input):
         """

@@ -16,9 +16,9 @@ class UXAction:
     As a result, any warnings encountered in the backend while preparing the data will be included in the UX action.
     """
 
-    def __init__(self, action_type, data=None, warnings=[]):
+    def __init__(self, action_type, data=None, warnings=None):
         self.__data = data
-        self.__warnings = warnings
+        self.__warnings = warnings or list()
         self.__type = action_type
 
     def get_warnings(self):
