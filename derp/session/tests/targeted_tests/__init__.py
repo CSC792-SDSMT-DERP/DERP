@@ -22,7 +22,8 @@ def execute_and_check_derp_statements(sessioncontroller_impl, statements_and_che
 
         if len(command) > 2:
             if command[1] == UXActionType.ERROR:
-                print("Check exception is type", command[2])
+                print("Check exception {0} is type".format(
+                    result.get_data()), command[2])
                 assert isinstance(result.get_data(), command[2])
             else:
                 print("Check result data is", command[2], result.get_data())

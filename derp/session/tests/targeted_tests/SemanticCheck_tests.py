@@ -148,3 +148,48 @@ class TestCriteriaAndSelectionModeSemanticChecks:
         ])
 
 
+@pytest.mark.slow
+class TestQualifierSemanticChecks:
+
+    @pytest.mark.parametrize("qualifier", ['with "" in the title', 'with the exact title ""', 'about ""', 'matching ""'])
+    @pytest.mark.parametrize("create_type,from_expr", [('criteria', ''), ('selection', 'from mock')])
+    def test_empty_string_literals(self, create_type, from_expr, qualifier, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('add posts {0} {1}'.format(from_expr, qualifier),
+             UXActionType.ERROR, EmptyStringLiteralSException,),
+        ])
+
+    @pytest.mark.parametrize("qualifier", ['with the post date on 2018', 'with the post date on November 2018'])
+    @pytest.mark.parametrize("create_type,from_expr", [('criteria', ''), ('selection', 'from mock')])
+    def test_exact_date_check(self, create_type, from_expr, qualifier, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('add posts {0} {1}'.format(from_expr, qualifier),
+             UXActionType.ERROR, MissingExactDateSException,),
+        ])
+
+    @pytest.mark.parametrize("qualifier", ['with the post date after 0', 'with the post date on November 32 2018', 'with the post date on August 0 2018'])
+    @pytest.mark.parametrize("create_type,from_expr", [('criteria', ''), ('selection', 'from mock')])
+    def test_invalid_date_check(self, create_type, from_expr, qualifier, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('add posts {0} {1}'.format(from_expr, qualifier),
+             UXActionType.ERROR, InvalidDateSException,),
+        ])
+
+    @pytest.mark.parametrize("create_type,from_expr", [('criteria', ''), ('selection', 'from mock')])
+    def test_matching_missing_criteria(self, create_type, from_expr, sessioncontroller_impl):
+        execute_and_check_derp_statements(sessioncontroller_impl, [
+            ('load "mockmodule"', UXActionType.NO_OP,),
+            ('create a new {0}'.format(create_type),
+             UXActionType.CHANGE_MODE,),
+            ('add posts {0} matching "fake criteria"'.format(from_expr),
+             UXActionType.ERROR, MissingCriteriaSException,),
+        ])

@@ -58,6 +58,11 @@ class DateQualifierReducer(Transformer):
 
         assert(year is not None)
 
+        try:
+            tmp = monthrange(year, 1)
+        except ValueError as e:
+            raise InvalidDateSException(str(year) + " is not a valid year")
+
         # If both day and month parsed, make sure the day is a valid date
         if month is not None and day is not None:
             last_valid_day = monthrange(year, month)[1]
