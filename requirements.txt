@@ -1,3 +1,5 @@
+atomicwrites==1.2.1
+attrs==18.2.0
 beautifulsoup4==4.6.3
 certifi==2018.10.15
 chardet==3.0.4
@@ -8,12 +10,16 @@ idna==2.7
 jieba3k==0.35.1
 lark-parser==0.6.5
 lxml==4.2.5
+more-itertools==4.3.0
 newspaper3k==0.2.8
 nltk==3.4
 Pillow==5.3.0
 pkg-resources==0.0.0
+pluggy==0.8.0
 praw==6.0.0
 prawcore==1.0.0
+py==1.7.0
+pytest==4.0.1
 python-dateutil==2.7.5
 PyYAML==3.13
 requests==2.20.1
