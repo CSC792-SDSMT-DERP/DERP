@@ -223,10 +223,7 @@ class SessionController(ISessionController):
 
     def _load_operation(self, load_action):
         module_name = load_action.get_data()
-        try:
-            self.__module_controller.load_module(module_name)
-        except ModuleNotRegisteredException as e:
-            return UXAction(UXActionType.ERROR, e)
+        self.__module_controller.load_module(module_name)
 
         try:
             self._build_selection_and_criteria_parsers()
@@ -239,13 +236,7 @@ class SessionController(ISessionController):
     def _unload_operation(self, unload_action):
         module_name = unload_action.get_data()
 
-        # TODO remove this try catch by providing a way to get it in
-        # the semantic checker
-        try:
-            self.__module_controller.unload_module(module_name)
-        except ModuleNotLoadedException as e:
-            return UXAction(UXActionType.ERROR, e)
-
+        self.__module_controller.unload_module(module_name)
         self._build_selection_and_criteria_parsers()
         return self._no_op_operation(unload_action)
 
