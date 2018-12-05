@@ -4,9 +4,10 @@ ModuleController.py
 Class definition for the ModuleController object.
 """
 
-from derp.exceptions import ModuleRegistrationException, ModuleNotRegisteredException, ModuleNotLoadedException
+from derp.exceptions import *
 
 from .IModuleController import IModuleController
+from .tests.IModule_tests import TestIModule
 
 
 class ModuleController(IModuleController):
@@ -47,7 +48,9 @@ class ModuleController(IModuleController):
         :param module: A derp.module.IModule to register
         """
 
-        # TODO: Find a way to enforce IModule on the module and raise ModuleDefinitionException if needed
+        if not TestIModule().module_is_valid(module):
+            raise ModuleDefinitionException(
+                "Module does not pass IModule tests")
 
         module_name = module.name().lower()
         if module_name in self.__modules:

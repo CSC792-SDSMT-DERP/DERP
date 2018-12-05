@@ -24,17 +24,18 @@ class __DerpGrammars:
 
 __grammars = __DerpGrammars()
 
+
 def build_main_mode_parser():
     return Parser(__grammars.main_grammar())
+
 
 def build_selection_and_criteria_parsers(active_modules):
     assert(len(active_modules) != 0)
 
-    # TODO enforce that source grammars are valid
     field_grammars = [module.post_definition().field_grammar()
-                        for module in active_modules]
+                      for module in active_modules]
     source_grammars = [(module.name(), module.source_grammar(),)
-                        for module in active_modules]
+                       for module in active_modules]
 
     # Build a list of all the {modulename}_source rules
     # that exist
@@ -68,7 +69,7 @@ def build_selection_and_criteria_parsers(active_modules):
     )
 
     source_grammars = [module.source_grammar()
-                        for module in active_modules]
+                       for module in active_modules]
 
     criteria_parser = Parser(
         __grammars.criteria_grammar(),

@@ -7,7 +7,7 @@ ModuleController, and Module objects on startup. Performs any required dependenc
 from derp.modules import ModuleController
 from derp.session import SessionController
 from derp.session.session_state import FileManager
-from derp.exceptions import ModuleInitializationException
+from derp.exceptions import ModuleInitializationException, ModuleDefinitionException
 from derp.selections.execution import SelectionExecutorFactory
 from frontend import Repl, PostReader
 
@@ -36,7 +36,10 @@ def main():
     # For now, we explicitly register modules that we know exist,
     # in the future this could do discovery
     mock_module = MockModule()
-    module_controller.register_module(mock_module)
+    try:
+        module_controller.register_module(mock_module)
+    except ModuleDefinitionException as e:
+        print("Mock module is does not meet module API")
 
     reddit_creds_json = open("reddit_credentials.json", "r")
     reddit_creds = json.load(reddit_creds_json)
@@ -44,8 +47,9 @@ def main():
     """
     At minimum, reddit_credentials.json must contain
     {
-        "client_id": "",
-        "client_secret": ""
+        "client_id": "[client id string]",
+        "client_secret": "[client secret string]",
+        "user_agent":"[user agent string]"
     }
 
     It may optionally provide
@@ -60,6 +64,8 @@ def main():
         module_controller.register_module(reddit_module)
     except ModuleInitializationException as e:
         print("Failed to load reddit module: ", e)
+    except ModuleDefinitionException as e:
+        print("Reddit module is does not meet module API")
 
     repl.read_eval_print_loop()
 
