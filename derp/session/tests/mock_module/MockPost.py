@@ -29,3 +29,6 @@ class MockPost(IPost):
 
     def about(self, string):
         return string in self.__data["mock_string"]
+
+    def __str__(self):
+        return "\n".join([field + ": " + str(self.__data[field]) for field in ["title", "points", "verified", "post date"]])

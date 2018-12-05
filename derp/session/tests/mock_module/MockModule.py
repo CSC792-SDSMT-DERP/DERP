@@ -32,9 +32,7 @@ class MockModule(IModule):
             "title": FieldType.STRING,
             "points": FieldType.NUMBER,
             "verified": FieldType.BOOLEAN,
-            "post date": FieldType.DATE,
-            "upvotes": FieldType.BOOLEAN,
-            "date": FieldType.NUMBER
+            "post date": FieldType.DATE
         })
 
     def get_posts(self, source_ast, qualifier_tree):
