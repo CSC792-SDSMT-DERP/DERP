@@ -7,6 +7,7 @@ from .random_data import *
 from derp.exceptions import FileIOException
 
 
+@pytest.mark.sequential
 class TestIFileManager:
     """
     Class containing tests for the IFileManager interface
@@ -21,7 +22,6 @@ class TestIFileManager:
 
     # Generate random files and texts to test with
     def setup_class(self):
-
         # Generate a bunch of unique random files to work with, up to 4 directories deep
         random_files = set()
         for i in range(5):

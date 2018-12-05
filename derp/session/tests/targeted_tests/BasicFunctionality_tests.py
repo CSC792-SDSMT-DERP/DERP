@@ -8,6 +8,7 @@ from random import shuffle
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestMainModeBasicFunctionality:
     @pytest.mark.parametrize("command", ["exit", "stop"])
     def test_main_mode_can_exit(self, command, sessioncontroller_impl):
@@ -36,6 +37,7 @@ class TestMainModeBasicFunctionality:
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestMainModeAdvancedFunctionality:
     @pytest.mark.parametrize("create_type,from_stmt", [("criteria", ""), ("selection", "from mock ")])
     def test_can_recall(self, create_type, from_stmt, sessioncontroller_impl):
@@ -77,6 +79,7 @@ class TestMainModeAdvancedFunctionality:
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestCriteriaAndSelectionMode:
     def setup_class(self):
         self.__possible_qualifiers = ['with a post date before November 1018',
@@ -184,6 +187,7 @@ class TestCriteriaAndSelectionMode:
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestQualifierVariations:
     @pytest.mark.parametrize("create_type,from_stmt,add_remove", [("criteria", "", "add"), ("criteria", "", "remove"), ("selection", "from mock ", "add")])
     @pytest.mark.parametrize('field_article', ["a", "an", "the"])

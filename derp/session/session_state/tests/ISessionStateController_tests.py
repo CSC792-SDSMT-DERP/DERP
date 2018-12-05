@@ -2,6 +2,8 @@ import pytest
 
 from derp.session.session_state.Buffer import *
 
+
+@pytest.mark.parallel
 class TestISessionStateController:
     """
     Class containing tests for the ISessionStateController interface

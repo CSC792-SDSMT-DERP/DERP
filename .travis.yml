@@ -6,4 +6,4 @@ python:
 install:
   - pip install -r requirements.txt
 
-script: pytest -v
+script: pytest -v -m parallel -n 8 && pytest -v -m sequential

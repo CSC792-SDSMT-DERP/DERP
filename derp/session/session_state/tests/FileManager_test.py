@@ -25,6 +25,7 @@ def filemanager_impl(request):
     return FileManager(temp_dir)
 
 
+@pytest.mark.sequential
 class TestFileManager:
     """
     Tests for file manager concrete type

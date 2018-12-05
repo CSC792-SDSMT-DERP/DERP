@@ -8,6 +8,7 @@ from derp.posts import FieldType
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestMainModeSemanticChecks:
 
     @pytest.mark.parametrize("keyword", ["load", "unload", "read", "recall", "clear"])
@@ -74,6 +75,7 @@ class TestMainModeSemanticChecks:
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestCriteriaAndSelectionModeSemanticChecks:
     @pytest.mark.parametrize("create_type,from_expr", [('criteria', ''), ('selection', 'from mock')])
     def test_save_as_empty_name(self, create_type, from_expr, sessioncontroller_impl):
@@ -150,6 +152,7 @@ class TestCriteriaAndSelectionModeSemanticChecks:
 
 
 @pytest.mark.slow
+@pytest.mark.parallel
 class TestQualifierSemanticChecks:
 
     @pytest.mark.parametrize("qualifier", ['with "" in the title', 'with the exact title ""', 'about ""', 'matching ""'])

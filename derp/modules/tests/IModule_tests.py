@@ -5,7 +5,12 @@ from derp.posts import PostDefinition, FieldType, IPost
 
 from lark import Transformer
 
+import pytest
 
+
+@pytest.mark.slow
+@pytest.mark.plugins
+@pytest.mark.parallel
 class TestIModule:
     def module_is_valid(self, module_impl):
         try:
