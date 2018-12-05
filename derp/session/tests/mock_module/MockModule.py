@@ -38,9 +38,9 @@ class MockModule(IModule):
         })
 
     def get_posts(self, source_ast, qualifier_tree):
-        return PostIterator(self.filter_posts(qualifier_tree))
+        return iter(PostIterator(self._filter_posts(qualifier_tree)))
 
-    def filter_posts(self, qualifier_tree):
+    def _filter_posts(self, qualifier_tree):
         for post in self.posts:
             # if qualifier_tree is None or (qualifier_tree is not None and qualifier_tree.evaluate(post)):
             #    yield post
