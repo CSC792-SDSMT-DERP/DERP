@@ -11,13 +11,13 @@ This repository contains the core DERP library as well as a simple console front
 Documentation covering the DERP library, language, frontend, and module system can be found in the [documentation subdirectory](./documentation).
 
 - Original Project Documentation
-  - White Paper (Errata)
-  - Language Tutorial (Errata)
-  - Language Reference (Errata)
-  - Final Report
+  - [White Paper](./documentation/White%20Paper.pdf) ([Errata](./documentation/White%20Paper%20Errata.md))
+  - [Language Tutorial](./documentation/White%20Paper.pdf) ([Errata](./documentation/Language%20Tutorial%20Errata.md))
+  - [Language Reference](./documentation/Language%20Reference.pdf) ([Errata](./documentation/Language%20Reference%20Errata.md))
+  - [Final Report](./documentation/Final%20Report.md)
 - DERP Modules
-  - Module API
-  - Built In Modules
+  - [Module API](./documentation/Module%20API.md)
+  - [Built In Modules](./documentation/Built%20In%20Modules.md)
 
 ## Getting Started
 The DERP interpreter is built to run in Python 3.5+.
