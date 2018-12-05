@@ -70,6 +70,8 @@ Acceptance and certification testing? Solves the problems set forth in the White
 ## Code and Documentation Storage
 Between August 27 and December 03, DERP was version controlled using Git on the SDSM&T MCS GitLab server. However, on December 03, the code was migrated to Github. All commit history was preserved during this transition.
 
+As the team consisted of three members by the time coding began, branching was not enforced. Communication sufficed to prevent merge conflicts.
+
 ## Acceptance Criteria
 As stated in our white paper, our primary goals were:
   - Intuitively querying multiple sources to produce a single stream of data
@@ -111,7 +113,8 @@ however the following example is a little rougher:
 >>>
 ```
 
-As the team consisted of three members by the time coding began, branching was not enforced. Communication sufficed to prevent merge conflicts. 
+## DERP Architecture
+
 Language Evolution Document [Shortcomings/ Stuff in Errata]
   Was the design such that additional features and capabilities could be added or did you require significant redesign / rethinking?
   Translator / Compiler Architecture [Design doc in prose]
