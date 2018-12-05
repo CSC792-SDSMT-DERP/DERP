@@ -70,10 +70,48 @@ Acceptance and certification testing? Solves the problems set forth in the White
 ## Code and Documentation Storage
 Between August 27 and December 03, DERP was version controlled using Git on the SDSM&T MCS GitLab server. However, on December 03, the code was migrated to Github. All commit history was preserved during this transition.
 
-Documentation was stored in multiple places throughout the development process. Internal documentation was and continues to be stored on a Google Team Drive bound to the SDSM&T domain. At present, external documentation is stored in the `./documentation` directory in the DERP repository. This supports versioning the documentation along side the code. However, between September 09 and December 05, external documentation was stored at the sister repository: [DERP-Documentation](https://github.com/CSC792-SDSMT-DERP).
+## Acceptance Criteria
+As stated in our white paper, our primary goals were:
+  - Intuitively querying multiple sources to produce a single stream of data
+  - Supporting multiple plug-in modules which could be used with the same core language
+  - Supporting speech-to-text and text-to-speech with a languge designed to be as close to natural English as possible
+
+Firstly, it is possible to query multiple sources to produce a single stream of data as is required.
+This feature is demonstrated in the example below which shows multiple
+sources being saved into a reusable selection and then read from. A feature that was under
+consideration but was removed was to permit querying against all loaded sources. As a module
+may provide an infinite number of sources, this was deemed infeasible.
+```
+>>>load "reddit"
+>>>create a new selection
+(selection)>>>add posts from subreddit "nfl" and subreddit "all"
+(selection)>>>save as "my news"
+(selection)>>>stop
+>>>read "my news"
+>>>
+```
+
+Secondly, the Language defines a set of core statements, and allows modules to specify grammar extensions.
+This is possible thanks to our module interface definition which specifies the required API for all
+extending modules. For example, the Reddit module specifies the keywords "subreddit" and "reddit" for
+selecting sources. Additionally, it specifies the fields to expect on Reddit posts, such as the
+upvote count and the post's body.
+
+Finally, almost all statements in the language are grammatically correct English
+phrases, though some are occasionally somewhat odd sounding when spoken.
+The example given above demonstrates a reasonable English phrase for creating a selection,
+however the following example is a little rougher:
+```
+>>>load "reddit"
+>>>create a new selection
+(selection)>>>add posts from subreddit "nfl" without under 100 upvotes
+(selection)>>>save as "my news"
+(selection)>>>stop
+>>>read "my news"
+>>>
+```
 
 As the team consisted of three members by the time coding began, branching was not enforced. Communication sufficed to prevent merge conflicts. 
-
 Language Evolution Document [Shortcomings/ Stuff in Errata]
   Was the design such that additional features and capabilities could be added or did you require significant redesign / rethinking?
   Translator / Compiler Architecture [Design doc in prose]
