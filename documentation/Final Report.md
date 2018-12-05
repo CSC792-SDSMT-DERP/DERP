@@ -1,8 +1,16 @@
 # Project Plan
 
-DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP was developed following the [Iterative Waterfall](https://www.geeksforgeeks.org/software-engineering-iterative-waterfall-model/) model. As such, a large amount of time was spent developing requirements and specifications (August 27, 2018 - November 04, 2018). These requirements and specifications are set forth in the [White Paper](./White%20Paper.pdf) and [Language Reference](./Language%20Reference.pdf). The [Language Tutorial](./Language%20Tutorial.pdf) also set forth expectations for user interaction. The initial design phase lasted from November 04, 2018 to November 08, 2018. However, certain aspects of DERP were found to be infeasible and needed to be re-specified. These changes to the specifications may be found in the errata pages ([White Paper Errata](./White%20Paper%20Errata.md), [Language Reference Errata](./Language%20Reference%20Errata.md), [Language Tutorial Errata](./Language%20Tutorial%20Errata.md)). Coding took place between November 08, 2018 and December 03, 2018. Additional tests were put in place between December 03, 2018 and December TODO:XX, 2018. Additional documentation was then written to promote maintenance.  
+DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP was developed following the [Iterative Waterfall](https://www.geeksforgeeks.org/software-engineering-iterative-waterfall-model/) model. As such, a large amount of time was spent developing requirements and specifications (August 27, 2018 - November 04, 2018). These requirements and specifications were set forth in the [White Paper](./White%20Paper.pdf) and [Language Reference](./Language%20Reference.pdf). The [Language Tutorial](./Language%20Tutorial.pdf) also set forth expectations for user interaction. The initial design phase lasted from November 04, 2018 to November 08, 2018. However, certain aspects of DERP were found to be infeasible and needed to be re-specified. These changes to the specifications may be found in the errata pages ([White Paper Errata](./White%20Paper%20Errata.md), [Language Reference Errata](./Language%20Reference%20Errata.md), [Language Tutorial Errata](./Language%20Tutorial%20Errata.md)). Coding took place between November 08, 2018 and December 03, 2018. Additional tests were put in place between December 03, 2018 and December TODO:XX, 2018. Finally, documentation was then written to promote maintenance.  
 
-## Timeline
+## Deliverable Schedule
+  - September 21: [White Paper](./White%20Paper.pdf) due
+  - October 22: [Language Tutorial](./Language%20Tutorial.pdf) and [Reference](./Language%20Reference.pdf) due
+  - November 28: Presentation and Demo
+  - December 05: Soft due date for project
+  - December 13: Hard due date for project
+
+
+## Project Timeline
   - August 27: Form team of five members
   - August 29:
     - Propose DERP
@@ -57,25 +65,14 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
   - December 13:
     - Last possible date to turn in project and report
 
-
-Are you doing to do some form of Agile software development? No. Iterative waterfall.
-
-When will you have requirements created? Requirements were created before any coding happened.
-
-Deliverable schedule:
-  - September 21: White Paper due
-  - October 22: Language Tutorial and Reference due
-  - November 28: Presentation and Demo
-  - December 05: Soft due date for project
-  - December 13: Hard due date for project
-
 Acceptance and certification testing? Solves the problems set forth in the White Paper.
 
-How are you maintaining code and document revisions?
-- Drive + GitLab
-- Drive + Github (Overleaf) + GitLab
-- Drive + GitLab
-- Drive + Github
+## Code and Documentation Storage
+Between August 27 and December 03, DERP was version controlled using Git on the SDSM&T MCS GitLab server. However, on December 03, the code was migrated to Github. All commit history was preserved during this transition.
+
+Documentation was stored in multiple places throughout the development process. Internal documentation was and continues to be stored on a Google Team Drive bound to the SDSM&T domain. At present, external documentation is stored in the `./documentation` directory in the DERP repository. This supports versioning the documentation along side the code. However, between September 09 and December 05, external documentation was stored at the sister repository: [DERP-Documentation](https://github.com/CSC792-SDSMT-DERP).
+
+As the team consisted of three members by the time coding began, branching was not enforced. Communication sufficed to prevent merge conflicts. 
 
 Language Evolution Document [Shortcomings/ Stuff in Errata]
   Was the design such that additional features and capabilities could be added or did you require significant redesign / rethinking?
