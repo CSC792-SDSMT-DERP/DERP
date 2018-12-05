@@ -15,10 +15,8 @@ import prawcore
 
 
 class RedditModule(IModule):
-    def __init__(self, client_id, client_secret, password=None, username=None):
+    def __init__(self, client_id, client_secret, user_agent, password=None, username=None):
         try:
-            user_agent = "dekstop-python:edu.sdsmt.derp.redditmodule:v1 (by /u/CompilersDERP)"
-
             self.__reddit = praw.Reddit(
                 client_id=client_id,
                 client_secret=client_secret,
@@ -53,10 +51,11 @@ class RedditModule(IModule):
     # * The common lark ESCAPED_STRING is part of the grammar
     # * Whitespace will be ignored when parsing
     #
-    # One rule must be [module name]_source, this is the rule that's matched
+    # One rule or token must be [module name]_source, this is the rule that's matched
     #   to know when this module is to be used for a query
-    # That rule must not begin with _ or ?. It may begin with !. It may be a token (all caps),
-    #   or a rule (all lower-case)
+    # That rule must not begin with _ or ?.
+    #
+    # All other rules and tokens must begin with the module name, optionally preceded by a _, ?, or !
     def source_grammar(self):
         """
         :return: the grammar for parsing sources interpreted by this module.
@@ -75,7 +74,7 @@ class RedditModule(IModule):
         given qualifier tree.
 
         :param source_ast: A AST representing the source clause of a selection.
-        :param qualifier_tree: A tree representing a logical expression which the posts must match.
+        :param qualifier_tree: A tree representing a logical expression which the posts should match.
         :return: a PostIterator which iterates over the returned set of posts
         """
 
@@ -111,6 +110,7 @@ class RedditModule(IModule):
                 fragment = "(" + self._create_query_string(child) + ")"
                 if fragment != "()":
                     fragments.append(fragment)
+
             # note: this may not be necessary anymore
             fragments = [s for s in fragments if s != ""]
             query_string = join_string.join(fragments)
