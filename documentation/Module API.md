@@ -70,3 +70,8 @@ the Grammar returned by `source_grammar()`.
 def module_source_string(request):
     return request.param
 ```
+
+## Registering a New Module
+New Modules must be added to the Derp.py script by instantiating an instance of the module class and
+invoking the module controller's `register_module()` method with the class instance as an argument in the `main()` method.
+This will make the module available for use with `load "modulename"` expressions.
