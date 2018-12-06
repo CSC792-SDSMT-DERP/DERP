@@ -2,10 +2,10 @@ from lark import Transformer, v_args
 from lark import Tree
 
 CHECK_TYPE_AND_NEGATE_TO_OP = {
-    "NUMBER_ABOVE": {False: ">", True: "<="},
-    "NUMBER_BELOW": {False: "<", True: ">="},
-    "NUMBER_EXACT": {False: "=", True: "!="},
-    "NUMBER_APPROX": {False: "~", True: "!~"},
+    "number_above": {False: ">", True: "<="},
+    "number_below": {False: "<", True: ">="},
+    "number_exact": {False: "=", True: "!="},
+    "number_approx": {False: "~", True: "!~"},
 }
 
 
@@ -19,6 +19,6 @@ class NumberQualifierReducer(Transformer):
     def number_qualifier(self, with_exp, check_type, number_tok, field):
         negate = with_exp.lower() == "without"
         value = eval(number_tok)
-        op = CHECK_TYPE_AND_NEGATE_TO_OP[check_type.type][negate]
+        op = CHECK_TYPE_AND_NEGATE_TO_OP[check_type.data][negate]
 
         return Tree("number_qualifier", (field, op, value))

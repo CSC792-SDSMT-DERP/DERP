@@ -77,11 +77,11 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
 
     '_string_check': 'WITH_EXP "the"i "exact"i',
 
-    '_number_check': 'WITH_EXP (NUMBER_ABOVE | NUMBER_BELOW | NUMBER_EXACT | NUMBER_APPROX)',
-    'NUMBER_ABOVE':   ('"over"i', '"greater"i "than"i'),
-    'NUMBER_BELOW':   ('"under"i', '"less"i "than"i'),
-    'NUMBER_EXACT':   '"exactly"i',
-    'NUMBER_APPROX':  '"roughly"i',
+    '_number_check': 'WITH_EXP (number_above | number_below | number_exact | number_approx)',
+    'number_above':   ('"over"i', '"greater"i "than"i'),
+    'number_below':   ('"under"i', '"less"i "than"i'),
+    'number_exact':   '"exactly"i',
+    'number_approx':  '"roughly"i',
 
     '_ON_EXP':   ('"on"i', '"about"i'),
     'NEGATE':    '"not"i',

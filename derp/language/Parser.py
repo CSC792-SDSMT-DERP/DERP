@@ -42,6 +42,7 @@ class Parser (IParser):
         try:
             ast = self._parser.parse(text)
         except UnexpectedInput as ex:
+            print(ex)
             raise TextParseException(
                 '%s at line %s, column %s.\n\n%s' % ("Parse Error", ex.line, ex.column, ex.get_context(text))) from ex
         except ParseError as ex:
