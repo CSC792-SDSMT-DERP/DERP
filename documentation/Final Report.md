@@ -249,9 +249,9 @@ All this is not to say there are no automated tests in the project, just that th
  * Interface tests
  * System tests and Monkey tests
 
-Interface tests are defined for the major interfaces in the interpreter which are used to inject dependencies into other objects. A prime example of this is the [IModule](../derp/modules/IModule) interface, which is used by language modules and has a set of tests which can be used to check that a module conforms to the API.
+Interface tests are defined for the major interfaces in the interpreter which are used to inject dependencies into other objects. A prime example of this is the [IModule](../derp/modules/IModule.py) interface, which is used by language modules and has a set of tests which can be used to check that a module conforms to the API.
 
-There few class-level tests, used to verify that individual class functions exhibit behaviors we desire. These are used mainly to test security features, such as in the [FileManager](../derp/session/session_state/FileManager) implementation.
+There few class-level tests, used to verify that individual class functions exhibit behaviors we desire. These are used mainly to test security features, such as in the [FileManager](../derp/session/session_state/FileManager.py) implementation.
 
 Finally, the majority of the tests in the project are system integration or monkey tests. These tests instantiate a DERP Session, which is the entry point to the DERP library, and execute language statements against it.
 Using the powerful Pytest library, the system integration tests verify that, aside from arbitrary capitalization, almost every single variation of DERP statements is properly handled, by the DERP library. 
