@@ -11,25 +11,32 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
 
 
 ## Project Timeline
-  - August 27: Form team of five members
+  - August 27: 
+    - Form team of five members
   - August 29:
     - Propose DERP
     - Outline White Paper
-  - September 03: Write Test Plan
+  - September 03: 
+    - Write Test Plan
   - September 09:
     - Begin drafting DERP grammar
     - Set up CI with GitLab and Azure Cloud
-  - September 12: Begin writing White Paper
-  - September 21: Finish White Paper
-  - September 27: Finish rough draft of DERP grammar
-  - October 05: Spin up on Python parsing (Lark)
+  - September 12: 
+    - Begin writing White Paper
+  - September 21: 
+    - Finish White Paper
+  - September 27: 
+    - Finish rough draft of DERP grammar
+  - October 05: 
+    - Spin up on Python parsing (Lark)
   - October 06:
     - Outline Language Reference
     - Outline Language Tutorial
   - October 15:
     - Begin drafting Language Reference
     - Team size decreased to four members
-  - October 18: Begin drafting Language Tutorial
+  - October 18: 
+    - Begin drafting Language Tutorial
   - October 21:
     - Finish Language Tutorial
     - Finish Language Reference
@@ -42,8 +49,10 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
   - November 11:
     - Break ground on Python code
     - Encode DSL grammar in code
-  - November 16: Implement basic language processing
-  - November 18: Implement language processing completely
+  - November 16: 
+    - Implement basic language processing
+  - November 18: 
+    - Implement language processing completely
   - November 23:
     - Set up CI with Digital Ocean and GitLab
     - Implement basic backend logic and data structures
@@ -51,7 +60,8 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
     - Implement Reddit module
     - Implement backend logic and data structures completely
     - Begin enforcing semantic checks
-  - November 27: Write DERP presentation and demo script
+  - November 27: 
+    - Write DERP presentation and demo script
   - December 03:
     - Outline Final Report
     - Migrate repository to Github
