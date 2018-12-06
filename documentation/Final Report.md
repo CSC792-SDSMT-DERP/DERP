@@ -11,23 +11,23 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
 
 
 ## Project Timeline
-  - August 27: 
+  - August 27:
     - Form team of five members
   - August 29:
     - Propose DERP
     - Outline White Paper
-  - September 03: 
+  - September 03:
     - Write Test Plan
   - September 09:
     - Begin drafting DERP grammar
     - Set up CI with GitLab and Azure Cloud
-  - September 12: 
+  - September 12:
     - Begin writing White Paper
-  - September 21: 
+  - September 21:
     - Finish White Paper
-  - September 27: 
+  - September 27:
     - Finish rough draft of DERP grammar
-  - October 05: 
+  - October 05:
     - Spin up on Python parsing (Lark)
   - October 06:
     - Outline Language Reference
@@ -35,7 +35,7 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
   - October 15:
     - Begin drafting Language Reference
     - Team size decreased to four members
-  - October 18: 
+  - October 18:
     - Begin drafting Language Tutorial
   - October 21:
     - Finish Language Tutorial
@@ -49,9 +49,9 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
   - November 11:
     - Break ground on Python code
     - Encode DSL grammar in code
-  - November 16: 
+  - November 16:
     - Implement basic language processing
-  - November 18: 
+  - November 18:
     - Implement language processing completely
   - November 23:
     - Set up CI with Digital Ocean and GitLab
@@ -60,7 +60,7 @@ DERP development was active from August 27, 2018 to December TODO:XX, 2018. DERP
     - Implement Reddit module
     - Implement backend logic and data structures completely
     - Begin enforcing semantic checks
-  - November 27: 
+  - November 27:
     - Write DERP presentation and demo script
   - December 03:
     - Outline Final Report
@@ -243,8 +243,7 @@ This approach was chosen mainly due to the arguments presented in [this article]
 
 ## Coding Practices, EAFP, and Assertions
 
- The specific practices that emphasis was put on are as follows:
-
+ The specific practices that emphasize was put on are as follows:
  * Use accurate and descriptive names for functions and variables
  * Keep function definitions (and preferably also class definitions) short. If the definition of a function is too long, split it into multiple functions.
  * Use assertions liberally. The goal being that if execution reaches any unexpected, invalid state, it should crash, not continue as if nothing were wrong.
@@ -266,15 +265,15 @@ Interface tests are defined for the major interfaces in the interpreter which ar
 There few class-level tests, used to verify that individual class functions exhibit behaviors we desire. These are used mainly to test security features, such as in the [FileManager](../derp/session/session_state/FileManager.py) implementation.
 
 Finally, the majority of the tests in the project are system integration or monkey tests. These tests instantiate a DERP Session, which is the entry point to the DERP library, and execute language statements against it.
-Using the powerful Pytest library, the system integration tests verify that, aside from arbitrary capitalization, almost every single variation of DERP statements is properly handled, by the DERP library. 
+Using the powerful Pytest library, the system integration tests verify that, aside from arbitrary capitalization, almost every single variation of DERP statements is properly handled, by the DERP library.
 
 There are three sets of monkey tests which, by default, run 1000 cases each. These tests generate random sequences of text and pass them to the DERP Session, in an attempt to crash it or cause it to hang. The first group of tests passes purely random strings, the second passes random sequences of DERP keywords, and the third passes random sequences of DERP statements (full lines of DERP code).
 
 ## Usage of Testing Scripts
 
-It is the responsibility of the developers to ensure the code the add to the project functions, whether it be through test scripts or manual testing. The system integration and interface tests are provided as an avenue towards this goal, but there is no strict requirement that they be passing at all times. This decision was made due to the small size of the development team and the rapid pace of development to prevent hindering development.
+It is the responsibility of the developers to ensure the code they add to the project works correctly, whether it be through test scripts or manual testing. The system integration and interface tests are provided as an avenue towards this goal, but there is no strict requirement that they be passing at all times. This decision was made due to the small size of the development team and the rapid pace of development.
 
-Once the Git Continuous Integration was working correctly, tests were run through that on every pushed commit to the repo, so developers could have constant visibility of the state of the project.
+Once continuous integration was working correctly, tests were run through that on every pushed commit to the repository, so developers could have constant visibility as to the state of the project.
 
 Tests are built using the Pytest library, and can be executed by running `python3 -m pytest` from the root of the project. This command will find and execute all tests in the project. Tests are defined in files named beginning with `test_` or ending with `_test.py`. These files are in `tests` subfolders throughout the project.
 
@@ -283,7 +282,7 @@ Since there are a plethora of tests defined, Pytest marks are utilized so that d
  * `slow` - This mark indicates that the test takes a long time to run and developers may not want to wait for it during rapid iteration
  * `monkey` - This mark indicates that the test is a monkey test
  * `plugins` - This mark indicates that the test is used to verify plugins function correctly.
-  
+
 For example, a developer who is doing rapid iteration may want to run tests with `python3 -m pytest -m "not slow"` to exclude long-running tests. For more information about Pytest, see the [Pytest reference pages](https://docs.pytest.org/en/latest/index.html).
 
 Furthermore, the marks `sequential` and `parallel` are defined for tests that must be run sequentially and tests that can be run in parallel, respectively. If developers have a Pytest plugin to run tests in parallel, such as `pytest-xdist`, they can use the `parallel` mark to only execute tests that are safe to run in parallel. (i.e. `python3 -m pytest -m parallel -n 10`)
