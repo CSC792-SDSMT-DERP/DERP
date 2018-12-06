@@ -134,12 +134,26 @@ Lines of input are passed first into the Parser for the appropriate mode. After 
 The [Evaluator](../derp/session/Evaluator.py) uses a Lark Visitor to search for certain types of nodes inside the AST. When a node is found that would imply a certain action should be taken, the evaluator constructs a [SessionAction](../derp/session/SessionAction.py) with the action to take and the data needed to carry out the action.
 
 ### Interpreting Criteria and Selection Lines
+As lines of selections and criteria are processed by
+the Evaluator, APPEND_TO_BUFFER SessionActions are created.
+The SessionController then appends the line of text and the processed AST to the active [Buffer](../derp/session/session_state/IBuffer.py) via the [SessionStateController](../derp/session/session_state/SessionStateController.py). The buffer may be a [CriteriaBuffer or SelectionBuffer](../derp/session/session_state/Buffer.py) depending on the active mode. The buffers progressively append the lines and ASTs to internal data structures. The lines are simply stored in lists, and the ASTs are appended to [Criteria](../derp/criteria/Criteria.py) objects and [Selection](../derp/selections/Selection.py) objects respectively. During an append step, the appended AST is converted into its backend representation.  
 
-### Executing a QUERY SessionAction
+Criteria statement ASTs are split into their actions (ADD or REMOVE) and their qualifier subtrees. The qualifier subtrees are then converted into [QualifierTrees](../derp/qualifiers/QualifierTree.py). This conversion happens via the static `convert(root_qualifier)` function in the [LarkQualifierConverter](../derp/qualifiers/Converter.py).
+The new QualifierTree may then be appended to the criteria by joining the existing QualifierTree for the criteria wih the new one using various ParentNodes. For ADD statements, the two trees are joined with an OR node. For REMOVE statements, the new tree is added to a NOT node and an AND node is used to join the previous tree with the new NOT node.
 
-When the evaluator
+Selections statement ASTs undergo a similar transformation. The action (ADD or REMOVE) and qualifier subtree are parsed out for each line; however, the specified sources are additionally extracted. Each selection maintains a dictionary consisting of (Source AST, QualifierTree) pairs. In the case of ADD statements, the newly converted QualifierTree is then merged with the existing QualifierTree for each of the sources specified. For REMOVE statements, the new QualifierTree is merged with all of the existing QualifierTrees. If one of the sources specified is another selection rather than a module defined source AST, a few extra steps must be taken. All of the (Source AST, QualifierTree) pairs defined in the nested selection are merged with the QualifierTree specified by the AST to be appended. Then, each of the newly qualified (Source AST, QualifierTree) pairs are merged with the existing (Source AST, QualifierTree) pairs in the selection being appended to.
+
+Semantic errors may be thrown during the append process. For example, if a user tries to issue a REMOVE statement in Selection Mode before any ADD statements have been issued, a semantic error will be thrown.
+
+### Executing a Selection
+
+As discussed above, a selection is simply a dictionary of (Source AST, QualifierTree) pairs. When a selection is to be executed, it is passed through the [SelectionExecutorFactory](../derp/selections/execution/SelectionExecutorFactory.py). The SelectionExecutorFactory then loops over the (Source AST, QualifierTree) pairs, dispatches the queries to the  [ModuleController](../derp/modules/ModuleController.py), filters the returned results using [PostIteratorFilters](../derp/selections/execution/PostIteratorFilter.py), and recombines the filtered results into one stream using a [PostIteratorMuxer](../derp/selections/execution/PostIteratorMuxer.py). The result stream is finally wrapped in a [SelectionExecutor](../derp/selections/execution/SelectionExecutor.py) and returned to the frontend in a READ UXAction.
+
+### Saving Selections and Criteria
+The SessionController expects an [IFileManager](../derp/session/session_state/IFileManager.py) to be passed into its constructor which will be used for saving selections and criteria. It simply expects to be able to save, recall, and delete lists of strings by name. This allows the persistence layer to be adapted across many implementations. The [default implementation](../derp/session/session_state/FileManager.py) stores the data in directories in the current working directory. However, a [mock implementation](../derp/session/session_state/tests/MockFileManager.py) is used for testing which simply uses Python dictionaries. One could imagine that if DERP was used to write an interpreter for a voice assistant, the data could be stored in cloud services such as [Firebase](https://firebase.google.com/products/database).
 
 ## Module System
+TODO
 
 # Dropped and Re-specified Features
 ## Saving Results
@@ -160,7 +174,7 @@ This feature was dropped entirely. Additional information about the intended fea
 Criteria and Selections were previously composed by value, however this behavior has been inverted. DERP is now defined such that composed selections and criteria ARE references, rather than copied data. This behaves similar to standard C macro expansions. It is implementation-defined whether or not saved selections and criteria are persistent across interpreter sessions.
 
 ## 'like'
-The 'like' qualification has been removed from the language. Additional information about the intended feature is available in the [White Paper](./White%20Paper.pdf). 
+The 'like' qualification has been removed from the language. Additional information about the intended feature is available in the [White Paper](./White%20Paper.pdf).
 
 ## 'Are' and 'Are Not'
 The phrases 'are' and 'are not' have been removed. Only 'which are' and 'which are not' are included in the language. While
