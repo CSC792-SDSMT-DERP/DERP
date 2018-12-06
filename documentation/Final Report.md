@@ -142,6 +142,12 @@ When the evaluator
 ## Module System
 
 # Dropped and Re-specified Features
+## Saving Results
+Saving results is no longer supported. It was intended that results could be saved for later.
+
+## Module Field Grammars
+Modules are no longer allowed to define grammar for the fields its posts expose; they may only define grammar for sources.
+
 ## Criteria Builder Mode
 The Critera Builder Mode section states that, 'While selections
 must reference a loaded news source, criteria do not have the same constraint.' Rather than not having the constraint, Criteria actually have a different constraint - They
