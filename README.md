@@ -26,7 +26,6 @@ The following Python packages are required to run the project and its tests:
  * lark-parser 0.6.5
  * newspaper3k 0.2.8
  * praw 6.0.0
- * prawcore 1.0.0
  * pytest 4.0.1
 
 Once the project has been cloned, these dependencies may be installed automatically by simply running `pip3 -r ./requirements.txt`.
