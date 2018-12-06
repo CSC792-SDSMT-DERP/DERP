@@ -290,14 +290,13 @@ Furthermore, the marks `sequential` and `parallel` are defined for tests that mu
 ### Pytest Fixtures
 A number of the test files end with `_tests.py`. These files are not auto-discovered by Pytest, and if they were, they would not execute. These files contain Interface tests, which require a Pytest fixture to be defined. To run these tests on an implementation of a specific interface, import everything in the `_tests.py` file and define the Pytest fixture to return the implementation needed. See the [Reddit Module Tests](../modules/reddit/tests/test_reddit.py) for an example of using Pytest fixtures in this way.
 
-
-
-
-
 # Conclusions
+The DERP project presented a significant challenge; however, that challenge was conquered. DERP fulfills all of the goals set out when it was first imagined. Unfortunately, some compromises had to be made. The biggest was the use of quotation marks around strings. Unfortunately, we could not find a clear way to implement bare strings in the context of the DERP grammar. This is the single largest hurdle to deploying DERP on a voice enabled device. Perhaps natural language processing offers a way forward.
 
-  What did you learn?
-  What would you do differently?
-  Did you successfully scope the project in terms of the amount of work that could be reasonably done by the team in the time alloted?
-  Is the design such that future work could be integrated?
-  Had you more time/resources/team members, what could have been added to the language? [natural english]
+The loss of team members meant the team had to move faster than it would have liked. Certain software design quality standards were not upheld as a result. While, today, DERP has a swath of integration, interface, and monkey tests, the verification of code was mostly done by hand during development. Additionally, large sections of code made their way into DERP, only to be reviewed at a much later date. Thankfully, skilled hands, rigid interfaces, and copious assertions provided a path forward in spite of these shortcomings.
+
+The core development happened over the course of roughly two weeks. Due to the scope of the project, an immense amount of time was spent on the required documentation. Perhaps the team could have been a bit briefer when writing the documentation, saving time for more critical processes. Perhaps the team should have scoped less work from the start. Nonetheless, the project was finished within the provided time constraints.
+
+Future developers may extend DERP using the built in module system. DERP may be readily adapted to fetch data from RSS feeds, news sites, forums, and much more. A future extension that would expand this horizon even further would be an extension of the "posts" keyword. One could imagine that DERP modules could define what type of data they return ("posts", "files", "people", etc.). Then modules that return the same type of data could be freely mixed with one and another. This would allow DERP to fetch data from nearly any source.
+
+All in all, designing, building, and testing the DERP project provided a valuable software engineering experience.
