@@ -1,9 +1,9 @@
 # Built-In Modules
 At present there are two built-in modules that are registered on startup, the MockModule used for
-testing and the Reddit module which is the primary module for hte language.
+testing and the Reddit module which is the primary module for the language.
 
 ## Reddit Module
-The Reddit module permits querying for posts on reddit and filtering them based on the criteria specified.
+The Reddit module permits querying for posts from reddit and filtering them based on the criteria specified.
 
 ### Name
 The Reddit module is identified by the name "reddit" and may be loaded with the expression
