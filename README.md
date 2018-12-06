@@ -14,6 +14,7 @@ Documentation covering the DERP library, language, frontend, and module system c
   - [White Paper](./documentation/White%20Paper.pdf) ([Errata](./documentation/White%20Paper%20Errata.md))
   - [Language Tutorial](./documentation/Language%20Tutorial.pdf) ([Errata](./documentation/Language%20Tutorial%20Errata.md))
   - [Language Reference](./documentation/Language%20Reference.pdf) ([Errata](./documentation/Language%20Reference%20Errata.md))
+  - [DERP Presentation Slides](./documentation/presentation)
   - [Final Report](./documentation/Final%20Report.md)
 - DERP Modules
   - [Module API](./documentation/Module%20API.md)
