@@ -1,0 +1,72 @@
+# Required class components for a new module
+
+The module class should extend IModule and implement the following methods:
+  - `def name(self):`
+    - this method returns the name of the module, modules that are loaded must have distinct names when lowercase
+  - `def source_grammar(self):`
+    - this method returns a Grammar object created with a dictionary mapping non-terminals to their production rules
+    - the non-terminals may be Lark 'rules' or 'tokens' 
+      - Lark rule names use lowercase letters only while Lark token names use uppercase letters only
+      - There must exist at least one rule or token named `<modulename>_source` in all uppercase or lowercase letters
+        - This is the start symbol for the module grammar
+        - This symbol must not begin with an underscore or a question-mark.
+      - Additional information about Lark grammars may be found on [their GitHub page](https://github.com/lark-parser/lark)
+  - `def post_definition(self):`
+    - Must return a PostDefinition object that specifies the names of the fields that may be read on resulting posts
+      - these fields must also include the type of the field in the specification.
+      - this is done by passing a dictionary mapping the string with the field's name to the type into the PostDefinition constructor.
+      - all posts returned ***must*** meet this post definition
+  - `def get_posts(self, source_ast, qualifier_tree):`
+    - must return an iterable type over posts
+      - a generator may be converted to such a type by returning `PostIterator(generator())`
+    - source_ast describes which source in the module to retrieve posts from
+    - qualifier_tree specifies filters to apply to results, and may be used to pre-filter results
+      - the qualifier tree consists of nodes specifying predicate logic on fields and their values
+      - The node types are specified in [QualifierTree.py](../derp/qualifiers/QualifierTree.py)
+
+## Implementing Posts
+Posts returned by get_posts must extend IPost and implement the following methods:
+  - `def definition(self):`
+    - returns the post definition for the post
+    - this is the same definition defined in the post_definition method of the module class
+  - `def source(self):`
+    - returns the module object that created the post
+  - `def field_data(self, field_name):`
+    - retrieve data from the field with the given name
+    - this name is one of those specified in the post definition
+  - `def about(self, string):`
+    - implementation defined method that should return true if the string matches information about the post
+    - A simple implementation may check for the string in the title or body of the post.
+    - about is invoked during the enforcement step after get_posts returns
+      - the enforcement step ensures the posts returned match the qualifier tree specified
+      - it is possible for a module to filter posts as mentioned above, however as this is not required, the enforcement step is always performed.
+      - if an external service implements the check for AboutCheck nodes during the pre-filter step in get_posts, simply return true when `about()` is invoked.
+  - `def __str__(self):`
+    - Returns the textual representation of the post 
+    - the default terminal output will print the string returned by this method as-is
+
+## Running the Module Against the Module Interface Tests
+  To verify that the module is meeting the required interface, create a pytest file
+  with two pytest fixtures. The first, `module_impl()`, creates an instance of the module class, while
+  the second, `module_source_string`, returns the source name for query made.
+
+  These will be used when running the tests in [IModule_tests.py](../derp/modules/tests/IModule_tests.py).
+
+### Example of `module_impl`
+```Python
+@pytest.fixture(scope="function")
+def module_impl():
+    my_module_instance = MyModule(
+        # constructor arguments go here
+    )
+    return my_module_instance
+```
+
+### Example of `module_source_string`
+A valid source string consists of any input string that corresponds to a valid string defined by
+the Grammar returned by `source_grammar()`.
+```Python
+@pytest.fixture(scope="function", params['valid source string #1', 'valid source string #2'])
+def module_source_string(request):
+    return request.param
+```
