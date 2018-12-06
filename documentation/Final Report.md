@@ -128,16 +128,23 @@ The core implementation of ISessionController is [SessionController](../derp/ses
 
 ### Converting Lines of Input to ASTs
 
+Lines of input are passed first into the Parser for the appropriate mode. After passing through the Parser, the SessionController receives a raw Lark Tree (AST). The SessionController then passes the AST through the Transformer. The Transformer applies various transforms contained in the [Transformer class proper](../derp/language/Transformer.py) and in the [qualifier reduction directory](../derp/language/qualifier_reductions). Once the tree has been shaped, the tree undergoes various semantic checks as applied by the [Semantic Checker](../derp/language/SemanticChecker.py). If a semantic error is detected, an exception is raised and returned to the frontend as an ERROR UXAction. If the tree is found to be semantically valid, it is passed to the [Evaluator](../derp/session/Evaluator.py) in order to produce a [SessionAction](../derp/session/SessionAction.py) which will be interpreted by the SessionController.
+
 ### Converting ASTs to SessionActions
+The [Evaluator](../derp/session/Evaluator.py) uses a Lark Visitor to search for certain types of nodes inside the AST. When a node is found that would imply a certain action should be taken, the evaluator constructs a [SessionAction](../derp/session/SessionAction.py) with the action to take and the data needed to carry out the action.
+
+### Interpreting Criteria and Selection Lines
 
 ### Executing a QUERY SessionAction
+
+When the evaluator
 
 ## Module System
 
 # Dropped and Re-specified Features
 ## Criteria Builder Mode
 The Critera Builder Mode section states that, 'While selections
-must reference a loaded news source, criteria do not have the same constraint.' Rather than not having the constraint, Criteria actually have a different constraint - They 
+must reference a loaded news source, criteria do not have the same constraint.' Rather than not having the constraint, Criteria actually have a different constraint - They
 CANNOT include a specific news source.
 
 ## Knowledge Modules
