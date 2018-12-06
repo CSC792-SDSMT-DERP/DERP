@@ -219,6 +219,18 @@ all of which can be obtained with the command `pip3 install -r ./requirements.tx
 Additional requirements can be added to the requirements.txt file
 by creating a new virtual-environment, installing the requirements, and then using the command `pip3 freeze > ./requirements.txt`.
 
+# Continuous Integration
+
+The initial continuous integration solution for the repository consisted of a GitLab runner hosted on a Windows Server 2019 Datacenter VM on Azure. The runner communicated with the GitLab server by means of the school's VPN. This solution lasted for roughly a
+month before the subscription's free credit ran out and another solution became necessary.
+
+At this point the runner was moved to a Digital Ocean Ubuntu 18.04 droplet which was similarly configured to run through
+the school's VPN. This solution was in place until the repository migrated to GitHub, at which point using the runner
+would have required workarounds to mirror the repository on GitLab that were not ideal.
+
+After deciding that the GitLab runner was no longer the ideal solution, Travis CI was introduced as a replacement. This
+is the currently used solution on the GitHub repository. The Travis CI server status can be viewed [here](https://travis-ci.org/CSC792-SDSMT-DERP/DERP)
+
 # Testing Plan and Scripts
 
 The plan for testing and verification of this project is a three-pronged approach:
@@ -278,6 +290,10 @@ Furthermore, the marks `sequential` and `parallel` are defined for tests that mu
 
 ### Pytest Fixtures
 A number of the test files end with `_tests.py`. These files are not auto-discovered by Pytest, and if they were, they would not execute. These files contain Interface tests, which require a Pytest fixture to be defined. To run these tests on an implementation of a specific interface, import everything in the `_tests.py` file and define the Pytest fixture to return the implementation needed. See the [Reddit Module Tests](../modules/reddit/tests/test_reddit.py) for an example of using Pytest fixtures in this way.
+
+
+
+
 
 # Conclusions
 
