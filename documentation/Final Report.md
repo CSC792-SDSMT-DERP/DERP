@@ -5,7 +5,7 @@ DERP development was active from August 27, 2018 to December 07, 2018. DERP was 
 ## Deliverable Schedule
   - September 21: [White Paper](./White%20Paper.pdf) due
   - October 22: [Language Tutorial](./Language%20Tutorial.pdf) and [Reference](./Language%20Reference.pdf) due
-  - November 28: Presentation and Demo
+  - November 28: [Presentation](./presentation/Presentation.md) and Demo
   - December 05: Soft due date for project
   - December 13: Hard due date for project
 
