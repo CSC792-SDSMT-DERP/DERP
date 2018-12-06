@@ -113,8 +113,30 @@ however the following example is a little rougher:
 >>>
 ```
 
-## DERP Architecture
+# DERP Architecture
 
+DERP can be split into three components: the frontend, the core library, and the module system.
+
+## Frontend
+The frontend is responsible fetching input from the user and supplying it to the core library. Additionally, the frontend must handle the various [UXActions](../derp/session/UXAction.py) that may be returned. This interaction is driven by the frontend by calling the methods defined in [ISessionController](../derp/session/ISessionController.py).
+
+The READ UXAction returns a [SelectionExecutor](../derp/selections/execution/SelectionExecutor.py) which returns an iterable of [Post](../derp/posts/IPost.py) results via the `results()` method. These posts must then be presented by the frontend. The iterable will end when no more posts are found for a given selection, or the sources for the selection return a large number of posts which do not match the criteria specified.
+
+## Core Library
+
+The core implementation of ISessionController is [SessionController](../derp/session/SessionController.py). The SessionController handles interpreting statements in the DERP language and maintaining the state of the interpreter. The SessionController delegates much of its logic to other classes. These classes include the language focused components such as the [Parser](../derp/language/Parser.py), [Transformer](../derp/language/Transformer.py), [SemanticChecker](../derp/language/SemanticChecker.py), and [Evaluator](../derp/session/Evaluator.py) as well as the [SessionStateController](../derp/session/session_state/SessionStateController.py), [SelectionExecutorFactory](../derp/selections/execution/SelectionExecutorFactory.py), and [ModuleController](../derp/modules/ModuleController.py).
+
+### Converting Lines of Input to ASTs
+
+### Converting ASTs to SessionActions
+
+### Executing a QUERY SessionAction
+
+## Module System
+
+# Dropped and Re-specified Features
+
+<<<<<<< Updated upstream
 Language Evolution Document [Shortcomings/ Stuff in Errata]
   Was the design such that additional features and capabilities could be added or did you require significant redesign / rethinking?
   Translator / Compiler Architecture [Design doc in prose]
@@ -137,6 +159,10 @@ Language Evolution Document [Shortcomings/ Stuff in Errata]
   by creating a new virtual-environment, installing the requirements, and then using the command `pip3 freeze > ./requirements.txt`.
 
   <!-- Are there OS restrictions?
+=======
+Development Environment and Run-Time System [trivial/ slides]
+  Are there OS restrictions?
+>>>>>>> Stashed changes
   Special hardware required?
   Have you created a runtime system or are you leveraging existing libraries?
   Do you need a special editor or IDE to write programs in your language?
