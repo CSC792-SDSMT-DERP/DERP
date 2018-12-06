@@ -135,6 +135,31 @@ The core implementation of ISessionController is [SessionController](../derp/ses
 ## Module System
 
 # Dropped and Re-specified Features
+## Criteria Builder Mode
+The Critera Builder Mode section states that, 'While selections
+must reference a loaded news source, criteria do not have the same constraint.' Rather than not having the constraint, Criteria actually have a different constraint - They 
+CANNOT include a specific news source.
+
+## Knowledge Modules
+This feature was dropped entirely.
+
+## Selections and Criteria and Persistence
+Criteria and Selections were previously composed by value, however this behavior has been inverted. DERP is now defined such that composed selections and criteria ARE references, rather than copied data. This behaves similar to standard C macro expansions. It is implementation-defined whether or not saved selections and criteria are persistent across interpreter sessions.
+
+## 'like'
+The 'like' qualification has been removed from the language.
+
+## 'Are' and 'Are Not'
+The phrases 'are' and 'are not' have been removed. Only 'which are' and 'which are not' are included in the language.
+
+## 'Over', 'Under', 'Exactly', and 'Roughly'
+The phrases 'over', 'under', 'exactly', and 'roughly' have been removed. Only 'with over', 'with under', 'with exactly', and 'with roughly' are supported
+as key phrases. Additionally, any one of them can be used with the word 'without' in place of 'with' to negate the effect.
+
+## Removing Posts by Source
+Removing posts from sources is a removed feature. It was initially intended to
+allow removing posts labeled as coming from a specific source, however this
+was removed due to time constraints.
 
 # Development Environment and Run-Time System
 
