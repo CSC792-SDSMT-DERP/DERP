@@ -136,37 +136,23 @@ The core implementation of ISessionController is [SessionController](../derp/ses
 
 # Dropped and Re-specified Features
 
-<<<<<<< Updated upstream
-Language Evolution Document [Shortcomings/ Stuff in Errata]
-  Was the design such that additional features and capabilities could be added or did you require significant redesign / rethinking?
-  Translator / Compiler Architecture [Design doc in prose]
-  This architecture should match the implementation evident in the Code Listing
 # Development Environment and Run-Time System
-  The interpreter depends on python 3.5 and above, but therefore is not limited
-  on the platforms it can run on. The interpreter serves as the development
-  environment for the language, and the default implementation provides text
-  output to the terminal. The following packages are required to run the
-  interpreter:
-    - lark-parser 0.6.5
-    - newspaper3k 0.2.8
-    - praw 6.0.0
-    - pytest 4.0.1
 
-  all of which can be obtained with the command `pip3 install -r ./requirements.txt`, where
-  the requirements.txt is the file provided in the repository root.
+DERP depends on python 3.5 and above, but is not otherwise limited
+as to the platforms it can be run on. The interpreter serves as the development
+environment for the language, and the default implementation provides text
+output to the terminal. The following packages are required to run the interpreter:
 
-  If necessary for developing new extensions, additional requirements can be added to the requirements.txt file
-  by creating a new virtual-environment, installing the requirements, and then using the command `pip3 freeze > ./requirements.txt`.
+  - lark-parser 0.6.5
+  - newspaper3k 0.2.8
+  - praw 6.0.0
+  - pytest 4.0.1
 
-  <!-- Are there OS restrictions?
-=======
-Development Environment and Run-Time System [trivial/ slides]
-  Are there OS restrictions?
->>>>>>> Stashed changes
-  Special hardware required?
-  Have you created a runtime system or are you leveraging existing libraries?
-  Do you need a special editor or IDE to write programs in your language?
-  Unique input or display devices? -->
+all of which can be obtained with the command `pip3 install -r ./requirements.txt`, where `requirements.txt` is the file provided in the repository root.
+
+Additional requirements can be added to the requirements.txt file
+by creating a new virtual-environment, installing the requirements, and then using the command `pip3 freeze > ./requirements.txt`.
+
 Test Plan and Scripts [cut & paste from old doc and updated news]
   What sort of testing is done?
   When is it done?
