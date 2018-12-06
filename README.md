@@ -3,9 +3,9 @@
 ## What is DERP?
 DERP is a query language for aggregating data from various sources. It was developed as a requirement for CSC 792, Compilers, in the Fall of 2018 at the South Dakota School of Mines & Technology.
 
-DERP was designed with a focus on querying Reddit and includes a module for doing so. Other sources may be integrated with DERP using additionl plug-in modules which modify the core language.
+DERP was designed with a focus on querying Reddit and includes a module for doing so. Other sources may be integrated with DERP using additional plug-in modules which modify the core language.
 
-This repository contains the core DERP library as well as a simple console frontend for interacting with the library.
+This repository contains the core DERP library and module system as well as a simple console frontend for interacting with the library.
 
 ### Documentation
 Documentation covering the DERP library, language, frontend, and module system can be found in the [documentation subdirectory](./documentation).
@@ -26,7 +26,6 @@ The following Python packages are required to run the project and its tests:
  * lark-parser 0.6.5
  * newspaper3k 0.2.8
  * praw 6.0.0
- * prawcore 1.0.0
  * pytest 4.0.1
 
 Once the project has been cloned, these dependencies may be installed automatically by simply running `pip3 -r ./requirements.txt`.
