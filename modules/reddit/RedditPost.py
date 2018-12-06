@@ -8,6 +8,7 @@ from datetime import datetime
 
 import re
 
+
 class RedditPost(IPost):
     def __init__(self, parent, praw_submission):
         self.__submission = praw_submission
@@ -44,7 +45,8 @@ class RedditPost(IPost):
                 article.parse()
                 self.__sub_data["selftext"] = article.text
         except ArticleException:
-            self.__sub_data["selftext"] = "[Unable to retrieve URL " + self.__sub_data["url"] + "]"
+            self.__sub_data["selftext"] = "[Unable to retrieve URL " + \
+                self.__sub_data["url"] + "]"
 
     def __str__(self):
         """
@@ -85,7 +87,7 @@ class RedditPost(IPost):
         return None
 
     def __get_author(self):
-        if "author" in self.__sub_data:
+        if "author" in self.__sub_data and self.__sub_data["author"] is not None:
             return self.__sub_data["author"].name
 
         return None
