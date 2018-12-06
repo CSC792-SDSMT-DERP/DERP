@@ -262,7 +262,7 @@ All this is not to say there are no automated tests in the project, just that th
 
 Interface tests are defined for the major interfaces in the interpreter which are used to inject dependencies into other objects. A prime example of this is the [IModule](../derp/modules/IModule.py) interface, which is used by language modules and has a set of tests which can be used to check that a module conforms to the API.
 
-There few class-level tests, used to verify that individual class functions exhibit behaviors we desire. These are used mainly to test security features, such as in the [FileManager](../derp/session/session_state/FileManager.py) implementation.
+There few class-level tests, used to verify that individual class functions exhibit the desired behaviors. These are used mainly to test security features, such as in the [FileManager](../derp/session/session_state/FileManager.py) implementation.
 
 Finally, the majority of the tests in the project are system integration or monkey tests. These tests instantiate a DERP Session, which is the entry point to the DERP library, and execute language statements against it.
 Using the powerful Pytest library, the system integration tests verify that, aside from arbitrary capitalization, almost every single variation of DERP statements is properly handled, by the DERP library.
@@ -291,7 +291,7 @@ Furthermore, the marks `sequential` and `parallel` are defined for tests that mu
 A number of the test files end with `_tests.py`. These files are not auto-discovered by Pytest, and if they were, they would not execute. These files contain Interface tests, which require a Pytest fixture to be defined. To run these tests on an implementation of a specific interface, import everything in the `_tests.py` file and define the Pytest fixture to return the implementation needed. See the [Reddit Module Tests](../modules/reddit/tests/test_reddit.py) for an example of using Pytest fixtures in this way.
 
 # Conclusions
-The DERP project presented a significant challenge; however, that challenge was conquered. DERP fulfills all of the goals set out when it was first imagined. Unfortunately, some compromises had to be made. The biggest was the use of quotation marks around strings. Unfortunately, we could not find a clear way to implement bare strings in the context of the DERP grammar. This is the single largest hurdle to deploying DERP on a voice enabled device. Perhaps natural language processing offers a way forward.
+The DERP project presented a significant challenge; however, that challenge was conquered. DERP fulfills all of the goals set out when it was first imagined. Unfortunately, some compromises had to be made. The biggest was the use of quotation marks around strings. Unfortunately, the team could not find a clear way to implement bare strings in the context of the DERP grammar. This is the single largest hurdle to deploying DERP on a voice enabled device. Perhaps natural language processing offers a way forward.
 
 The loss of team members meant the team had to move faster than it would have liked. Certain software design quality standards were not upheld as a result. While, today, DERP has a swath of integration, interface, and monkey tests, the verification of code was mostly done by hand during development. Additionally, large sections of code made their way into DERP, only to be reviewed at a much later date. Thankfully, skilled hands, rigid interfaces, and copious assertions provided a path forward in spite of these shortcomings.
 
