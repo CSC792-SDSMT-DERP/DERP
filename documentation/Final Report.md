@@ -80,12 +80,12 @@ Acceptance and certification testing? Solves the problems set forth in the White
 ## Code and Documentation Storage
 Between August 27 and December 03, DERP was version controlled using Git on the SDSM&T MCS GitLab server. However, on December 03, the code was migrated to Github. All commit history was preserved during this transition.
 
-As the team consisted of three members by the time coding began, branching was not enforced. Communication sufficed to prevent merge conflicts.
+As the team consisted of three members by the time coding began, branching was not enforced; however, feature branches were used for implementation of a number of pieces of the project. Communication sufficed to prevent major merge conflicts and resolve minor ones.
 
 ## Acceptance Criteria
 As stated in our white paper, our primary goals were:
   - Intuitively querying multiple sources to produce a single stream of data
-  - Supporting multiple plug-in modules which could be used with the same core language
+  - Supporting plugin modules which could be used with the same core language
   - Supporting speech-to-text and text-to-speech with a languge designed to be as close to natural English as possible
 
 Firstly, it is possible to query multiple sources to produce a single stream of data as is required.
@@ -94,16 +94,16 @@ sources being saved into a reusable selection and then read from. A feature that
 consideration but was removed was to permit querying against all loaded sources. As a module
 may provide an infinite number of sources, this was deemed infeasible.
 ```
->>>load "reddit"
->>>create a new selection
-(selection)>>>add posts from subreddit "nfl" and subreddit "all"
-(selection)>>>save as "my news"
-(selection)>>>stop
->>>read "my news"
+>>> load "reddit"
+>>> create a new selection
+(selection)>>> add posts from subreddit "nfl" and subreddit "all"
+(selection)>>> save as "my news"
+(selection)>>> stop
+>>> read "my news"
 >>>
 ```
 
-Secondly, the Language defines a set of core statements, and allows modules to specify grammar extensions.
+Secondly, the language defines a set of core statements, and allows modules to specify grammar extensions.
 This is possible thanks to our module interface definition which specifies the required API for all
 extending modules. For example, the Reddit module specifies the keywords "subreddit" and "reddit" for
 selecting sources. Additionally, it specifies the fields to expect on Reddit posts, such as the
@@ -114,12 +114,12 @@ phrases, though some are occasionally somewhat odd sounding when spoken.
 The example given above demonstrates a reasonable English phrase for creating a selection,
 however the following example is a little rougher:
 ```
->>>load "reddit"
->>>create a new selection
-(selection)>>>add posts from subreddit "nfl" without under 100 upvotes
-(selection)>>>save as "my news"
-(selection)>>>stop
->>>read "my news"
+>>> load "reddit"
+>>> create a new selection
+(selection)>>> add posts from subreddit "nfl" without under 100 upvotes
+(selection)>>> save as "my news"
+(selection)>>> stop
+>>> read "my news"
 >>>
 ```
 
@@ -130,7 +130,7 @@ DERP can be split into three components: the frontend, the core library, and the
 ## Frontend
 The frontend is responsible fetching input from the user and supplying it to the core library. Additionally, the frontend must handle the various [UXActions](../derp/session/UXAction.py) that may be returned. This interaction is driven by the frontend by calling the methods defined in [ISessionController](../derp/session/ISessionController.py).
 
-The READ UXAction returns a [SelectionExecutor](../derp/selections/execution/SelectionExecutor.py) which returns an iterable of [Post](../derp/posts/IPost.py) results via the `results()` method. These posts must then be presented by the frontend. The iterable will end when no more posts are found for a given selection, or the sources for the selection return a large number of posts which do not match the criteria specified.
+The READ UXAction returns a [SelectionExecutor](../derp/selections/execution/SelectionExecutor.py) which returns an iterable of [Post](../derp/posts/IPost.py) results via the `results()` method. These posts must then be presented by the frontend. The iterable will end when no more posts are found for a given selection, or the sources for the selection return a large number of sequential posts which do not match the criteria specified.
 
 ## Core Library
 
@@ -138,7 +138,7 @@ The core implementation of ISessionController is [SessionController](../derp/ses
 
 ### Converting Lines of Input to ASTs
 
-Lines of input are passed first into the Parser for the appropriate mode. If a syntax error occurs, an exception is raised and returned to the frontend as an ERROR UXAction. After passing through the Parser, the SessionController receives a raw Lark Tree (AST). The SessionController then passes the AST through the Transformer. The Transformer applies various transforms contained in the [Transformer class proper](../derp/language/Transformer.py) and in the [qualifier reduction directory](../derp/language/qualifier_reductions). Once the tree has been shaped, the tree undergoes various semantic checks as applied by the [Semantic Checker](../derp/language/SemanticChecker.py). If a semantic error is detected, an exception is raised and handled in the same manner as syntax errors. If the tree is found to be semantically valid, it is passed to the [Evaluator](../derp/session/Evaluator.py) in order to produce a [SessionAction](../derp/session/SessionAction.py) which will be interpreted by the SessionController.
+Lines of input are passed first into the Parser for the appropriate mode. If a syntax error occurs, an exception is raised and returned to the frontend as an ERROR UXAction. After passing through the Parser, the SessionController receives a raw Lark Tree (AST). The SessionController then passes the AST through the Transformer. The Transformer applies various transforms contained in the [Transformer class proper](../derp/language/Transformer.py) and in the [qualifier reduction directory](../derp/language/qualifier_reductions). Once the tree has been shaped, the tree undergoes various semantic checks as applied by the [Semantic Checker](../derp/language/SemanticChecker.py). If a semantic error is detected during either of the previous steps, an exception is raised and handled in the same manner as syntax errors. If the tree is found to be semantically valid, it is passed to the [Evaluator](../derp/session/Evaluator.py) in order to produce a [SessionAction](../derp/session/SessionAction.py) which will be interpreted by the SessionController.
 
 ### Converting ASTs to SessionActions
 The [Evaluator](../derp/session/Evaluator.py) uses a Lark Visitor to search for certain types of nodes inside the AST. When a node is found that would imply a certain action should be taken, the evaluator constructs a [SessionAction](../derp/session/SessionAction.py) with the action to take and the data needed to carry out the action.
@@ -180,7 +180,7 @@ CANNOT include a specific news source.
 ## Knowledge Modules
 This feature was dropped entirely. Additional information about the intended feature is available in the [White Paper](./White%20Paper.pdf).
 
-## Selections and Criteria and Persistence
+## Persistance of Selections and Criteria
 Criteria and Selections were previously composed by value, however this behavior has been inverted. DERP is now defined such that composed selections and criteria ARE references, rather than copied data. This behaves similar to standard C macro expansions. It is implementation-defined whether or not saved selections and criteria are persistent across interpreter sessions.
 
 ## 'like'
