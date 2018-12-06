@@ -17,6 +17,14 @@ The following field names and types are defined for posts returned by the Reddit
   - "upvotes": FieldType.NUMBER,
   - "date": FieldType.DATE,
   - "body": FieldType.STRING
+  
+### Reddit Sources
+Reddit sources come in two forms:
+* `reddit` will return posts from [Subreddit All](https://www.reddit.com/r/all)
+* `subreddit "<x>"` will return posts from Subreddit \<x\>
+#### Examples
+* `add posts from reddit`
+* `add posts from subreddit "nfl"`
 
 ### Pre-Filtering
 As the Reddit API provides limited searching capabilities, some results can be pre-filtered before
@@ -37,6 +45,9 @@ The following field names and types are defined for posts returned by the Reddit
   - "points": FieldType.NUMBER,
   - "verified": FieldType.BOOLEAN,
   - "post date": FieldType.DATE
+  
+### Mock Sources
+The mock module source is just the word `mock` by itself. (i.e. `add posts from mock`)
 
 ### Pre-Filtering
 The Mock module doesn't perform any pre-filtering on the posts before returning an iterator.
