@@ -39,9 +39,9 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
 
     'recall_expression':    '"recall"i',
     'clear_expression':     '"clear"i',
-    'save_expression':      '"save as"i string',
-    'add_expression':       '"add posts"i add_selector',
-    'remove_expression':    '"remove posts"i remove_selector',
+    'save_expression':      '"save"i "as"i string',
+    'add_expression':       '"add"i "posts"i add_selector',
+    'remove_expression':    '"remove"i "posts"i remove_selector',
 
     '?qualifier_or':     ('qualifier_or "or"i qualifier_and', 'qualifier_and'),
     '?qualifier_and':    ('qualifier_and "and"i? _qualifier', '_qualifier'),
@@ -73,13 +73,13 @@ _criteria_and_selection_modes_shared_grammar = Grammar({
 
     '_substring_check':  '"in"i "the"i?',
 
-    '_boolean_check':    '"which are"i NEGATE?',
+    '_boolean_check':    '"which"i "are"i NEGATE?',
 
-    '_string_check': 'WITH_EXP "the exact"i',
+    '_string_check': 'WITH_EXP "the"i "exact"i',
 
     '_number_check': 'WITH_EXP (NUMBER_ABOVE | NUMBER_BELOW | NUMBER_EXACT | NUMBER_APPROX)',
-    'NUMBER_ABOVE':   ('"over"i', '"greater than"i'),
-    'NUMBER_BELOW':   ('"under"i', '"less than"i'),
+    'NUMBER_ABOVE':   ('"over"i', '"greater"i "than"i'),
+    'NUMBER_BELOW':   ('"under"i', '"less"i "than"i'),
     'NUMBER_EXACT':   '"exactly"i',
     'NUMBER_APPROX':  '"roughly"i',
 
