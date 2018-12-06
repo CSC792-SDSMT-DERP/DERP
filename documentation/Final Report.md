@@ -219,16 +219,68 @@ all of which can be obtained with the command `pip3 install -r ./requirements.tx
 Additional requirements can be added to the requirements.txt file
 by creating a new virtual-environment, installing the requirements, and then using the command `pip3 freeze > ./requirements.txt`.
 
-Test Plan and Scripts [cut & paste from old doc and updated news]
-  What sort of testing is done?
-  When is it done?
-  Who is responsible for doing the testing?
-  Is development tied to testing/certification?
-  For example, is there a requirement that all tests run before feature branches can be merged into a development branch?
-  Are you running with multiple development branches?
-  Integration branch?
-  What are the requirements in terms of testing, code review, etc. before something goes into the master or release branch?
-Conclusions
+# Testing Plan and Scripts
+
+The plan for testing and verification of this project is a three-pronged approach:
+
+  1. Follow good coding practices, and utilize the EAFP principle
+  2. Use assertions to guarantee the code is not in invalid states
+  3. Provide test harnesses to verify things other than individual implementation details (Interface behaviors, monkey tests, etc.)
+
+This approach was chosen mainly due to the arguments presented in [this article](http://pythontesting.net/strategy/why-most-unit-testing-is-waste/). The most important argument being that the project had a rapid development timeline and that interfaces would be changing rapidly. If the project were unit tested at a low level or following full TDD, this would have resulted to a large, difficult to change, mass of tests hindering development of the actual project.
+
+## Coding Practices, EAFP, and Assertions
+
+ The specific practices that emphasis was put on are as follows:
+
+ * Use accurate and descriptive names for functions and variables
+ * Keep function definitions (and preferably also class definitions) short. If the definition of a function is too long, split it into multiple functions.
+ * Use assertions liberally. The goal being that if execution reaches any unexpected, invalid state, it should crash, not continue as if nothing were wrong.
+
+These practices were chosen specifically to foster code readability, so that when exceptions are thrown by the interpreter, they occur in reasonable locations (because of assertions), and it is easy to read the
+code to verify what is or should be happening.
+
+The EAFP approach (Easier to Ask Forgiveness than Permission) reinforces these behaviors by requiring that developers be mindful of what operations may throw exceptions, and by preventing the project from functioning in the case that exceptions are not properly minded.
+
+## Test Scripts
+
+All this is not to say there are no automated tests in the project, just that they do not (for the most part) get down to the level of individual function testing. There are essentially three types of tests defined in the DERP project:
+ * Class tests
+ * Interface tests
+ * System tests and Monkey tests
+
+Interface tests are defined for the major interfaces in the interpreter which are used to inject dependencies into other objects. A prime example of this is the [IModule](../derp/modules/IModule) interface, which is used by language modules and has a set of tests which can be used to check that a module conforms to the API.
+
+There few class-level tests, used to verify that individual class functions exhibit behaviors we desire. These are used mainly to test security features, such as in the [FileManager](../derp/session/session_state/FileManager) implementation.
+
+Finally, the majority of the tests in the project are system integration or monkey tests. These tests instantiate a DERP Session, which is the entry point to the DERP library, and execute language statements against it.
+Using the powerful Pytest library, the system integration tests verify that, aside from arbitrary capitalization, almost every single variation of DERP statements is properly handled, by the DERP library. 
+
+There are three sets of monkey tests which, by default, run 1000 cases each. These tests generate random sequences of text and pass them to the DERP Session, in an attempt to crash it or cause it to hang. The first group of tests passes purely random strings, the second passes random sequences of DERP keywords, and the third passes random sequences of DERP statements (full lines of DERP code).
+
+## Usage of Testing Scripts
+
+It is the responsibility of the developers to ensure the code the add to the project functions, whether it be through test scripts or manual testing. The system integration and interface tests are provided as an avenue towards this goal, but there is no strict requirement that they be passing at all times. This decision was made due to the small size of the development team and the rapid pace of development to prevent hindering development.
+
+Once the Git Continuous Integration was working correctly, tests were run through that on every pushed commit to the repo, so developers could have constant visibility of the state of the project.
+
+Tests are built using the Pytest library, and can be executed by running `python3 -m pytest` from the root of the project. This command will find and execute all tests in the project. Tests are defined in files named beginning with `test_` or ending with `_test.py`. These files are in `tests` subfolders throughout the project.
+
+Since there are a plethora of tests defined, Pytest marks are utilized so that developers can easily run subsets of the tests.
+
+ * `slow` - This mark indicates that the test takes a long time to run and developers may not want to wait for it during rapid iteration
+ * `monkey` - This mark indicates that the test is a monkey test
+ * `plugins` - This mark indicates that the test is used to verify plugins function correctly.
+  
+For example, a developer who is doing rapid iteration may want to run tests with `python3 -m pytest -m "not slow"` to exclude long-running tests. For more information about Pytest, see the [Pytest reference pages](https://docs.pytest.org/en/latest/index.html).
+
+Furthermore, the marks `sequential` and `parallel` are defined for tests that must be run sequentially and tests that can be run in parallel, respectively. If developers have a Pytest plugin to run tests in parallel, such as `pytest-xdist`, they can use the `parallel` mark to only execute tests that are safe to run in parallel. (i.e. `python3 -m pytest -m parallel -n 10`)
+
+### Pytest Fixtures
+A number of the test files end with `_tests.py`. These files are not auto-discovered by Pytest, and if they were, they would not execute. These files contain Interface tests, which require a Pytest fixture to be defined. To run these tests on an implementation of a specific interface, import everything in the `_tests.py` file and define the Pytest fixture to return the implementation needed. See the [Reddit Module Tests](../modules/reddit/tests/test_reddit.py) for an example of using Pytest fixtures in this way.
+
+# Conclusions
+
   What did you learn?
   What would you do differently?
   Did you successfully scope the project in terms of the amount of work that could be reasonably done by the team in the time alloted?
