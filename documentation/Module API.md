@@ -50,16 +50,17 @@ Posts returned by `get_posts()` must extend [IPost](../derp/posts/IPost.py) and 
 `about()` and `field_data()` will both be invoked during the enforcement step of a query. Regardless of what posts are returned by the `PostIterator`, they will be filtered by the DERP backend to ensure that they meet the user-specified criteria.
 Modules are encouraged to use the qualifier tree to filter posts as part of their web query when possible; however as this is not required - the enforcement step is always performed.
 
-## Running the Module Against the Module Interface Tests
+## Testing your Module
+### Running the Module Against the Module Interface Tests
   To verify that the module is meeting the required interface, create a pytest file
   with two pytest fixtures. The first, `module_impl()`, creates an instance of the module class, while
   the second, `module_source_string()`, returns the source string for the query made.
 
   These will be used when running the tests in [IModule_tests.py](../derp/modules/tests/IModule_tests.py).
 
-### Example of `module_impl()`
+#### Example of `module_impl()`
 ```Python
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def module_impl():
     my_module_instance = MyModule(
         # constructor arguments go here
@@ -67,13 +68,28 @@ def module_impl():
     return my_module_instance
 ```
 
-### Example of `module_source_string()`
+#### Example of `module_source_string()`
 A valid source string consists of any input string that corresponds to a valid string defined by
 the Grammar returned by `source_grammar()`.
 ```Python
-@pytest.fixture(scope="function", params['valid source string #1', 'valid source string #2'])
+@pytest.fixture(params['valid source string #1', 'valid source string #2'])
 def module_source_string(request):
     return request.param
+```
+
+### Running a Post against the Post Interface Tests
+  Similarly to the Module Interface, there are a set of tests that can be run to ensure that a Post
+  matches the Post Interface. Testing the Post interface requires only a single fixture, `post_impl()`
+  and gets tests from [IPost_tests.py](../derp/posts/tests/IPost_tests.py).
+
+#### Example of `post_impl()`
+```Python
+@pytest.fixture()
+def post_impl():
+    my_post_instance = MyPost(
+        # constructor arguments go here
+    )
+    return my_post_instance
 ```
 
 ## Registering a New Module

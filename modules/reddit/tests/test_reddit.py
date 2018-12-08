@@ -5,7 +5,7 @@ from .. import RedditModule
 import json
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="class")
 def module_impl():
     reddit_creds_json = open("reddit_credentials.json", "r")
     reddit_creds = json.load(reddit_creds_json)
