@@ -9,7 +9,7 @@ feedparser==5.2.1
 idna==2.7
 jieba3k==0.35.1
 lark-parser==0.6.5
-lxml==4.2.5
+lxml==4.6.3
 more-itertools==4.3.0
 newspaper3k==0.2.8
 nltk==3.4
